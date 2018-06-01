@@ -1,0 +1,59 @@
+{
+  "project_info": {
+    "project_number": "29360140397",
+    "firebase_url": "https://berry-c9313.firebaseio.com",
+    "project_id": "berry-c9313",
+    "storage_bucket": "berry-c9313.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:29360140397:android:e0f4d42e6b86b540",
+        "android_client_info": {
+          "package_name": "com.example.nishant.berry"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "29360140397-dn0ma4u3vm1j3jojlfpflk7s2erlovgu.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.nishant.berry",
+            "certificate_hash": "6aba496e17e4163d50f772fe3070b360c5c38dd0"
+          }
+        },
+        {
+          "client_id": "29360140397-j8rvqo2d011tgbte92fej5p2vlqkrrif.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "29360140397-j8rvqo2d011tgbte92fej5p2vlqkrrif.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBzC4thozULG1PQS8H-gaDKXEfoYOR0WPM"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "29360140397-j8rvqo2d011tgbte92fej5p2vlqkrrif.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
