@@ -26,4 +26,8 @@
 <resources>
     <string name="app_name">Berry</string>
     <string name="need_account_label">Need account ?</string>
+    <string name="display_name_edit_text_hint">Display Name</string>
+    <string name="email_edit_text_hint">Email</string>
+    <string name="password_edit_text_hint">Password</string>
+    <string name="create_account_btn_label">Create Account</string>
 </resources>

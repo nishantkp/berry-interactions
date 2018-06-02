@@ -25,16 +25,61 @@
 
 package com.example.nishant.berry.ui.signup;
 
+import android.content.Intent;
+import android.databinding.DataBindingUtil;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import com.example.nishant.berry.R;
+import com.example.nishant.berry.databinding.ActivitySignUpBinding;
+import com.example.nishant.berry.ui.dashboard.DashboardActivity;
+import com.example.nishant.berry.ui.model.User;
 
-public class SignUpActivity extends AppCompatActivity {
+public class SignUpActivity
+        extends AppCompatActivity
+        implements SignUpContract.View, SignUpContract.View.SignUpCallback {
+
+    private ActivitySignUpBinding mBinding;
+    private SignUpPresenter mPresenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_sign_up);
+        mBinding = DataBindingUtil.setContentView(this, R.layout.activity_sign_up);
+        mBinding.setUser(new User());
+        mBinding.setCallback(this);
+
+        mPresenter = new SignUpPresenter();
+        mPresenter.attachView(this);
+        mBinding.setPresenter(mPresenter);
+    }
+
+    @Override
+    public void signUpSuccess() {
+        startActivity(
+                new Intent(SignUpActivity.this, DashboardActivity.class)
+                        .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK)
+        );
+    }
+
+    @Override
+    public void signUpError(String error) {
+        Toast.makeText(SignUpActivity.this, error, Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void invalidDisplayName(String error) {
+        Toast.makeText(SignUpActivity.this, error, Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void invalidEmail(String error) {
+        Toast.makeText(SignUpActivity.this, error, Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void invalidPassword(String error) {
+        Toast.makeText(SignUpActivity.this, error, Toast.LENGTH_LONG).show();
     }
 }
