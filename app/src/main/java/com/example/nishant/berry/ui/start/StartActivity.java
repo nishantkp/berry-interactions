@@ -32,6 +32,7 @@ import android.os.Bundle;
 
 import com.example.nishant.berry.R;
 import com.example.nishant.berry.databinding.ActivityStartBinding;
+import com.example.nishant.berry.ui.signin.SignInActivity;
 import com.example.nishant.berry.ui.signup.SignUpActivity;
 
 public class StartActivity extends AppCompatActivity {
@@ -51,5 +52,12 @@ public class StartActivity extends AppCompatActivity {
     public void onRegistrationButtonClick() {
         startActivity(new Intent(StartActivity.this, SignUpActivity.class));
         finish();
+    }
+
+    /**
+     * When user click on Sign In button, start {@link SignInActivity}
+     */
+    public void onSignInButtonClick() {
+        startActivity(new Intent(StartActivity.this, SignInActivity.class));
     }
 }

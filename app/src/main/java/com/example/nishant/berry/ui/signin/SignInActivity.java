@@ -25,16 +25,63 @@
 
 package com.example.nishant.berry.ui.signin;
 
+import android.content.Intent;
+import android.databinding.DataBindingUtil;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import com.example.nishant.berry.R;
+import com.example.nishant.berry.databinding.ActivitySignInBinding;
+import com.example.nishant.berry.ui.dashboard.DashboardActivity;
+import com.example.nishant.berry.ui.model.User;
+import com.example.nishant.berry.ui.signup.SignUpActivity;
 
-public class SignInActivity extends AppCompatActivity {
+import java.util.Objects;
+
+public class SignInActivity
+        extends AppCompatActivity
+        implements SignInContract.View, SignInContract.View.SignInCallback {
+
+    private ActivitySignInBinding mBinding;
+    private SignInPresenter mPresenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_sign_in);
+        mBinding = DataBindingUtil.setContentView(this, R.layout.activity_sign_in);
+
+        setSupportActionBar(mBinding.signInToolBar.mainAppBar);
+        Objects.requireNonNull(getSupportActionBar()).setTitle("Sign In");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        mPresenter = new SignInPresenter();
+        mPresenter.attachView(this);
+        mBinding.setUser(new User());
+        mBinding.setPresenter(mPresenter);
+        mBinding.setCallback(this);
+    }
+
+    @Override
+    public void signInSuccess() {
+        startActivity(
+                new Intent(SignInActivity.this, DashboardActivity.class)
+                        .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK)
+        );
+    }
+
+    @Override
+    public void signInError(String error) {
+        Toast.makeText(SignInActivity.this, error, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void invalidEmail(String error) {
+        Toast.makeText(SignInActivity.this, error, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void invalidPassword(String error) {
+        Toast.makeText(SignInActivity.this, error, Toast.LENGTH_SHORT).show();
     }
 }
