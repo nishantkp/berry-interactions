@@ -29,7 +29,6 @@ import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -70,8 +69,7 @@ public class DashboardActivity
      */
     @Override
     public void noActiveUser() {
-        startActivity(new Intent(DashboardActivity.this, StartActivity.class));
-        finish();
+        sendToStartActivity();
     }
 
     @Override
@@ -85,9 +83,18 @@ public class DashboardActivity
         int itemId = item.getItemId();
         switch (itemId) {
             case R.id.action_logout:
+                mPresenter.signOutUser();
+                sendToStartActivity();
                 return true;
-
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    /**
+     * Intent to send user to start activity
+     */
+    private void sendToStartActivity() {
+        startActivity(new Intent(DashboardActivity.this, StartActivity.class));
+        finish();
     }
 }

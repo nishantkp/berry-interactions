@@ -34,5 +34,7 @@ public interface DashboardContract {
 
     interface Presenter {
         void checkCurrentUser();
+
+        void signOutUser();
     }
 }

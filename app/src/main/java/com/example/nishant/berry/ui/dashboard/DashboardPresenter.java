@@ -56,4 +56,12 @@ public class DashboardPresenter
             getView().noActiveUser();
         }
     }
+
+    /**
+     * Sign out current user
+     */
+    @Override
+    public void signOutUser() {
+        mAuth.signOut();
+    }
 }
