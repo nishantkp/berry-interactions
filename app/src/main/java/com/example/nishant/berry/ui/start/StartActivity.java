@@ -51,7 +51,6 @@ public class StartActivity extends AppCompatActivity {
      */
     public void onRegistrationButtonClick() {
         startActivity(new Intent(StartActivity.this, SignUpActivity.class));
-        finish();
     }
 
     /**
