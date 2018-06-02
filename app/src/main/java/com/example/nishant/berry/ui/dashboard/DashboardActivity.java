@@ -25,16 +25,44 @@
 
 package com.example.nishant.berry.ui.dashboard;
 
+import android.content.Intent;
+import android.databinding.DataBindingUtil;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import com.example.nishant.berry.R;
+import com.example.nishant.berry.databinding.ActivityDashboardBinding;
+import com.example.nishant.berry.ui.signin.SignInActivity;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
-public class DashboardActivity extends AppCompatActivity {
+public class DashboardActivity
+        extends AppCompatActivity
+        implements DashboardContract.View {
+
+    private DashboardPresenter mPresenter;
+    private ActivityDashboardBinding mBinding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_dashboard);
+        mBinding = DataBindingUtil.setContentView(this, R.layout.activity_dashboard);
+
+        mPresenter = new DashboardPresenter();
+        mPresenter.attachView(this);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mPresenter.checkCurrentUser();
+    }
+
+    /**
+     * If there isn't any active users start {@link SignInActivity}
+     */
+    @Override
+    public void noActiveUser() {
+        startActivity(new Intent(DashboardActivity.this, SignInActivity.class));
     }
 }
