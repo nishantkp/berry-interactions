@@ -40,8 +40,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".ui.start.StartActivity" />
-        <activity android:name=".ui.login.LoginActivity" />
-        <activity android:name=".ui.signup.SignUpActivity"></activity>
+        <activity android:name=".ui.signin.SignInActivity" />
+        <activity android:name=".ui.signup.SignUpActivity" />
     </application>
 
 </manifest>
