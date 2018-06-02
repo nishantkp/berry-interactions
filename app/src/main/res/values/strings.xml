@@ -30,4 +30,7 @@
     <string name="email_edit_text_hint">Email</string>
     <string name="password_edit_text_hint">Password</string>
     <string name="create_account_btn_label">Create Account</string>
+    <string name="menu_sign_out_label">Sign out</string>
+    <string name="menu_account_settings_label">Account settings</string>
+    <string name="menu_all_users_label">All users</string>
 </resources>

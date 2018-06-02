@@ -29,13 +29,15 @@ import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import com.example.nishant.berry.R;
 import com.example.nishant.berry.databinding.ActivityDashboardBinding;
-import com.example.nishant.berry.ui.signin.SignInActivity;
 import com.example.nishant.berry.ui.start.StartActivity;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
+
+import java.util.Objects;
 
 public class DashboardActivity
         extends AppCompatActivity
@@ -48,6 +50,10 @@ public class DashboardActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_dashboard);
+
+        // Set custom toolbar
+        setSupportActionBar(mBinding.dashboardAppBar.mainAppBar);
+        Objects.requireNonNull(getSupportActionBar()).setTitle("Dashboard");
 
         mPresenter = new DashboardPresenter();
         mPresenter.attachView(this);
@@ -66,5 +72,22 @@ public class DashboardActivity
     public void noActiveUser() {
         startActivity(new Intent(DashboardActivity.this, StartActivity.class));
         finish();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.dashboard_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int itemId = item.getItemId();
+        switch (itemId) {
+            case R.id.action_logout:
+                return true;
+
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

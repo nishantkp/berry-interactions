@@ -19,18 +19,24 @@
   ~ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
   ~ SOFTWARE.
   ~
-  ~ File Created on 02/06/18 1:53 PM by nishant
-  ~ Last Modified on 02/06/18 1:53 PM
+  ~ File Created on 02/06/18 2:17 PM by nishant
+  ~ Last Modified on 02/06/18 2:17 PM
   -->
 
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/main_app_bar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/colorPrimary"
-        android:theme="@style/Base.ThemeOverlay.AppCompat.ActionBar">
+    <item
+        android:id="@+id/action_account_settings"
+        android:title="@string/menu_account_settings_label"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_all_users"
+        android:title="@string/menu_all_users_label"
+        app:showAsAction="never" />
 
-    </android.support.v7.widget.Toolbar>
-</layout>
+    <item
+        android:id="@+id/action_logout"
+        android:title="@string/menu_sign_out_label"
+        app:showAsAction="never" />
+</menu>
