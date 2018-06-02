@@ -19,20 +19,22 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  *
- * File Created on 31/05/18 9:40 PM by nishant
- * Last Modified on 31/05/18 9:38 PM
+ * File Created on 01/06/18 8:05 PM by nishant
+ * Last Modified on 01/06/18 8:05 PM
  */
 
-package com.example.nishant.berry;
+package com.example.nishant.berry.ui.dashboard;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
-public class MainActivity extends AppCompatActivity {
+import com.example.nishant.berry.R;
+
+public class DashboardActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_dashboard);
     }
 }
