@@ -65,5 +65,6 @@ public class DashboardActivity
     @Override
     public void noActiveUser() {
         startActivity(new Intent(DashboardActivity.this, StartActivity.class));
+        finish();
     }
 }
