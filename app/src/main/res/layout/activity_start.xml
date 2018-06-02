@@ -40,32 +40,46 @@
         tools:context=".ui.start.StartActivity">
 
         <TextView
-            android:id="@+id/textView"
+            android:id="@+id/start_heading"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            android:text="Welcome to Start"
-            android:textSize="14sp"
+            android:fontFamily="cursive"
+            android:text="@string/welcome_to_berry_label"
+            android:textAppearance="@style/TextAppearance.AppCompat.Display2"
+            android:textColor="@color/colorSecondaryLight"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.55" />
 
         <Button
             android:id="@+id/start_registration_btn"
+            style="@style/Widget.AppCompat.Button.Borderless.Colored"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:onClick="@{()->activity.onRegistrationButtonClick()}"
+            android:text="@string/need_account_label"
+            app:layout_constraintEnd_toEndOf="@+id/start_sign_in_button"
+            app:layout_constraintStart_toStartOf="@+id/start_sign_in_button"
+            app:layout_constraintTop_toBottomOf="@+id/start_sign_in_button" />
+
+        <TextView
+            android:id="@+id/start_sign_in_button"
             style="@style/Widget.AppCompat.Button.Colored"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
-            android:onClick="@{()->activity.onRegistrationButtonClick()}"
-            android:text="@string/need_account_label"
-            app:layout_constraintEnd_toEndOf="@+id/textView"
-            app:layout_constraintStart_toStartOf="@+id/textView"
-            app:layout_constraintTop_toBottomOf="@+id/textView" />
+            android:layout_marginTop="60dp"
+            android:text="@string/already_have_account_label"
+            app:layout_constraintEnd_toEndOf="@+id/start_heading"
+            app:layout_constraintStart_toStartOf="@+id/start_heading"
+            app:layout_constraintTop_toBottomOf="@+id/start_heading" />
 
     </android.support.constraint.ConstraintLayout>
 </layout>
