@@ -41,7 +41,9 @@
         </activity>
         <activity android:name=".ui.start.StartActivity" />
         <activity android:name=".ui.signin.SignInActivity" />
-        <activity android:name=".ui.signup.SignUpActivity" />
+        <activity
+            android:name=".ui.signup.SignUpActivity"
+            android:parentActivityName=".ui.start.StartActivity" />
     </application>
 
 </manifest>

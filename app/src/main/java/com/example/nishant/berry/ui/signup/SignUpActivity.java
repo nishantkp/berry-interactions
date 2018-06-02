@@ -36,6 +36,8 @@ import com.example.nishant.berry.databinding.ActivitySignUpBinding;
 import com.example.nishant.berry.ui.dashboard.DashboardActivity;
 import com.example.nishant.berry.ui.model.User;
 
+import java.util.Objects;
+
 public class SignUpActivity
         extends AppCompatActivity
         implements SignUpContract.View, SignUpContract.View.SignUpCallback {
@@ -47,6 +49,12 @@ public class SignUpActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_sign_up);
+
+        // Setup toolbar
+        setSupportActionBar(mBinding.signUpToolBar.mainAppBar);
+        Objects.requireNonNull(getSupportActionBar()).setTitle("Sign Up");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         mBinding.setUser(new User());
         mBinding.setCallback(this);
 
