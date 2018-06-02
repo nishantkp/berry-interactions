@@ -33,6 +33,7 @@ import android.os.Bundle;
 import com.example.nishant.berry.R;
 import com.example.nishant.berry.databinding.ActivityDashboardBinding;
 import com.example.nishant.berry.ui.signin.SignInActivity;
+import com.example.nishant.berry.ui.start.StartActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -59,10 +60,10 @@ public class DashboardActivity
     }
 
     /**
-     * If there isn't any active users start {@link SignInActivity}
+     * If there isn't any active users start {@link StartActivity}
      */
     @Override
     public void noActiveUser() {
-        startActivity(new Intent(DashboardActivity.this, SignInActivity.class));
+        startActivity(new Intent(DashboardActivity.this, StartActivity.class));
     }
 }
