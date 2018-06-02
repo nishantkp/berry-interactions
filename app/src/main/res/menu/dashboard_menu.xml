@@ -30,6 +30,7 @@
         android:id="@+id/action_account_settings"
         android:title="@string/menu_account_settings_label"
         app:showAsAction="never" />
+
     <item
         android:id="@+id/action_all_users"
         android:title="@string/menu_all_users_label"
