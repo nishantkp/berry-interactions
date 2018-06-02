@@ -25,16 +25,31 @@
 
 package com.example.nishant.berry.ui.start;
 
+import android.content.Intent;
+import android.databinding.DataBindingUtil;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import com.example.nishant.berry.R;
+import com.example.nishant.berry.databinding.ActivityStartBinding;
+import com.example.nishant.berry.ui.signup.SignUpActivity;
 
 public class StartActivity extends AppCompatActivity {
+
+    private ActivityStartBinding mBinding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_start);
+        mBinding = DataBindingUtil.setContentView(this, R.layout.activity_start);
+        mBinding.setActivity(this);
+    }
+
+    /**
+     * When user clicks on account registration button, start {@link SignUpActivity}
+     */
+    public void onRegistrationButtonClick() {
+        startActivity(new Intent(StartActivity.this, SignUpActivity.class));
+        finish();
     }
 }

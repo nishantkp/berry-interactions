@@ -25,4 +25,5 @@
 
 <resources>
     <string name="app_name">Berry</string>
+    <string name="need_account_label">Need account ?</string>
 </resources>
