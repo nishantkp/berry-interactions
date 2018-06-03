@@ -33,6 +33,10 @@ public interface SignInContract {
 
         void signInError(String error);
 
+        void showProgressDialog();
+
+        void cancelProgressDialog();
+
         interface SignInCallback {
             void invalidEmail(String error);
 

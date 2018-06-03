@@ -25,6 +25,7 @@
 
 package com.example.nishant.berry.ui.signin;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.support.v7.app.AppCompatActivity;
@@ -45,6 +46,7 @@ public class SignInActivity
 
     private ActivitySignInBinding mBinding;
     private SignInPresenter mPresenter;
+    private ProgressDialog mProgressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +75,19 @@ public class SignInActivity
     @Override
     public void signInError(String error) {
         Toast.makeText(SignInActivity.this, error, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void showProgressDialog() {
+        mProgressDialog = new ProgressDialog(this);
+        mProgressDialog.setMessage("Authenticating...");
+        mProgressDialog.setCanceledOnTouchOutside(false);
+        mProgressDialog.show();
+    }
+
+    @Override
+    public void cancelProgressDialog() {
+        mProgressDialog.dismiss();
     }
 
     @Override

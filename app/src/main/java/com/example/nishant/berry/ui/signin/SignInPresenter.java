@@ -68,13 +68,21 @@ public class SignInPresenter
             return;
         }
 
+        // Show progress dialog
+        getView().showProgressDialog();
+
         // SignIn user
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isComplete() && task.isSuccessful()) getView().signInSuccess();
-                        else getView().signInError("Email or password is incorrect!");
+                        if (task.isComplete() && task.isSuccessful()) {
+                            getView().cancelProgressDialog();
+                            getView().signInSuccess();
+                        } else {
+                            getView().cancelProgressDialog();
+                            getView().signInError("Email or password is incorrect!");
+                        }
                     }
                 });
     }
