@@ -25,16 +25,47 @@
 
 package com.example.nishant.berry.ui.settings;
 
+import android.databinding.DataBindingUtil;
+import android.icu.text.UnicodeSetSpanner;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import com.example.nishant.berry.R;
+import com.example.nishant.berry.databinding.ActivitySettingsBinding;
 
-public class SettingsActivity extends AppCompatActivity {
+public class SettingsActivity
+        extends AppCompatActivity
+        implements SettingsContract.View {
+
+    private ActivitySettingsBinding mBinding;
+    private SettingsPresenter mPresenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_settings);
+        mBinding = DataBindingUtil.setContentView(this, R.layout.activity_settings);
+        mPresenter = new SettingsPresenter();
+        mPresenter.attachView(this);
+    }
+
+    @Override
+    public void setName(String name) {
+        mBinding.settingsDisplayName.setText(name);
+    }
+
+    @Override
+    public void setStatus(String status) {
+        mBinding.settingsStatus.setText(status);
+    }
+
+    @Override
+    public void setImage(String imageUri) {
+
+    }
+
+    @Override
+    public void onError(String error) {
+        Toast.makeText(this, error, Toast.LENGTH_SHORT).show();
     }
 }
