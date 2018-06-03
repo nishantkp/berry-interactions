@@ -38,6 +38,7 @@ public class User extends BaseObservable {
     private String displayName;
     private String email;
     private String password;
+    private String status;
 
     @Bindable
     public String getDisplayName() {
@@ -54,6 +55,11 @@ public class User extends BaseObservable {
         return password;
     }
 
+    @Bindable
+    public String getStatus() {
+        return status;
+    }
+
     public void setDisplayName(String displayName) {
         this.displayName = displayName;
         notifyPropertyChanged(BR.displayName);
@@ -67,6 +73,11 @@ public class User extends BaseObservable {
     public void setPassword(String password) {
         this.password = password;
         notifyPropertyChanged(BR.password);
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+        notifyPropertyChanged(BR.status);
     }
 
     /**

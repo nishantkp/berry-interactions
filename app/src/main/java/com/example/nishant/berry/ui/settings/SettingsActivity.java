@@ -25,6 +25,7 @@
 
 package com.example.nishant.berry.ui.settings;
 
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.icu.text.UnicodeSetSpanner;
 import android.support.v7.app.AppCompatActivity;
@@ -32,7 +33,9 @@ import android.os.Bundle;
 import android.widget.Toast;
 
 import com.example.nishant.berry.R;
+import com.example.nishant.berry.config.IConstants;
 import com.example.nishant.berry.databinding.ActivitySettingsBinding;
+import com.example.nishant.berry.ui.status.StatusActivity;
 
 public class SettingsActivity
         extends AppCompatActivity
@@ -40,11 +43,14 @@ public class SettingsActivity
 
     private ActivitySettingsBinding mBinding;
     private SettingsPresenter mPresenter;
+    private String mStatus;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_settings);
+        mBinding.setActivity(this);
+
         mPresenter = new SettingsPresenter();
         mPresenter.attachView(this);
     }
@@ -57,6 +63,7 @@ public class SettingsActivity
     @Override
     public void setStatus(String status) {
         mBinding.settingsStatus.setText(status);
+        mStatus = status;
     }
 
     @Override
@@ -67,5 +74,15 @@ public class SettingsActivity
     @Override
     public void onError(String error) {
         Toast.makeText(this, error, Toast.LENGTH_SHORT).show();
+    }
+
+    /**
+     * When user press status change button start {@link StatusActivity}
+     */
+    public void onStatusButtonClick() {
+        startActivity(
+                new Intent(this, StatusActivity.class)
+                        .putExtra(IConstants.KEY_STATUS_INTENT, mStatus)
+        );
     }
 }

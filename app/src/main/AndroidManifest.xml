@@ -49,6 +49,9 @@
         <activity
             android:name=".ui.settings.SettingsActivity"
             android:parentActivityName=".ui.dashboard.DashboardActivity" />
+        <activity
+            android:name=".ui.status.StatusActivity"
+            android:parentActivityName=".ui.settings.SettingsActivity" />
     </application>
 
 </manifest>

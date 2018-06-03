@@ -26,6 +26,13 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <data>
+
+        <variable
+            name="activity"
+            type="com.example.nishant.berry.ui.settings.SettingsActivity" />
+    </data>
+
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -80,6 +87,7 @@
             android:layout_marginBottom="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
+            android:onClick="@{()->activity.onStatusButtonClick()}"
             android:text="@string/change_status_label"
             app:layout_constraintBottom_toTopOf="@+id/settings_change_avatar_btn"
             app:layout_constraintEnd_toEndOf="parent"
