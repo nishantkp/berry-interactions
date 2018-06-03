@@ -81,8 +81,7 @@ public class SignUpActivity
     @Override
     public void showProgressDialog() {
         mProgressDialog = new ProgressDialog(this);
-        mProgressDialog.setTitle("Registering User");
-        mProgressDialog.setMessage("Please wait while we create your account!");
+        mProgressDialog.setMessage("Creating account...");
         mProgressDialog.setCanceledOnTouchOutside(false);
         mProgressDialog.show();
     }
