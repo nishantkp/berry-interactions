@@ -52,10 +52,11 @@ public class SignUpActivity
         super.onCreate(savedInstanceState);
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_sign_up);
 
-        // Setup toolbar
+        // Setup app bar
         setSupportActionBar(mBinding.signUpToolBar.mainAppBar);
         Objects.requireNonNull(getSupportActionBar()).setTitle("Sign Up");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setElevation(0f);
 
         mBinding.setUser(new User());
         mBinding.setCallback(this);

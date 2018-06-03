@@ -53,9 +53,11 @@ public class SignInActivity
         super.onCreate(savedInstanceState);
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_sign_in);
 
+        // Setup app bar
         setSupportActionBar(mBinding.signInToolBar.mainAppBar);
         Objects.requireNonNull(getSupportActionBar()).setTitle("Sign In");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setElevation(0f);
 
         mPresenter = new SignInPresenter();
         mPresenter.attachView(this);
