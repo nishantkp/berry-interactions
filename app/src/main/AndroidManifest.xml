@@ -21,7 +21,7 @@
   ~
   ~ File Created on 02/06/18 12:55 AM by nishant
   ~ Last Modified on 01/06/18 8:16 PM
-  -->
+-->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.nishant.berry">
 
@@ -46,6 +46,9 @@
         <activity
             android:name=".ui.signup.SignUpActivity"
             android:parentActivityName=".ui.start.StartActivity" />
+        <activity
+            android:name=".ui.settings.SettingsActivity"
+            android:parentActivityName=".ui.dashboard.DashboardActivity" />
     </application>
 
 </manifest>

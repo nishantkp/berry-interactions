@@ -35,6 +35,7 @@ import android.view.MenuItem;
 import com.example.nishant.berry.R;
 import com.example.nishant.berry.databinding.ActivityDashboardBinding;
 import com.example.nishant.berry.ui.adapter.SectionsPagerAdapter;
+import com.example.nishant.berry.ui.settings.SettingsActivity;
 import com.example.nishant.berry.ui.start.StartActivity;
 
 import java.util.Objects;
@@ -91,6 +92,9 @@ public class DashboardActivity
             case R.id.action_logout:
                 mPresenter.signOutUser();
                 sendToStartActivity();
+                return true;
+            case R.id.action_account_settings:
+                startActivity(new Intent(this, SettingsActivity.class));
                 return true;
         }
         return super.onOptionsItemSelected(item);
