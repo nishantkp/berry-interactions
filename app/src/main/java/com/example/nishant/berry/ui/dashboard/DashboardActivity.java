@@ -34,6 +34,7 @@ import android.view.MenuItem;
 
 import com.example.nishant.berry.R;
 import com.example.nishant.berry.databinding.ActivityDashboardBinding;
+import com.example.nishant.berry.ui.adapter.SectionsPagerAdapter;
 import com.example.nishant.berry.ui.start.StartActivity;
 
 import java.util.Objects;
@@ -56,6 +57,11 @@ public class DashboardActivity
 
         mPresenter = new DashboardPresenter();
         mPresenter.attachView(this);
+
+        // Setup viewPager with pager adapter
+        SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+        mBinding.dashboardViewPager.setAdapter(sectionsPagerAdapter);
+        mBinding.dashboardTabs.setupWithViewPager(mBinding.dashboardViewPager);
     }
 
     @Override

@@ -33,4 +33,5 @@
     <color name="colorSecondaryDark">#c4001d</color>
     <color name="primaryTextColor">#000000</color>
     <color name="secondaryTextColor">#fafafa</color>
+    <color name="tabTextColor">#757575</color>
 </resources>
