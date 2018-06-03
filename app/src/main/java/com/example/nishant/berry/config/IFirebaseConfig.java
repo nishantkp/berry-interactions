@@ -19,39 +19,16 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  *
- * File Created on 02/06/18 12:55 AM by nishant
- * Last Modified on 02/06/18 12:51 AM
+ * File Created on 03/06/18 1:09 AM by nishant
+ * Last Modified on 03/06/18 1:09 AM
  */
 
-package com.example.nishant.berry.ui.signup;
+package com.example.nishant.berry.config;
 
-import com.example.nishant.berry.base.MvpView;
-
-public interface SignUpContract {
-    interface View extends MvpView {
-        void signUpSuccess();
-
-        void signUpError(String error);
-
-        void showProgressDialog();
-
-        void cancelProgressDialog();
-
-        interface SignUpCallback {
-            void invalidDisplayName(String error);
-
-            void invalidEmail(String error);
-
-            void invalidPassword(String error);
-        }
-    }
-
-    interface Presenter {
-        void signUpUser(String displayName,
-                        String email,
-                        String password,
-                        SignUpContract.View.SignUpCallback callback);
-
-        void storeDataToFirebaseDatabase(String displayName);
-    }
+public interface IFirebaseConfig {
+    String USERS_OBJECT = "users";
+    String NAME = "name";
+    String THUMBNAIL = "thumbnail";
+    String STATUS = "status";
+    String IMAGE = "image";
 }

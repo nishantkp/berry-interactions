@@ -57,6 +57,7 @@ dependencies {
 
     // Firebase
     implementation 'com.google.firebase:firebase-auth:16.0.1'
+    implementation 'com.google.firebase:firebase-database:16.0.1'
 
     // Circle Image View
     implementation 'de.hdodenhof:circleimageview:2.2.0'

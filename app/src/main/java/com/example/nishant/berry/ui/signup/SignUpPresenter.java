@@ -28,11 +28,17 @@ package com.example.nishant.berry.ui.signup;
 import android.support.annotation.NonNull;
 
 import com.example.nishant.berry.base.BasePresenter;
+import com.example.nishant.berry.config.IFirebaseConfig;
 import com.example.nishant.berry.ui.model.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.HashMap;
 
 public class SignUpPresenter
         extends BasePresenter<SignUpContract.View>
@@ -64,7 +70,7 @@ public class SignUpPresenter
      * @param callback    callback for invalid display name, password and email
      */
     @Override
-    public void signUpUser(String displayName, String email, String password, SignUpContract.View.SignUpCallback callback) {
+    public void signUpUser(final String displayName, final String email, String password, SignUpContract.View.SignUpCallback callback) {
 
         // Validation check
         if (!User.isDisplayNameValid(displayName)) {
@@ -88,6 +94,45 @@ public class SignUpPresenter
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isComplete() && task.isSuccessful()) {
+
+                            //Store data
+                            storeDataToFirebaseDatabase(displayName);
+                        } else {
+                            getView().cancelProgressDialog();
+                            getView().signUpError("Error creating account!");
+                        }
+                    }
+                });
+    }
+
+    /**
+     * Store user data to database and sets callbacks to display/cancel progress dialog
+     *
+     * @param displayName display name
+     */
+    @Override
+    public void storeDataToFirebaseDatabase(String displayName) {
+        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        // Setup Firebase database reference
+        DatabaseReference mDatabaseReference =
+                FirebaseDatabase.getInstance()
+                        .getReference()
+                        .child(IFirebaseConfig.USERS_OBJECT)
+                        .child(userId);
+
+        // Value Map for Firebase database
+        HashMap<String, String> userMap = new HashMap<>();
+        userMap.put(IFirebaseConfig.NAME, displayName);
+        userMap.put(IFirebaseConfig.STATUS, "Hi there it's berry");
+        userMap.put(IFirebaseConfig.IMAGE, "default");
+        userMap.put(IFirebaseConfig.THUMBNAIL, "default thumbnail");
+
+        // Set the values to Firebase database
+        mDatabaseReference.setValue(userMap)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
                         if (task.isComplete() && task.isSuccessful()) {
                             getView().cancelProgressDialog();
                             getView().signUpSuccess();
