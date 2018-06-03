@@ -33,6 +33,10 @@ public interface SignUpContract {
 
         void signUpError(String error);
 
+        void showProgressDialog();
+
+        void cancelProgressDialog();
+
         interface SignUpCallback {
             void invalidDisplayName(String error);
 

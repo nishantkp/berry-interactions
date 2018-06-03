@@ -25,6 +25,7 @@
 
 package com.example.nishant.berry.ui.signup;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.support.v7.app.AppCompatActivity;
@@ -44,6 +45,7 @@ public class SignUpActivity
 
     private ActivitySignUpBinding mBinding;
     private SignUpPresenter mPresenter;
+    private ProgressDialog mProgressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,6 +76,20 @@ public class SignUpActivity
     @Override
     public void signUpError(String error) {
         Toast.makeText(SignUpActivity.this, error, Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void showProgressDialog() {
+        mProgressDialog = new ProgressDialog(this);
+        mProgressDialog.setTitle("Registering User");
+        mProgressDialog.setMessage("Please wait while we create your account!");
+        mProgressDialog.setCanceledOnTouchOutside(false);
+        mProgressDialog.show();
+    }
+
+    @Override
+    public void cancelProgressDialog() {
+        mProgressDialog.dismiss();
     }
 
     @Override

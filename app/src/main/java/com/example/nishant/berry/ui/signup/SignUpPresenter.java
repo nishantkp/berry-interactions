@@ -80,14 +80,19 @@ public class SignUpPresenter
             return;
         }
 
-        // Register user with email and password
+        // Show progress dialog
+        getView().showProgressDialog();
+
+        // Register user with email, password and cancel progress dialog
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isComplete()) {
+                        if (task.isComplete() && task.isSuccessful()) {
+                            getView().cancelProgressDialog();
                             getView().signUpSuccess();
                         } else {
+                            getView().cancelProgressDialog();
                             getView().signUpError("Error creating account!");
                         }
                     }
