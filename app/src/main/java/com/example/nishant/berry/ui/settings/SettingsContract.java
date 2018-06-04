@@ -25,6 +25,8 @@
 
 package com.example.nishant.berry.ui.settings;
 
+import android.net.Uri;
+
 import com.example.nishant.berry.base.MvpView;
 
 public interface SettingsContract {
@@ -36,9 +38,19 @@ public interface SettingsContract {
         void setImage(String imageUri);
 
         void onError(String error);
+
+        void showProgressDialog(String message);
+
+        void cancelProgressDialog();
     }
 
     interface Presenter {
         void retrieveDataFromFirebaseDatabase();
+
+        void storeAvatarToFirebaseDatabase(Uri fileUri);
+
+        void updateDatabaseWithAvatarUrl(String url);
+
+        void getDownloadUrlFromStorageRef();
     }
 }

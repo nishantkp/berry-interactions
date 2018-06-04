@@ -31,4 +31,5 @@ public interface IFirebaseConfig {
     String THUMBNAIL = "thumbnail";
     String STATUS = "status";
     String IMAGE = "image";
+    String AVATAR_STORAGE_DIR = "profile_images";
 }

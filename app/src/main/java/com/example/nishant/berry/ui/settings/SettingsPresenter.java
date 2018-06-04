@@ -25,16 +25,22 @@
 
 package com.example.nishant.berry.ui.settings;
 
+import android.net.Uri;
 import android.support.annotation.NonNull;
 
 import com.example.nishant.berry.base.BasePresenter;
 import com.example.nishant.berry.config.IFirebaseConfig;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 public class SettingsPresenter
         extends BasePresenter<SettingsContract.View>
@@ -42,12 +48,18 @@ public class SettingsPresenter
 
     private FirebaseAuth mAuth;
     private DatabaseReference mDatabaseReference;
+    private StorageReference mStorageReference;
 
     SettingsPresenter() {
         mAuth = FirebaseAuth.getInstance();
         String userId = mAuth.getCurrentUser().getUid();
         mDatabaseReference =
                 FirebaseDatabase.getInstance().getReference().child(IFirebaseConfig.USERS_OBJECT).child(userId);
+
+        // Storage reference to store user avatar -> file name will be userId.jpg
+        mStorageReference = FirebaseStorage.getInstance().getReference()
+                .child(IFirebaseConfig.AVATAR_STORAGE_DIR)
+                .child(userId + ".jpg");
         retrieveDataFromFirebaseDatabase();
     }
 
@@ -85,5 +97,71 @@ public class SettingsPresenter
                 getView().onError(databaseError.getMessage());
             }
         });
+    }
+
+    /**
+     * Call this method to store avatar to Firebase storage
+     * This method sets callback to progressbar and error
+     *
+     * @param fileUri Uri of user avatar
+     */
+    @Override
+    public void storeAvatarToFirebaseDatabase(Uri fileUri) {
+        getView().showProgressDialog("Uploading avatar...");
+        mStorageReference.putFile(fileUri)
+                .addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                        if (task.isComplete() && task.isSuccessful()) {
+                            // Get download url from storage reference to store into out database
+                            getDownloadUrlFromStorageRef();
+                        } else {
+                            getView().cancelProgressDialog();
+                            getView().onError("Error uploading avatar!");
+                        }
+                    }
+                });
+    }
+
+    /**
+     * Call this method to get download url of avatar from StorageReference
+     */
+    @Override
+    public void getDownloadUrlFromStorageRef() {
+        mStorageReference.getDownloadUrl()
+                .addOnCompleteListener(new OnCompleteListener<Uri>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Uri> task) {
+                        if (task.isSuccessful()) {
+                            String downloadUrl = task.getResult().toString();
+                            updateDatabaseWithAvatarUrl(downloadUrl);
+                        } else {
+                            getView().onError("Error uploading avatar!");
+                        }
+                    }
+                });
+    }
+
+    /**
+     * Call this method to update database for particular user with avatar image url
+     * This method sets callback for progressbar and error
+     *
+     * @param url download url of avatar
+     */
+    @Override
+    public void updateDatabaseWithAvatarUrl(String url) {
+        mDatabaseReference.child(IFirebaseConfig.IMAGE)
+                .setValue(url)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            getView().cancelProgressDialog();
+                        } else {
+                            getView().cancelProgressDialog();
+                            getView().onError("Error uploading avatar!");
+                        }
+                    }
+                });
     }
 }
