@@ -126,7 +126,7 @@ public class SignUpPresenter
         userMap.put(IFirebaseConfig.NAME, displayName);
         userMap.put(IFirebaseConfig.STATUS, "Hi there it's berry");
         userMap.put(IFirebaseConfig.IMAGE, "default");
-        userMap.put(IFirebaseConfig.THUMBNAIL, "default thumbnail");
+        userMap.put(IFirebaseConfig.THUMBNAIL, "default");
 
         // Set the values to Firebase database
         mDatabaseReference.setValue(userMap)
