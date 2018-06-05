@@ -124,9 +124,9 @@ public class SignUpPresenter
         // Value Map for Firebase database
         HashMap<String, String> userMap = new HashMap<>();
         userMap.put(IFirebaseConfig.NAME, displayName);
-        userMap.put(IFirebaseConfig.STATUS, "Hi there it's berry");
-        userMap.put(IFirebaseConfig.IMAGE, "default");
-        userMap.put(IFirebaseConfig.THUMBNAIL, "default");
+        userMap.put(IFirebaseConfig.STATUS, IFirebaseConfig.DEFAULT_STATUS);
+        userMap.put(IFirebaseConfig.IMAGE, IFirebaseConfig.DEFAULT_VALUE);
+        userMap.put(IFirebaseConfig.THUMBNAIL, IFirebaseConfig.DEFAULT_VALUE);
 
         // Set the values to Firebase database
         mDatabaseReference.setValue(userMap)

@@ -28,6 +28,7 @@ package com.example.nishant.berry.ui.allusers;
 import android.support.v7.widget.RecyclerView;
 
 import com.example.nishant.berry.R;
+import com.example.nishant.berry.config.IFirebaseConfig;
 import com.example.nishant.berry.databinding.AllUsersListItemBinding;
 import com.example.nishant.berry.ui.model.AllUsers;
 import com.squareup.picasso.Picasso;
@@ -49,7 +50,7 @@ public class AllUsersViewHolder extends RecyclerView.ViewHolder {
         mBinding.setUsers(users);
 
         // load default avatar
-        if (users.getImage().equals("default")) {
+        if (users.getImage().equals(IFirebaseConfig.DEFAULT_VALUE)) {
             mBinding.allUsersListItemAvatar.setImageResource(R.drawable.user_default_avatar);
         } else {
             // load avatar into circular ImageView
