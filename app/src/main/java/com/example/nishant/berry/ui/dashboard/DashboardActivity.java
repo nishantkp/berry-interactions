@@ -35,6 +35,7 @@ import android.view.MenuItem;
 import com.example.nishant.berry.R;
 import com.example.nishant.berry.databinding.ActivityDashboardBinding;
 import com.example.nishant.berry.ui.adapter.SectionsPagerAdapter;
+import com.example.nishant.berry.ui.allusers.AllUsersActivity;
 import com.example.nishant.berry.ui.settings.SettingsActivity;
 import com.example.nishant.berry.ui.start.StartActivity;
 
@@ -95,6 +96,9 @@ public class DashboardActivity
                 return true;
             case R.id.action_account_settings:
                 startActivity(new Intent(this, SettingsActivity.class));
+                return true;
+            case R.id.action_all_users:
+                startActivity(new Intent(this, AllUsersActivity.class));
                 return true;
         }
         return super.onOptionsItemSelected(item);
