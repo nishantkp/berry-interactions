@@ -54,7 +54,9 @@ public class AllUsersViewHolder extends RecyclerView.ViewHolder {
             mBinding.allUsersListItemAvatar.setImageResource(R.drawable.user_default_avatar);
         } else {
             // load avatar into circular ImageView
-            Picasso.get().load(users.getImage()).into(mBinding.allUsersListItemAvatar);
+            Picasso.get().load(users.getImage())
+                    .placeholder(R.drawable.user_default_avatar)
+                    .into(mBinding.allUsersListItemAvatar);
         }
     }
 }
