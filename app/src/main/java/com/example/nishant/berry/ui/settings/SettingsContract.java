@@ -29,6 +29,10 @@ import android.net.Uri;
 
 import com.example.nishant.berry.base.MvpView;
 
+import java.util.Map;
+
+import id.zelory.compressor.Compressor;
+
 public interface SettingsContract {
     interface View extends MvpView {
         void setName(String name);
@@ -47,10 +51,12 @@ public interface SettingsContract {
     interface Presenter {
         void retrieveDataFromFirebaseDatabase();
 
-        void storeAvatarToFirebaseDatabase(Uri fileUri);
+        void storeAvatarToFirebaseDatabase(Uri fileUri, Compressor compressor);
 
-        void updateDatabaseWithAvatarUrl(String url);
+        void updateDatabaseWithAvatarUrl(String url, String field);
 
         void getDownloadUrlFromStorageRef();
+
+        void uploadAvatarThumbnail(byte[] bytes);
     }
 }

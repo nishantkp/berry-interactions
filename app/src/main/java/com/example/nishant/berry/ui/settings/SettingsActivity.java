@@ -28,6 +28,7 @@ package com.example.nishant.berry.ui.settings;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
+import android.graphics.Bitmap;
 import android.icu.text.UnicodeSetSpanner;
 import android.net.Uri;
 import android.support.v4.widget.CircularProgressDrawable;
@@ -42,6 +43,12 @@ import com.example.nishant.berry.ui.status.StatusActivity;
 import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+
+import id.zelory.compressor.Compressor;
 
 public class SettingsActivity
         extends AppCompatActivity
@@ -144,6 +151,7 @@ public class SettingsActivity
             CropImage.activity(imageUri)
                     .setAspectRatio(1, 1)
                     .start(this);
+            // TODO try to use setMinCropWindowSize(500, 500)
         }
 
         // This will get the result after cropping
@@ -151,7 +159,9 @@ public class SettingsActivity
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
             if (resultCode == RESULT_OK) {
                 Uri resultUri = result.getUri();
-                mPresenter.storeAvatarToFirebaseDatabase(resultUri);
+
+                // Store original avatar and thumbnail avatar to database
+                mPresenter.storeAvatarToFirebaseDatabase(resultUri, new Compressor(this));
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                 Exception error = result.getError();
             }

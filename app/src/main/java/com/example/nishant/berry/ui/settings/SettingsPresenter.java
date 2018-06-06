@@ -25,6 +25,7 @@
 
 package com.example.nishant.berry.ui.settings;
 
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 
@@ -42,24 +43,39 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+
+import id.zelory.compressor.Compressor;
+
 public class SettingsPresenter
         extends BasePresenter<SettingsContract.View>
         implements SettingsContract.Presenter {
 
-    private FirebaseAuth mAuth;
     private DatabaseReference mDatabaseReference;
-    private StorageReference mStorageReference;
+    private StorageReference mAvatarStorageReference;
+    private StorageReference mThumbnailStorageReference;
 
     SettingsPresenter() {
-        mAuth = FirebaseAuth.getInstance();
-        String userId = mAuth.getCurrentUser().getUid();
+
+        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+        // Firebase database reference
         mDatabaseReference =
                 FirebaseDatabase.getInstance().getReference().child(IFirebaseConfig.USERS_OBJECT).child(userId);
 
         // Storage reference to store user avatar -> file name will be userId.jpg
-        mStorageReference = FirebaseStorage.getInstance().getReference()
+        mAvatarStorageReference = FirebaseStorage.getInstance().getReference()
                 .child(IFirebaseConfig.AVATAR_STORAGE_DIR)
                 .child(userId + ".jpg");
+
+        // Storage reference to store user avatar thumbnail -> file name will be userId.jpg
+        mThumbnailStorageReference = FirebaseStorage.getInstance().getReference()
+                .child(IFirebaseConfig.AVATAR_STORAGE_DIR)
+                .child(IFirebaseConfig.THUMBNAIL_STORAGE_DIR)
+                .child(userId + ".jpg");
+
         retrieveDataFromFirebaseDatabase();
     }
 
@@ -110,18 +126,43 @@ public class SettingsPresenter
      * Call this method to store avatar to Firebase storage
      * This method sets callback to progressbar and error
      *
-     * @param fileUri Uri of user avatar
+     * @param avatarUri  Uri of user avatar
+     * @param compressor compressor object to compress avatar to generate thumbnail
      */
     @Override
-    public void storeAvatarToFirebaseDatabase(Uri fileUri) {
+    public void storeAvatarToFirebaseDatabase(Uri avatarUri, Compressor compressor) {
         getView().showProgressDialog("Uploading avatar...");
-        mStorageReference.putFile(fileUri)
+
+        File bitmapFilePath = new File(avatarUri.getPath());
+
+        byte[] thumb_byte = null;
+        try {
+            // Compress image to create thumbnail
+            Bitmap thumbnailBitmap = compressor
+                    .setMaxHeight(200)
+                    .setMaxWidth(200)
+                    .setQuality(75)
+                    .compressToBitmap(bitmapFilePath);
+
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            thumbnailBitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+            thumb_byte = stream.toByteArray();
+        } catch (IOException e) {
+            getView().onError("Error creating avatar thumbnail");
+        }
+
+        final byte[] finalThumb_byte = thumb_byte;
+
+        // Upload original avatar to database storage pointing to "profile_images"
+        mAvatarStorageReference.putFile(avatarUri)
                 .addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
                         if (task.isComplete() && task.isSuccessful()) {
-                            // Get download url from storage reference to store into out database
-                            getDownloadUrlFromStorageRef();
+
+                            // As soon as we are done uploading original avatar to database,
+                            // upload thumbnail avatar to database
+                            uploadAvatarThumbnail(finalThumb_byte);
                         } else {
                             getView().cancelProgressDialog();
                             getView().onError("Error uploading avatar!");
@@ -131,19 +172,59 @@ public class SettingsPresenter
     }
 
     /**
+     * Call this method to upload avatar thumbnail to database storage
+     * path: /profile_images/thumb_images
+     *
+     * @param bytes thumb image in form of byte array
+     */
+    @Override
+    public void uploadAvatarThumbnail(byte[] bytes) {
+        UploadTask uploadTask = mThumbnailStorageReference.putBytes(bytes);
+        uploadTask.addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                if (task.isSuccessful()) {
+                    // Get download url from storage reference to store into out database
+                    getDownloadUrlFromStorageRef();
+                } else {
+                    getView().cancelProgressDialog();
+                    getView().onError("Error uploading avatar!");
+                }
+            }
+        });
+    }
+
+    /**
      * Call this method to get download url of avatar from StorageReference
      */
     @Override
     public void getDownloadUrlFromStorageRef() {
-        mStorageReference.getDownloadUrl()
+        // Get the download url of original avatar
+        mAvatarStorageReference.getDownloadUrl()
                 .addOnCompleteListener(new OnCompleteListener<Uri>() {
                     @Override
                     public void onComplete(@NonNull Task<Uri> task) {
                         if (task.isSuccessful()) {
-                            String downloadUrl = task.getResult().toString();
-                            updateDatabaseWithAvatarUrl(downloadUrl);
+                            String avatarUrl = task.getResult().toString();
+
+                            // Update database with url
+                            updateDatabaseWithAvatarUrl(avatarUrl, IFirebaseConfig.IMAGE);
                         } else {
                             getView().onError("Error uploading avatar!");
+                        }
+                    }
+                });
+
+        // Get the download url of avatar thumbnail
+        mThumbnailStorageReference.getDownloadUrl()
+                .addOnCompleteListener(new OnCompleteListener<Uri>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Uri> task) {
+                        if (task.isSuccessful()) {
+                            String thumbnailUrl = task.getResult().toString();
+
+                            // Update database with url
+                            updateDatabaseWithAvatarUrl(thumbnailUrl, IFirebaseConfig.THUMBNAIL);
                         }
                     }
                 });
@@ -153,12 +234,12 @@ public class SettingsPresenter
      * Call this method to update database for particular user with avatar image url
      * This method sets callback for progressbar and error
      *
-     * @param url download url of avatar
+     * @param url   download url of avatar or thumbnail
+     * @param field database field i.e image or thumbnail
      */
     @Override
-    public void updateDatabaseWithAvatarUrl(String url) {
-        mDatabaseReference.child(IFirebaseConfig.IMAGE)
-                .setValue(url)
+    public void updateDatabaseWithAvatarUrl(String url, String field) {
+        mDatabaseReference.child(field).setValue(url)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {

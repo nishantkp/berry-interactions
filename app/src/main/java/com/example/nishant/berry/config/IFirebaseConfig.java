@@ -34,4 +34,5 @@ public interface IFirebaseConfig {
     String AVATAR_STORAGE_DIR = "profile_images";
     String DEFAULT_VALUE = "default";
     String DEFAULT_STATUS = "Hi there, it's berry!";
+    String THUMBNAIL_STORAGE_DIR = "thumb_images";
 }
