@@ -30,9 +30,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
+import android.widget.Toast;
 
 import com.example.nishant.berry.R;
 import com.example.nishant.berry.databinding.ActivityAllUsersBinding;
+import com.example.nishant.berry.ui.model.AllUsers;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 
 import java.util.Objects;
@@ -93,5 +95,16 @@ public class AllUsersActivity
     public void getFirebaseRecyclerAdapter(FirebaseRecyclerAdapter adapter) {
         mFirebaseRecyclerAdapter = adapter;
         mBinding.allUsersRv.setAdapter(mFirebaseRecyclerAdapter);
+    }
+
+    /**
+     * Implement this functionality to set behavior when user clicks on list item from
+     * all users list
+     *
+     * @param user AllUsers object on which click performed
+     */
+    @Override
+    public void onListItemClick(AllUsers user) {
+        Toast.makeText(this, user.getName(), Toast.LENGTH_LONG).show();
     }
 }

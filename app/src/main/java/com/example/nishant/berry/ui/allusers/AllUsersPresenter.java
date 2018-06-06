@@ -70,13 +70,24 @@ public class AllUsersPresenter
     @Override
     public void setupFirebaseRecyclerAdapter(Query query) {
         FirebaseRecyclerOptions<AllUsers> options =
-                new FirebaseRecyclerOptions.Builder<AllUsers>().setQuery(query, AllUsers.class).build();
+                new FirebaseRecyclerOptions.Builder<AllUsers>().setQuery(query, AllUsers.class)
+                        .build();
 
         FirebaseRecyclerAdapter<AllUsers, AllUsersViewHolder> adapter
                 = new FirebaseRecyclerAdapter<AllUsers, AllUsersViewHolder>(options) {
             @Override
-            protected void onBindViewHolder(@NonNull AllUsersViewHolder holder, int position, @NonNull AllUsers model) {
+            protected void onBindViewHolder(@NonNull AllUsersViewHolder holder,
+                                            int position,
+                                            @NonNull final AllUsers model) {
                 holder.bind(model);
+
+                // Set onclick listener on ViewHolder
+                holder.itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        getView().onListItemClick(model);
+                    }
+                });
             }
 
             @NonNull

@@ -26,12 +26,15 @@
 package com.example.nishant.berry.ui.allusers;
 
 import com.example.nishant.berry.base.MvpView;
+import com.example.nishant.berry.ui.model.AllUsers;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.database.Query;
 
 public interface AllUsersContract {
     interface View extends MvpView {
         void getFirebaseRecyclerAdapter(FirebaseRecyclerAdapter adapter);
+
+        void onListItemClick(AllUsers user);
     }
 
     interface Presenter {

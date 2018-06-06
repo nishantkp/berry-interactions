@@ -26,11 +26,13 @@
 package com.example.nishant.berry.ui.allusers;
 
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 
 import com.example.nishant.berry.R;
 import com.example.nishant.berry.config.IFirebaseConfig;
 import com.example.nishant.berry.databinding.AllUsersListItemBinding;
 import com.example.nishant.berry.ui.model.AllUsers;
+import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.squareup.picasso.Picasso;
 
 /**
