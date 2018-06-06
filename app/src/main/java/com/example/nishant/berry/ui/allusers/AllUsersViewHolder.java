@@ -53,8 +53,8 @@ public class AllUsersViewHolder extends RecyclerView.ViewHolder {
         if (users.getImage().equals(IFirebaseConfig.DEFAULT_VALUE)) {
             mBinding.allUsersListItemAvatar.setImageResource(R.drawable.user_default_avatar);
         } else {
-            // load avatar into circular ImageView
-            Picasso.get().load(users.getImage())
+            // load avatar thumbnail into circular ImageView
+            Picasso.get().load(users.getThumbnail())
                     .placeholder(R.drawable.user_default_avatar)
                     .into(mBinding.allUsersListItemAvatar);
         }

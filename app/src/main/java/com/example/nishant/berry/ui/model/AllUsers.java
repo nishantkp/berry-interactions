@@ -33,14 +33,16 @@ public class AllUsers {
     private String name;
     private String image;
     private String status;
+    private String thumbnail;
 
     public AllUsers() {
     }
 
-    public AllUsers(String name, String image, String status) {
+    public AllUsers(String name, String image, String status, String thumbnail) {
         this.name = name;
         this.image = image;
         this.status = status;
+        this.thumbnail = thumbnail;
     }
 
     public String getName() {
@@ -65,5 +67,13 @@ public class AllUsers {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getThumbnail() {
+        return thumbnail;
+    }
+
+    public void setThumbnail(String thumbnail) {
+        this.thumbnail = thumbnail;
     }
 }
