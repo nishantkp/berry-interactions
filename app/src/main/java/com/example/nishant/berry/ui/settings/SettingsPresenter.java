@@ -89,7 +89,14 @@ public class SettingsPresenter
                 // Setup callbacks
                 getView().setName(name);
                 getView().setStatus(status);
-                getView().setImage(image);
+
+                // If image has default value stored in it, pass null in callback, so that we don't
+                // need to set image i.e use default
+                if (image.equals(IFirebaseConfig.DEFAULT_VALUE)) {
+                    getView().setImage(null);
+                } else {
+                    getView().setImage(image);
+                }
             }
 
             @Override

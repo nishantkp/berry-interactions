@@ -76,7 +76,9 @@ public class SettingsActivity
 
     @Override
     public void setImage(String imageUri) {
-        Picasso.get().load(imageUri).into(mBinding.settingsAvatar);
+        if (imageUri != null) {
+            Picasso.get().load(imageUri).into(mBinding.settingsAvatar);
+        }
     }
 
     @Override
