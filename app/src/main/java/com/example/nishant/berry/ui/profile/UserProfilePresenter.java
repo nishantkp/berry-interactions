@@ -51,7 +51,7 @@ public class UserProfilePresenter
 
     private DatabaseReference mUsersDatabaseReference;
     private DatabaseReference mFriendReqDatabaseReference;
-    private String mCurrentState;
+    private int mCurrentState;
     private String mCurrentUserId;
     private String mNewUserId;
     private UserProfile mUserProfile;
@@ -74,7 +74,7 @@ public class UserProfilePresenter
         // Current firebase user id
         mCurrentUserId = FirebaseAuth.getInstance().getUid();
 
-        mCurrentState = "not_friends";
+        mCurrentState = IFirebaseConfig.NOT_FRIEND;
         getDataFromFirebaseDatabase();
     }
 
@@ -118,6 +118,22 @@ public class UserProfilePresenter
 
     /**
      * When user presses send friend request button, this method will be executed
+     */
+    @Override
+    public void sendFriendRequestButtonClick() {
+        switch (mCurrentState) {
+            case IFirebaseConfig.NOT_FRIEND:
+                sendRequest();
+                break;
+            case IFirebaseConfig.REQ_SENT:
+                cancelRequest();
+                break;
+        }
+    }
+
+    /**
+     * Call this method to send friend request
+     * <p>
      * i.e if user1 sends friend request to user2
      * <p>
      * friend_request:
@@ -135,9 +151,9 @@ public class UserProfilePresenter
      * }
      */
     @Override
-    public void sendFriendRequestButtonClick() {
-        if (mCurrentState.equals("req_sent")) cancelFriendRequest();
-        if (!mCurrentState.equals("not_friends")) return;
+    public void sendRequest() {
+        if (mCurrentState == IFirebaseConfig.REQ_SENT) cancelRequest();
+        if (mCurrentState != IFirebaseConfig.NOT_FRIEND) return;
 
         // As soon as user hits send request button, disable the button
         // so user can't be able to press another time and no new requests are made to
@@ -162,7 +178,7 @@ public class UserProfilePresenter
                                         public void onSuccess(Void aVoid) {
                                             // When we successfully updated database,
                                             // change the current state, and set button text to "cancel request"
-                                            mCurrentState = "req_sent";
+                                            mCurrentState = IFirebaseConfig.REQ_SENT;
                                             mUserProfile.setFriendReqButtonEnabled(true);
                                             mUserProfile.setFriendReqButtonText("cancel friend request");
                                             getView().updateProfile(mUserProfile);
@@ -182,7 +198,7 @@ public class UserProfilePresenter
      * Call this method to cancel friend request
      */
     @Override
-    public void cancelFriendRequest() {
+    public void cancelRequest() {
         // Disable the button so user can't be able to press another time and
         // no new requests are made to firebase database
         mUserProfile.setFriendReqButtonEnabled(false);
@@ -203,7 +219,7 @@ public class UserProfilePresenter
                                         public void onComplete(@NonNull Task<Void> task) {
                                             // When we successfully updated database,
                                             // change the current state, and set button text to "send request"
-                                            mCurrentState = "not_friends";
+                                            mCurrentState = IFirebaseConfig.NOT_FRIEND;
                                             mUserProfile.setFriendReqButtonEnabled(true);
                                             mUserProfile.setFriendReqButtonText("send friend request");
                                             getView().updateProfile(mUserProfile);

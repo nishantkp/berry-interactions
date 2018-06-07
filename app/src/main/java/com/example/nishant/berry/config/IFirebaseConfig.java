@@ -39,4 +39,6 @@ public interface IFirebaseConfig {
     String FRIEND_REQUEST_TYPE = "request_type";
     String FRIEND_REQUEST_SENT = "sent";
     String FRIEND_REQUEST_RECEIVED = "received";
+    int NOT_FRIEND = 101;
+    int REQ_SENT = 102;
 }

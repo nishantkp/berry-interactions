@@ -44,6 +44,8 @@ public interface UserProfileContract {
 
         void sendFriendRequestButtonClick();
 
-        void cancelFriendRequest();
+        void sendRequest();
+
+        void cancelRequest();
     }
 }
