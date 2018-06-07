@@ -152,9 +152,6 @@ public class UserProfilePresenter
      */
     @Override
     public void sendRequest() {
-        if (mCurrentState == IFirebaseConfig.REQ_SENT) cancelRequest();
-        if (mCurrentState != IFirebaseConfig.NOT_FRIEND) return;
-
         // As soon as user hits send request button, disable the button
         // so user can't be able to press another time and no new requests are made to
         // firebase database
