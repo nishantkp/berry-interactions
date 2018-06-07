@@ -25,6 +25,7 @@
 
 package com.example.nishant.berry.ui.profile;
 
+import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 
 import com.example.nishant.berry.base.BasePresenter;
@@ -103,6 +104,9 @@ public class UserProfilePresenter
 
                 mUserProfile.setDisplayName(displayName);
                 mUserProfile.setStatus(status);
+
+                // Update layout to display accept friend request
+                updateButtonToAcceptFriendRequest();
 
                 // Set callbacks to populate user profile layout
                 getView().updateProfile(mUserProfile);
@@ -227,6 +231,52 @@ public class UserProfilePresenter
                             getView().updateProfile(mUserProfile);
                             getView().onError("Unable to cancel request!");
                         }
+                    }
+                });
+    }
+
+    /**
+     * Call this method to update btn accept for accepting the friend request
+     * Go to friend_requests/ currentUserId
+     * go to userId of user on whose profile right now we are on
+     * get the value of request_type parameter. If type is "received" change btn text to
+     * "accept friend request" / if type is "sent" change btn text to "cancel friend request"
+     */
+    @Override
+    public void updateButtonToAcceptFriendRequest() {
+        mFriendReqDatabaseReference.child(mCurrentUserId)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.hasChild(mNewUserId)) {
+                            // Get the request_type from user on whose profile right now we are at
+                            String reqType = Objects.requireNonNull(dataSnapshot.child(mNewUserId)
+                                    .child(IFirebaseConfig.FRIEND_REQUEST_TYPE)
+                                    .getValue())
+                                    .toString();
+
+                            switch (reqType) {
+                                case IFirebaseConfig.FRIEND_REQUEST_RECEIVED:
+                                    // If the request type is "received", change the button text to
+                                    // accept the friend request
+                                    mCurrentState = IFirebaseConfig.REQ_RECEIVED;
+                                    mUserProfile.setFriendReqButtonText("accept friend request");
+                                    getView().updateProfile(mUserProfile);
+                                    break;
+                                case IFirebaseConfig.FRIEND_REQUEST_SENT:
+                                    // If the request type is "sent", change the button text to
+                                    // cancel the friend request
+                                    mCurrentState = IFirebaseConfig.REQ_SENT;
+                                    mUserProfile.setFriendReqButtonText("cancel friend request");
+                                    getView().updateProfile(mUserProfile);
+                                    break;
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                        getView().onError("Error retrieving user profile!");
                     }
                 });
     }
