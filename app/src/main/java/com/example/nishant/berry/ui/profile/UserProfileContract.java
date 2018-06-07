@@ -43,5 +43,7 @@ public interface UserProfileContract {
         void getDataFromFirebaseDatabase();
 
         void sendFriendRequestButtonClick();
+
+        void cancelFriendRequest();
     }
 }

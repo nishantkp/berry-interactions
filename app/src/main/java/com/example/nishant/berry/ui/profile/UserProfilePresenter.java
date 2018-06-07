@@ -136,6 +136,7 @@ public class UserProfilePresenter
      */
     @Override
     public void sendFriendRequestButtonClick() {
+        if (mCurrentState.equals("req_sent")) cancelFriendRequest();
         if (!mCurrentState.equals("not_friends")) return;
 
         // As soon as user hits send request button, disable the button
@@ -169,7 +170,49 @@ public class UserProfilePresenter
                                         }
                                     });
                         } else {
+                            mUserProfile.setFriendReqButtonEnabled(true);
+                            getView().updateProfile(mUserProfile);
                             getView().onError("Unable to send friend request!");
+                        }
+                    }
+                });
+    }
+
+    /**
+     * Call this method to cancel friend request
+     */
+    @Override
+    public void cancelFriendRequest() {
+        // Disable the button so user can't be able to press another time and
+        // no new requests are made to firebase database
+        mUserProfile.setFriendReqButtonEnabled(false);
+        getView().updateProfile(mUserProfile);
+
+        mFriendReqDatabaseReference.child(mCurrentUserId)
+                .child(mNewUserId)
+                .removeValue()
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            mFriendReqDatabaseReference.child(mNewUserId)
+                                    .child(mCurrentUserId)
+                                    .removeValue()
+                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            // When we successfully updated database,
+                                            // change the current state, and set button text to "send request"
+                                            mCurrentState = "not_friends";
+                                            mUserProfile.setFriendReqButtonEnabled(true);
+                                            mUserProfile.setFriendReqButtonText("send friend request");
+                                            getView().updateProfile(mUserProfile);
+                                        }
+                                    });
+                        } else {
+                            mUserProfile.setFriendReqButtonEnabled(true);
+                            getView().updateProfile(mUserProfile);
+                            getView().onError("Unable to cancel request!");
                         }
                     }
                 });
