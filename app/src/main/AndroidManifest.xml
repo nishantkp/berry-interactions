@@ -61,6 +61,7 @@
         <activity
             android:name=".ui.allusers.AllUsersActivity"
             android:parentActivityName=".ui.dashboard.DashboardActivity" />
+        <activity android:name=".ui.profile.UserProfileActivity"></activity>
     </application>
 
 </manifest>

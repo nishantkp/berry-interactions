@@ -25,6 +25,7 @@
 
 package com.example.nishant.berry.ui.allusers;
 
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -33,8 +34,10 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.widget.Toast;
 
 import com.example.nishant.berry.R;
+import com.example.nishant.berry.config.IConstants;
 import com.example.nishant.berry.databinding.ActivityAllUsersBinding;
 import com.example.nishant.berry.ui.model.AllUsers;
+import com.example.nishant.berry.ui.profile.UserProfileActivity;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 
 import java.util.Objects;
@@ -101,10 +104,12 @@ public class AllUsersActivity
      * Implement this functionality to set behavior when user clicks on list item from
      * all users list
      *
-     * @param user AllUsers object on which click performed
+     * @param userId Id of a user on which click event occurred
      */
     @Override
-    public void onListItemClick(AllUsers user) {
-        Toast.makeText(this, user.getName(), Toast.LENGTH_LONG).show();
+    public void onListItemClick(String userId) {
+        startActivity(
+                new Intent(this, UserProfileActivity.class)
+                        .putExtra(IConstants.KEY_USER_ID, userId));
     }
 }

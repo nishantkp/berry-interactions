@@ -77,7 +77,7 @@ public class AllUsersPresenter
                 = new FirebaseRecyclerAdapter<AllUsers, AllUsersViewHolder>(options) {
             @Override
             protected void onBindViewHolder(@NonNull AllUsersViewHolder holder,
-                                            int position,
+                                            final int position,
                                             @NonNull final AllUsers model) {
                 holder.bind(model);
 
@@ -85,7 +85,8 @@ public class AllUsersPresenter
                 holder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        getView().onListItemClick(model);
+                        // set call back with user id parameter
+                        getView().onListItemClick(getRef(position).getKey());
                     }
                 });
             }

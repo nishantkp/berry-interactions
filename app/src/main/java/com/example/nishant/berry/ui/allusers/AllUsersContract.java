@@ -34,7 +34,7 @@ public interface AllUsersContract {
     interface View extends MvpView {
         void getFirebaseRecyclerAdapter(FirebaseRecyclerAdapter adapter);
 
-        void onListItemClick(AllUsers user);
+        void onListItemClick(String userId);
     }
 
     interface Presenter {

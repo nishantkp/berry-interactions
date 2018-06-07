@@ -19,13 +19,25 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  *
- * File Created on 03/06/18 3:00 AM by nishant
- * Last Modified on 03/06/18 3:00 AM
+ * File Created on 06/06/18 8:04 PM by nishant
+ * Last Modified on 06/06/18 8:04 PM
  */
 
-package com.example.nishant.berry.config;
+package com.example.nishant.berry.ui.profile;
 
-public interface IConstants {
-    String KEY_STATUS_INTENT = "status";
-    String KEY_USER_ID = "user_id";
+import com.example.nishant.berry.base.MvpView;
+import com.example.nishant.berry.ui.model.UserProfile;
+
+public interface UserProfileContract {
+    interface View extends MvpView {
+        void onError(String errorMessage);
+
+        void updateProfile(UserProfile profile);
+
+        void updateUserProfileAvatar(String url);
+    }
+
+    interface Presenter {
+        void getDataFromFirebaseDatabase();
+    }
 }

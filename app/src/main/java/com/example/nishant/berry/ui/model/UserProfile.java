@@ -19,13 +19,32 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  *
- * File Created on 03/06/18 3:00 AM by nishant
- * Last Modified on 03/06/18 3:00 AM
+ * File Created on 06/06/18 8:29 PM by nishant
+ * Last Modified on 06/06/18 8:29 PM
  */
 
-package com.example.nishant.berry.config;
+package com.example.nishant.berry.ui.model;
 
-public interface IConstants {
-    String KEY_STATUS_INTENT = "status";
-    String KEY_USER_ID = "user_id";
+/**
+ * Object to set fields of User profile
+ */
+public class UserProfile {
+    private String displayName;
+    private String status;
+
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
 }
