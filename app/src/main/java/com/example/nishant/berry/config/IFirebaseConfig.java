@@ -27,6 +27,7 @@ package com.example.nishant.berry.config;
 
 public interface IFirebaseConfig {
     String USERS_OBJECT = "users";
+    String FRIEND_REQUEST_OBJECT = "friend_requests";
     String NAME = "name";
     String THUMBNAIL = "thumbnail";
     String STATUS = "status";
@@ -35,4 +36,7 @@ public interface IFirebaseConfig {
     String DEFAULT_VALUE = "default";
     String DEFAULT_STATUS = "Hi there, it's berry!";
     String THUMBNAIL_STORAGE_DIR = "thumb_images";
+    String FRIEND_REQUEST_TYPE = "request_type";
+    String FRIEND_REQUEST_SENT = "sent";
+    String FRIEND_REQUEST_RECEIVED = "received";
 }

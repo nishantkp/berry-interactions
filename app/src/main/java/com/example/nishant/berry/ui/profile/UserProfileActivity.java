@@ -57,6 +57,9 @@ public class UserProfileActivity
         // Setup presenter
         mPresenter = new UserProfilePresenter(userId);
         mPresenter.attachView(this);
+
+        // Attach presenter to binding
+        mBinding.setPresenter(mPresenter);
     }
 
     /**
@@ -89,5 +92,15 @@ public class UserProfileActivity
         Picasso.get().load(url)
                 .placeholder(R.drawable.user_default_avatar)
                 .into(mBinding.profileAvatar);
+    }
+
+    /**
+     * Use this method to notify user about friend request sent successfully
+     *
+     * @param message success message
+     */
+    @Override
+    public void friendRequestSentSuccessfully(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 }

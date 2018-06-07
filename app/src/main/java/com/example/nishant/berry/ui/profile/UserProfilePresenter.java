@@ -30,6 +30,10 @@ import android.support.annotation.NonNull;
 import com.example.nishant.berry.base.BasePresenter;
 import com.example.nishant.berry.config.IFirebaseConfig;
 import com.example.nishant.berry.ui.model.UserProfile;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -45,15 +49,30 @@ public class UserProfilePresenter
         extends BasePresenter<UserProfileContract.View>
         implements UserProfileContract.Presenter {
 
-    private DatabaseReference mDatabaseReference;
+    private DatabaseReference mUsersDatabaseReference;
+    private DatabaseReference mFriendReqDatabaseReference;
+    private String mCurrentState;
+    private String mCurrentUserId;
+    private String mNewUserId;
 
     UserProfilePresenter(String userId) {
         if (userId == null) return;
+        mNewUserId = userId;
         // Database reference pointing to passed in userId
-        mDatabaseReference = FirebaseDatabase.getInstance()
+        mUsersDatabaseReference = FirebaseDatabase.getInstance()
                 .getReference()
                 .child(IFirebaseConfig.USERS_OBJECT)
                 .child(userId);
+
+        // Database reference pointing to friend_request object
+        mFriendReqDatabaseReference = FirebaseDatabase.getInstance()
+                .getReference()
+                .child(IFirebaseConfig.FRIEND_REQUEST_OBJECT);
+
+        // Current firebase user id
+        mCurrentUserId = FirebaseAuth.getInstance().getUid();
+
+        mCurrentState = "not_friends";
         getDataFromFirebaseDatabase();
     }
 
@@ -72,7 +91,8 @@ public class UserProfilePresenter
      */
     @Override
     public void getDataFromFirebaseDatabase() {
-        mDatabaseReference.addValueEventListener(new ValueEventListener() {
+        if (!mCurrentState.equals("not_friends")) return;
+        mUsersDatabaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 // Get the data from DataSnapshot
@@ -94,5 +114,50 @@ public class UserProfilePresenter
                 getView().onError("Error retrieving user profile!");
             }
         });
+    }
+
+    /**
+     * When user presses send friend request button, this method will be executed
+     * i.e if user1 sends friend request to user2
+     * <p>
+     * friend_request:
+     * <p>
+     * user1_key{
+     * user2_key{
+     * request_type : sent
+     * }
+     * }
+     * <p>
+     * user2_key{
+     * user1_key{
+     * request_type: received
+     * }
+     * }
+     */
+    @Override
+    public void sendFriendRequestButtonClick() {
+        mFriendReqDatabaseReference.child(mCurrentUserId)
+                .child(mNewUserId)
+                .child(IFirebaseConfig.FRIEND_REQUEST_TYPE)
+                .setValue(IFirebaseConfig.FRIEND_REQUEST_SENT)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            mFriendReqDatabaseReference.child(mNewUserId)
+                                    .child(mCurrentUserId)
+                                    .child(IFirebaseConfig.FRIEND_REQUEST_TYPE)
+                                    .setValue(IFirebaseConfig.FRIEND_REQUEST_RECEIVED)
+                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void aVoid) {
+                                            getView().friendRequestSentSuccessfully("Friend request sent!");
+                                        }
+                                    });
+                        } else {
+                            getView().onError("Unable to send friend request!");
+                        }
+                    }
+                });
     }
 }

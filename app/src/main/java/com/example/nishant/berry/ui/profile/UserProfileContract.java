@@ -35,9 +35,13 @@ public interface UserProfileContract {
         void updateProfile(UserProfile profile);
 
         void updateUserProfileAvatar(String url);
+
+        void friendRequestSentSuccessfully(String message);
     }
 
     interface Presenter {
         void getDataFromFirebaseDatabase();
+
+        void sendFriendRequestButtonClick();
     }
 }
