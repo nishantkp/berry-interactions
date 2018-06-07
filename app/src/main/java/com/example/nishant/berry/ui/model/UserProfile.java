@@ -31,6 +31,8 @@ package com.example.nishant.berry.ui.model;
 public class UserProfile {
     private String displayName;
     private String status;
+    private String friendReqButtonText = "send friend request";
+    private boolean friendReqButtonEnabled = true;
 
     public String getDisplayName() {
         return displayName;
@@ -46,5 +48,21 @@ public class UserProfile {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getFriendReqButtonText() {
+        return friendReqButtonText;
+    }
+
+    public void setFriendReqButtonText(String friendReqButtonText) {
+        this.friendReqButtonText = friendReqButtonText;
+    }
+
+    public boolean isFriendReqButtonEnabled() {
+        return friendReqButtonEnabled;
+    }
+
+    public void setFriendReqButtonEnabled(boolean friendReqButtonEnabled) {
+        this.friendReqButtonEnabled = friendReqButtonEnabled;
     }
 }

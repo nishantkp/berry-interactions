@@ -111,11 +111,13 @@
             android:layout_marginBottom="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
+            android:enabled="@{profile.friendReqButtonEnabled}"
             android:onClick="@{()->presenter.sendFriendRequestButtonClick()}"
-            android:text="Send friend request"
+            android:text="@{profile.friendReqButtonText}"
             app:layout_constraintBottom_toTopOf="@+id/profile_decline_request_btn"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            tools:text="Send friend request" />
 
         <Button
             android:id="@+id/profile_decline_request_btn"

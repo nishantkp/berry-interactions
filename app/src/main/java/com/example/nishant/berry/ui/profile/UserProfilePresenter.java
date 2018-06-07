@@ -54,10 +54,12 @@ public class UserProfilePresenter
     private String mCurrentState;
     private String mCurrentUserId;
     private String mNewUserId;
+    private UserProfile mUserProfile;
 
     UserProfilePresenter(String userId) {
         if (userId == null) return;
         mNewUserId = userId;
+        mUserProfile = new UserProfile();
         // Database reference pointing to passed in userId
         mUsersDatabaseReference = FirebaseDatabase.getInstance()
                 .getReference()
@@ -91,7 +93,6 @@ public class UserProfilePresenter
      */
     @Override
     public void getDataFromFirebaseDatabase() {
-        if (!mCurrentState.equals("not_friends")) return;
         mUsersDatabaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -100,12 +101,11 @@ public class UserProfilePresenter
                 String status = Objects.requireNonNull(dataSnapshot.child(IFirebaseConfig.STATUS).getValue()).toString();
                 String imageUrl = Objects.requireNonNull(dataSnapshot.child(IFirebaseConfig.IMAGE).getValue()).toString();
 
-                UserProfile userProfile = new UserProfile();
-                userProfile.setDisplayName(displayName);
-                userProfile.setStatus(status);
+                mUserProfile.setDisplayName(displayName);
+                mUserProfile.setStatus(status);
 
                 // Set callbacks to populate user profile layout
-                getView().updateProfile(userProfile);
+                getView().updateProfile(mUserProfile);
                 getView().updateUserProfileAvatar(imageUrl);
             }
 
@@ -136,6 +136,14 @@ public class UserProfilePresenter
      */
     @Override
     public void sendFriendRequestButtonClick() {
+        if (!mCurrentState.equals("not_friends")) return;
+
+        // As soon as user hits send request button, disable the button
+        // so user can't be able to press another time and no new requests are made to
+        // firebase database
+        mUserProfile.setFriendReqButtonEnabled(false);
+        getView().updateProfile(mUserProfile);
+
         mFriendReqDatabaseReference.child(mCurrentUserId)
                 .child(mNewUserId)
                 .child(IFirebaseConfig.FRIEND_REQUEST_TYPE)
@@ -151,6 +159,12 @@ public class UserProfilePresenter
                                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                                         @Override
                                         public void onSuccess(Void aVoid) {
+                                            // When we successfully updated database,
+                                            // change the current state, and set button text to "cancel request"
+                                            mCurrentState = "req_sent";
+                                            mUserProfile.setFriendReqButtonEnabled(true);
+                                            mUserProfile.setFriendReqButtonText("cancel friend request");
+                                            getView().updateProfile(mUserProfile);
                                             getView().friendRequestSentSuccessfully("Friend request sent!");
                                         }
                                     });
