@@ -55,5 +55,7 @@ public interface UserProfileContract {
         void updateButtonTextToAcceptFriendRequest();
 
         void updateButtonTextToUnfriend();
+
+        void removeFriend();
     }
 }

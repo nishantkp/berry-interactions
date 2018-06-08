@@ -112,6 +112,7 @@ public class UserProfilePresenter
 
                 mUserProfile.setDisplayName(displayName);
                 mUserProfile.setStatus(status);
+                mUserProfile.setDeclineFriendReqButtonVisibility(IConstants.VIEW_GONE);
 
                 // Update layout to display accept friend request
                 updateButtonTextToAcceptFriendRequest();
@@ -145,6 +146,9 @@ public class UserProfilePresenter
                 break;
             case IFirebaseConfig.REQ_RECEIVED:
                 acceptRequest();
+                break;
+            case IFirebaseConfig.FRIENDS:
+                removeFriend();
                 break;
         }
     }
@@ -289,7 +293,6 @@ public class UserProfilePresenter
                         }
                     }
                 });
-
     }
 
     /**
@@ -357,6 +360,7 @@ public class UserProfilePresenter
                                     // accept the friend request
                                     mCurrentState = IFirebaseConfig.REQ_RECEIVED;
                                     mUserProfile.setFriendReqButtonText("accept friend request");
+                                    mUserProfile.setDeclineFriendReqButtonVisibility(IConstants.VIEW_VISIBLE);
                                     getView().updateProfile(mUserProfile);
                                     break;
                                 case IFirebaseConfig.FRIEND_REQUEST_SENT:
@@ -364,6 +368,7 @@ public class UserProfilePresenter
                                     // cancel the friend request
                                     mCurrentState = IFirebaseConfig.REQ_SENT;
                                     mUserProfile.setFriendReqButtonText("cancel friend request");
+                                    mUserProfile.setDeclineFriendReqButtonVisibility(IConstants.VIEW_GONE);
                                     getView().updateProfile(mUserProfile);
                                     break;
                             }
@@ -414,5 +419,39 @@ public class UserProfilePresenter
             }
         });
 
+    }
+
+    /**
+     * Call this to unfriend the user
+     */
+    @Override
+    public void removeFriend() {
+        mFriendsDatabaseReference.child(mCurrentUserId).child(mNewUserId).removeValue()
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            mFriendsDatabaseReference.child(mNewUserId).child(mCurrentUserId).removeValue()
+                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            if (task.isSuccessful()) {
+                                                // When we successfully updated database,
+                                                // change the current state, and set button text to "send request"
+                                                mCurrentState = IFirebaseConfig.NOT_FRIEND;
+                                                mUserProfile.setDeclineFriendReqButtonVisibility(IConstants.VIEW_GONE);
+                                                mUserProfile.setFriendReqButtonText("send friend request");
+                                            } else {
+                                                getView().onError("Error!");
+                                            }
+                                            mUserProfile.setFriendReqButtonEnabled(true);
+                                            getView().updateProfile(mUserProfile);
+                                        }
+                                    });
+                        } else {
+                            getView().onError("Error!");
+                        }
+                    }
+                });
     }
 }
