@@ -454,4 +454,14 @@ public class UserProfilePresenter
                     }
                 });
     }
+
+    /**
+     * This method will be called when user clicks on decline request button
+     */
+    @Override
+    public void onDeclineFriendRequestBtnClick() {
+        cancelRequest();
+        mUserProfile.setDeclineFriendReqButtonVisibility(IConstants.VIEW_GONE);
+        getView().updateProfile(mUserProfile);
+    }
 }
