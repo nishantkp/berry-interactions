@@ -389,27 +389,16 @@ public class UserProfilePresenter
      */
     @Override
     public void updateButtonTextToUnfriend() {
-        mFriendsDatabaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+        mFriendsDatabaseReference.child(mCurrentUserId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (dataSnapshot.hasChild(mCurrentUserId)) {
-                    mFriendsDatabaseReference.child(mCurrentUserId)
-                            .addListenerForSingleValueEvent(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                    if (dataSnapshot.hasChild(mNewUserId)) {
-                                        mCurrentState = IFirebaseConfig.FRIENDS;
-                                        mUserProfile.setFriendReqButtonText("unfriend");
-                                        mUserProfile.setDeclineFriendReqButtonVisibility(IConstants.VIEW_GONE);
-                                        getView().updateProfile(mUserProfile);
-                                    }
-                                }
-
-                                @Override
-                                public void onCancelled(@NonNull DatabaseError databaseError) {
-                                    getView().onError("Error retrieving user profile!");
-                                }
-                            });
+                if (dataSnapshot.hasChild(mNewUserId)) {
+                    mCurrentState = IFirebaseConfig.FRIENDS;
+                    mUserProfile.setFriendReqButtonText("unfriend");
+                    mUserProfile.setDeclineFriendReqButtonVisibility(IConstants.VIEW_GONE);
+                    getView().updateProfile(mUserProfile);
+                } else {
+                    getView().onError("Error retrieving user profile!");
                 }
             }
 
@@ -418,7 +407,6 @@ public class UserProfilePresenter
                 getView().onError("Error retrieving user profile!");
             }
         });
-
     }
 
     /**
