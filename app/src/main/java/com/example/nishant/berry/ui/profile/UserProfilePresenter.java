@@ -28,6 +28,7 @@ package com.example.nishant.berry.ui.profile;
 import android.support.annotation.NonNull;
 
 import com.example.nishant.berry.base.BasePresenter;
+import com.example.nishant.berry.config.IConstants;
 import com.example.nishant.berry.config.IFirebaseConfig;
 import com.example.nishant.berry.ui.model.UserProfile;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -114,6 +115,9 @@ public class UserProfilePresenter
 
                 // Update layout to display accept friend request
                 updateButtonTextToAcceptFriendRequest();
+
+                // Update layout to display unfriend, if user is already a friend
+                updateButtonTextToUnfriend();
 
                 // Set callbacks to populate user profile layout
                 getView().updateProfile(mUserProfile);
@@ -312,6 +316,7 @@ public class UserProfilePresenter
                                                 // change the current state, and set button text to "unfriend"
                                                 mCurrentState = IFirebaseConfig.FRIENDS;
                                                 mUserProfile.setFriendReqButtonText("unfriend");
+                                                mUserProfile.setDeclineFriendReqButtonVisibility(IConstants.VIEW_GONE);
                                                 mUserProfile.setFriendReqButtonEnabled(true);
                                                 getView().updateProfile(mUserProfile);
                                             }
@@ -327,7 +332,7 @@ public class UserProfilePresenter
     }
 
     /**
-     * Call this method to update btn accept for accepting the friend request
+     * Call this method to update btn text for accepting the friend request
      * Go to friend_requests/ currentUserId
      * go to userId of user on whose profile right now we are on
      * get the value of request_type parameter. If type is "received" change btn text to
@@ -370,5 +375,44 @@ public class UserProfilePresenter
                         getView().onError("Error retrieving user profile!");
                     }
                 });
+    }
+
+    /**
+     * Call this method to update button text to "unfriend"
+     * Go to friends/ currentUserId
+     * check if the id of person on whose profile we are on right now, exists or not
+     */
+    @Override
+    public void updateButtonTextToUnfriend() {
+        mFriendsDatabaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.hasChild(mCurrentUserId)) {
+                    mFriendsDatabaseReference.child(mCurrentUserId)
+                            .addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    if (dataSnapshot.hasChild(mNewUserId)) {
+                                        mCurrentState = IFirebaseConfig.FRIENDS;
+                                        mUserProfile.setFriendReqButtonText("unfriend");
+                                        mUserProfile.setDeclineFriendReqButtonVisibility(IConstants.VIEW_GONE);
+                                        getView().updateProfile(mUserProfile);
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+                                    getView().onError("Error retrieving user profile!");
+                                }
+                            });
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                getView().onError("Error retrieving user profile!");
+            }
+        });
+
     }
 }

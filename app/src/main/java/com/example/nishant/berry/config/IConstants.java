@@ -28,4 +28,7 @@ package com.example.nishant.berry.config;
 public interface IConstants {
     String KEY_STATUS_INTENT = "status";
     String KEY_USER_ID = "user_id";
+    int VIEW_GONE = 8;
+    int VIEW_VISIBLE = 0;
+    int VIEW_INVISIBLE = 4;
 }

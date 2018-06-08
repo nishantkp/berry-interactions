@@ -33,6 +33,7 @@ public class UserProfile {
     private String status;
     private String friendReqButtonText = "send friend request";
     private boolean friendReqButtonEnabled = true;
+    private int declineFriendReqButtonVisibility = 0;
 
     public String getDisplayName() {
         return displayName;
@@ -64,5 +65,13 @@ public class UserProfile {
 
     public void setFriendReqButtonEnabled(boolean friendReqButtonEnabled) {
         this.friendReqButtonEnabled = friendReqButtonEnabled;
+    }
+
+    public int getDeclineFriendReqButtonVisibility() {
+        return declineFriendReqButtonVisibility;
+    }
+
+    public void setDeclineFriendReqButtonVisibility(int declineFriendReqButtonVisibility) {
+        this.declineFriendReqButtonVisibility = declineFriendReqButtonVisibility;
     }
 }
