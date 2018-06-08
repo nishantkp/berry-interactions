@@ -28,6 +28,7 @@ package com.example.nishant.berry.config;
 public interface IFirebaseConfig {
     String USERS_OBJECT = "users";
     String FRIEND_REQUEST_OBJECT = "friend_requests";
+    String FRIENDS_OBJECT = "friends";
     String NAME = "name";
     String THUMBNAIL = "thumbnail";
     String STATUS = "status";
@@ -42,4 +43,5 @@ public interface IFirebaseConfig {
     int NOT_FRIEND = 101;
     int REQ_SENT = 102;
     int REQ_RECEIVED = 103;
+    int FRIENDS = 104;
 }

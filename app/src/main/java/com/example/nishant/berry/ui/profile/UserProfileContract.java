@@ -48,6 +48,10 @@ public interface UserProfileContract {
 
         void cancelRequest();
 
+        void acceptRequest();
+
+        void removeRefFromFriendRequestTable();
+
         void updateButtonToAcceptFriendRequest();
     }
 }

@@ -25,7 +25,6 @@
 
 package com.example.nishant.berry.ui.profile;
 
-import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 
 import com.example.nishant.berry.base.BasePresenter;
@@ -41,6 +40,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.DateFormat;
+import java.util.Date;
 import java.util.Objects;
 
 /**
@@ -52,6 +53,7 @@ public class UserProfilePresenter
 
     private DatabaseReference mUsersDatabaseReference;
     private DatabaseReference mFriendReqDatabaseReference;
+    private DatabaseReference mFriendsDatabaseReference;
     private int mCurrentState;
     private String mCurrentUserId;
     private String mNewUserId;
@@ -71,6 +73,11 @@ public class UserProfilePresenter
         mFriendReqDatabaseReference = FirebaseDatabase.getInstance()
                 .getReference()
                 .child(IFirebaseConfig.FRIEND_REQUEST_OBJECT);
+
+        // Database reference pointing to friends object
+        mFriendsDatabaseReference = FirebaseDatabase.getInstance()
+                .getReference()
+                .child(IFirebaseConfig.FRIENDS_OBJECT);
 
         // Current firebase user id
         mCurrentUserId = FirebaseAuth.getInstance().getUid();
@@ -131,6 +138,9 @@ public class UserProfilePresenter
                 break;
             case IFirebaseConfig.REQ_SENT:
                 cancelRequest();
+                break;
+            case IFirebaseConfig.REQ_RECEIVED:
+                acceptRequest();
                 break;
         }
     }
@@ -230,6 +240,87 @@ public class UserProfilePresenter
                             mUserProfile.setFriendReqButtonEnabled(true);
                             getView().updateProfile(mUserProfile);
                             getView().onError("Unable to cancel request!");
+                        }
+                    }
+                });
+    }
+
+    /**
+     * Call this method to accept the friend request
+     * i.e if user1 accept the request from user2 friends table would look like
+     * <p>
+     * friends{
+     * user1_key{
+     * user2_key: currentDate
+     * }
+     * user2_key{
+     * user1_key: currentDate
+     * }
+     * }
+     */
+    @Override
+    public void acceptRequest() {
+        // Get the current date and time
+        final String currentDateTime = DateFormat.getDateTimeInstance().format(new Date());
+
+        mFriendsDatabaseReference.child(mCurrentUserId).child(mNewUserId).setValue(currentDateTime)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            mFriendsDatabaseReference.child(mNewUserId).child(mCurrentUserId)
+                                    .setValue(currentDateTime).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if (task.isSuccessful()) {
+                                        // Remove references from friend_requests table
+                                        removeRefFromFriendRequestTable();
+                                    } else {
+                                        getView().onError("Error accepting friend request");
+                                    }
+                                }
+                            });
+                        } else {
+                            getView().onError("Error accepting friend request");
+                        }
+                    }
+                });
+
+    }
+
+    /**
+     * Call this method after accepting friend request to remove any references of
+     * friend request from friend_requests table
+     */
+    @Override
+    public void removeRefFromFriendRequestTable() {
+        mFriendReqDatabaseReference.child(mCurrentUserId)
+                .child(mNewUserId)
+                .removeValue()
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            mFriendReqDatabaseReference.child(mNewUserId)
+                                    .child(mCurrentUserId)
+                                    .removeValue()
+                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            if (task.isSuccessful()) {
+                                                // When we successfully updated database,
+                                                // change the current state, and set button text to "unfriend"
+                                                mCurrentState = IFirebaseConfig.FRIENDS;
+                                                mUserProfile.setFriendReqButtonText("unfriend");
+                                                mUserProfile.setFriendReqButtonEnabled(true);
+                                                getView().updateProfile(mUserProfile);
+                                            }
+                                        }
+                                    });
+                        } else {
+                            getView().onError("Unable to cancel request!");
+                            mUserProfile.setFriendReqButtonEnabled(true);
+                            getView().updateProfile(mUserProfile);
                         }
                     }
                 });
