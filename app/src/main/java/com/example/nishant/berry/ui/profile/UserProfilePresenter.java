@@ -113,7 +113,7 @@ public class UserProfilePresenter
                 mUserProfile.setStatus(status);
 
                 // Update layout to display accept friend request
-                updateButtonToAcceptFriendRequest();
+                updateButtonTextToAcceptFriendRequest();
 
                 // Set callbacks to populate user profile layout
                 getView().updateProfile(mUserProfile);
@@ -334,7 +334,7 @@ public class UserProfilePresenter
      * "accept friend request" / if type is "sent" change btn text to "cancel friend request"
      */
     @Override
-    public void updateButtonToAcceptFriendRequest() {
+    public void updateButtonTextToAcceptFriendRequest() {
         mFriendReqDatabaseReference.child(mCurrentUserId)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
