@@ -28,11 +28,17 @@ package com.example.nishant.berry.ui.signin;
 import android.support.annotation.NonNull;
 
 import com.example.nishant.berry.base.BasePresenter;
+import com.example.nishant.berry.config.IFirebaseConfig;
 import com.example.nishant.berry.ui.model.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.iid.FirebaseInstanceId;
+
+import java.util.Objects;
 
 public class SignInPresenter
         extends BasePresenter<SignInContract.View>
@@ -40,9 +46,14 @@ public class SignInPresenter
 
     // Firebase
     private FirebaseAuth mAuth;
+    private DatabaseReference mUserDatabaseReference;
 
     SignInPresenter() {
         mAuth = FirebaseAuth.getInstance();
+
+        // Database reference pointing to users object
+        mUserDatabaseReference = FirebaseDatabase.getInstance().getReference()
+                .child(IFirebaseConfig.USERS_OBJECT);
     }
 
     @Override
@@ -77,11 +88,37 @@ public class SignInPresenter
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isComplete() && task.isSuccessful()) {
+                            storeDeviceToken();
+                        } else {
+                            getView().cancelProgressDialog();
+                            getView().signInError("Email or password is incorrect!");
+                        }
+                    }
+                });
+    }
+
+    /**
+     * Call this method to store token Id to user database, when user logs in
+     */
+    @Override
+    public void storeDeviceToken() {
+        // Get the device token
+        String deviceToken = FirebaseInstanceId.getInstance().getToken();
+        String userId = Objects.requireNonNull(mAuth.getCurrentUser()).getUid();
+
+        // Store token Id to users database
+        mUserDatabaseReference.child(userId)
+                .child(IFirebaseConfig.DEVICE_TOKEN_ID)
+                .setValue(deviceToken)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isComplete() && task.isSuccessful()) {
                             getView().cancelProgressDialog();
                             getView().signInSuccess();
                         } else {
                             getView().cancelProgressDialog();
-                            getView().signInError("Email or password is incorrect!");
+                            getView().signInError("Sign in error!");
                         }
                     }
                 });

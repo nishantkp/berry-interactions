@@ -48,5 +48,7 @@ public interface SignInContract {
         void signInUser(String email,
                         String password,
                         SignInContract.View.SignInCallback callback);
+
+        void storeDeviceToken();
     }
 }
