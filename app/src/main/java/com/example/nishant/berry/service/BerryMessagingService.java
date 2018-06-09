@@ -32,6 +32,8 @@ import com.example.nishant.berry.R;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
+import java.util.Objects;
+
 /**
  * Firebase messaging service
  */
@@ -43,10 +45,14 @@ public class BerryMessagingService extends FirebaseMessagingService {
     public void onMessageReceived(RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
 
+        // Extract title and body from firebase message
+        String notificationTitle = Objects.requireNonNull(remoteMessage.getNotification()).getTitle();
+        String notificationBody = remoteMessage.getNotification().getBody();
+
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_baseline_person_add_24px)
-                .setContentTitle("Friend Request")
-                .setContentText("You have received a new Friend Request")
+                .setContentTitle(notificationTitle)
+                .setContentText(notificationBody)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT);
 
         // Notification Id : current time ensures uniqueness of Id
