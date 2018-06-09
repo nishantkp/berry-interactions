@@ -25,6 +25,7 @@
 
 package com.example.nishant.berry.ui.profile;
 
+import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 
 import com.example.nishant.berry.base.BasePresenter;
@@ -32,6 +33,7 @@ import com.example.nishant.berry.config.IConstants;
 import com.example.nishant.berry.config.IFirebaseConfig;
 import com.example.nishant.berry.ui.model.UserProfile;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -43,6 +45,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.text.DateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Objects;
 
 /**
@@ -55,6 +58,7 @@ public class UserProfilePresenter
     private DatabaseReference mUsersDatabaseReference;
     private DatabaseReference mFriendReqDatabaseReference;
     private DatabaseReference mFriendsDatabaseReference;
+    private DatabaseReference mNotificationDatabaseReference;
     private int mCurrentState;
     private String mCurrentUserId;
     private String mNewUserId;
@@ -79,6 +83,11 @@ public class UserProfilePresenter
         mFriendsDatabaseReference = FirebaseDatabase.getInstance()
                 .getReference()
                 .child(IFirebaseConfig.FRIENDS_OBJECT);
+
+        // Database reference pointing to notifications object
+        mNotificationDatabaseReference = FirebaseDatabase.getInstance()
+                .getReference()
+                .child(IFirebaseConfig.NOTIFICATION_OBJECT);
 
         // Current firebase user id
         mCurrentUserId = FirebaseAuth.getInstance().getUid();
@@ -195,19 +204,18 @@ public class UserProfilePresenter
                                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                                         @Override
                                         public void onSuccess(Void aVoid) {
-                                            // When we successfully updated database,
-                                            // change the current state, and set button text to "cancel request"
-                                            mCurrentState = IFirebaseConfig.REQ_SENT;
-                                            mUserProfile.setFriendReqButtonEnabled(true);
-                                            mUserProfile.setFriendReqButtonText("cancel friend request");
-                                            getView().updateProfile(mUserProfile);
-                                            getView().friendRequestSentSuccessfully("Friend request sent!");
+                                            // Update friend request button text and create notification
+                                            createNotification();
+                                        }
+                                    })
+                                    .addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            unableToSendFriendRequestError();
                                         }
                                     });
                         } else {
-                            mUserProfile.setFriendReqButtonEnabled(true);
-                            getView().updateProfile(mUserProfile);
-                            getView().onError("Unable to send friend request!");
+                            unableToSendFriendRequestError();
                         }
                     }
                 });
@@ -449,5 +457,48 @@ public class UserProfilePresenter
         cancelRequest();
         mUserProfile.setDeclineFriendReqButtonVisibility(IConstants.VIEW_GONE);
         getView().updateProfile(mUserProfile);
+    }
+
+    /**
+     * Call this method to store detail about notification to database
+     * and update the friend request button text to "cancel friend request"
+     */
+    @Override
+    public void createNotification() {
+        // HashMap for notification details
+        HashMap<String, String> notificationMap = new HashMap<>();
+        notificationMap.put(IFirebaseConfig.NOTIFICATION_FROM, mCurrentUserId);
+        notificationMap.put(IFirebaseConfig.NOTIFICATION_TYPE, IFirebaseConfig.NOTIFICATION_TYPE_REQUEST);
+
+        mNotificationDatabaseReference.child(mNewUserId)
+                .push()
+                .setValue(notificationMap)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            // When we successfully updated database,
+                            // change the current state, and set button text to "cancel request"
+                            mCurrentState = IFirebaseConfig.REQ_SENT;
+                            mUserProfile.setFriendReqButtonEnabled(true);
+                            mUserProfile.setFriendReqButtonText("cancel friend request");
+                            getView().updateProfile(mUserProfile);
+                            getView().friendRequestSentSuccessfully("Friend request sent!");
+                        } else {
+                            unableToSendFriendRequestError();
+                        }
+                    }
+                });
+    }
+
+    /**
+     * Call this method to show error message about "not able to send friend request"
+     * and enable friend request button
+     */
+    @Override
+    public void unableToSendFriendRequestError() {
+        mUserProfile.setFriendReqButtonEnabled(true);
+        getView().updateProfile(mUserProfile);
+        getView().onError("Unable to send friend request!");
     }
 }

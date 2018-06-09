@@ -59,5 +59,9 @@ public interface UserProfileContract {
         void removeFriend();
 
         void onDeclineFriendRequestBtnClick();
+
+        void createNotification();
+
+        void unableToSendFriendRequestError();
     }
 }

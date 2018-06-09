@@ -29,6 +29,7 @@ public interface IFirebaseConfig {
     String USERS_OBJECT = "users";
     String FRIEND_REQUEST_OBJECT = "friend_requests";
     String FRIENDS_OBJECT = "friends";
+    String NOTIFICATION_OBJECT = "notifications";
     String NAME = "name";
     String THUMBNAIL = "thumbnail";
     String STATUS = "status";
@@ -40,6 +41,9 @@ public interface IFirebaseConfig {
     String FRIEND_REQUEST_TYPE = "request_type";
     String FRIEND_REQUEST_SENT = "sent";
     String FRIEND_REQUEST_RECEIVED = "received";
+    String NOTIFICATION_FROM = "from";
+    String NOTIFICATION_TYPE = "type";
+    String NOTIFICATION_TYPE_REQUEST = "request";
     int NOT_FRIEND = 101;
     int REQ_SENT = 102;
     int REQ_RECEIVED = 103;
