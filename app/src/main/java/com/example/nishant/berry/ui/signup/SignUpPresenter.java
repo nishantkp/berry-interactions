@@ -37,6 +37,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.iid.FirebaseInstanceId;
 
 import java.util.HashMap;
 
@@ -114,6 +115,7 @@ public class SignUpPresenter
     @Override
     public void storeDataToFirebaseDatabase(String displayName) {
         String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        String deviceToken = FirebaseInstanceId.getInstance().getToken();
         // Setup Firebase database reference
         DatabaseReference mDatabaseReference =
                 FirebaseDatabase.getInstance()
@@ -127,6 +129,7 @@ public class SignUpPresenter
         userMap.put(IFirebaseConfig.STATUS, IFirebaseConfig.DEFAULT_STATUS);
         userMap.put(IFirebaseConfig.IMAGE, IFirebaseConfig.DEFAULT_VALUE);
         userMap.put(IFirebaseConfig.THUMBNAIL, IFirebaseConfig.DEFAULT_VALUE);
+        userMap.put(IFirebaseConfig.DEVICE_TOKEN_ID, deviceToken);
 
         // Set the values to Firebase database
         mDatabaseReference.setValue(userMap)
