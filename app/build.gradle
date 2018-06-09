@@ -59,6 +59,8 @@ dependencies {
     implementation 'com.google.firebase:firebase-auth:16.0.1'
     implementation 'com.google.firebase:firebase-database:16.0.1'
     implementation 'com.google.firebase:firebase-storage:16.0.1'
+    // Older version og Firebase UI is used because of FirebaseRecyclerAdapter
+    // not properly working with new version
     implementation 'com.firebaseui:firebase-ui-database:3.3.1'
 
     // Circle Image View
@@ -69,6 +71,9 @@ dependencies {
 
     // Picasso for images
     implementation 'com.squareup.picasso:picasso:2.71828'
+
+    // OkHttp3 for network operations
+    implementation 'com.squareup.okhttp3:okhttp:3.10.0'
 
     // Image compression
     implementation 'id.zelory:compressor:2.1.0'

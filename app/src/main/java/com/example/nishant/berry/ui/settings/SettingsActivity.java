@@ -40,6 +40,8 @@ import com.example.nishant.berry.R;
 import com.example.nishant.berry.config.IConstants;
 import com.example.nishant.berry.databinding.ActivitySettingsBinding;
 import com.example.nishant.berry.ui.status.StatusActivity;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
@@ -82,12 +84,28 @@ public class SettingsActivity
     }
 
     @Override
-    public void setImage(String imageUri) {
-        if (imageUri != null) {
-            Picasso.get().load(imageUri)
-                    .placeholder(R.drawable.user_default_avatar)
-                    .into(mBinding.settingsAvatar);
-        }
+    public void setImage(final String imageUri) {
+        if (imageUri == null)
+            return;
+        // First try to load image from disk, if it's not available only then download
+        // image from database
+        Picasso.get().load(imageUri)
+                .networkPolicy(NetworkPolicy.OFFLINE)
+                .placeholder(R.drawable.user_default_avatar)
+                .into(mBinding.settingsAvatar, new Callback() {
+                    @Override
+                    public void onSuccess() {
+                        /* This means we have avatar available locally, so load it from there */
+                        /* do nothing */
+                    }
+
+                    @Override
+                    public void onError(Exception e) {
+                        Picasso.get().load(imageUri)
+                                .placeholder(R.drawable.user_default_avatar)
+                                .into(mBinding.settingsAvatar);
+                    }
+                });
     }
 
     @Override
