@@ -20,7 +20,8 @@ exports.sendNotification = functions.database.ref('/notifications/{userId}/{noti
                         .once('value').then(function(snapshot) {
 
     const tokenId = snapshot.val();
-    console.log('token_id'. tokenId);
+    // log the token Id
+    console.log('Device token id is : ', tokenId);
 
     const payload = {
       notification: {
