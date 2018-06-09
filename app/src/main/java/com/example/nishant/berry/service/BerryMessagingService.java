@@ -25,6 +25,10 @@
 
 package com.example.nishant.berry.service;
 
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
+
+import com.example.nishant.berry.R;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
@@ -32,8 +36,24 @@ import com.google.firebase.messaging.RemoteMessage;
  * Firebase messaging service
  */
 public class BerryMessagingService extends FirebaseMessagingService {
+
+    private static String CHANNEL_ID = "notification";
+
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
+
+        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this, CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_baseline_person_add_24px)
+                .setContentTitle("Friend Request")
+                .setContentText("You have received a new Friend Request")
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+
+        // Notification Id : current time ensures uniqueness of Id
+        // so we can receive different notifications
+        int notification_id = (int) System.currentTimeMillis();
+
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+        notificationManager.notify(notification_id, mBuilder.build());
     }
 }
