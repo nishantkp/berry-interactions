@@ -397,8 +397,6 @@ public class UserProfilePresenter
                     mUserProfile.setFriendReqButtonText("unfriend");
                     mUserProfile.setDeclineFriendReqButtonVisibility(IConstants.VIEW_GONE);
                     getView().updateProfile(mUserProfile);
-                } else {
-                    getView().onError("Error retrieving user profile!");
                 }
             }
 
