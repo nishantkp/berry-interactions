@@ -34,6 +34,8 @@ import com.example.nishant.berry.R;
 import com.example.nishant.berry.config.IConstants;
 import com.example.nishant.berry.databinding.ActivityUserProfileBinding;
 import com.example.nishant.berry.ui.model.UserProfile;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 public class UserProfileActivity
@@ -88,10 +90,26 @@ public class UserProfileActivity
      * @param url url of user avatar
      */
     @Override
-    public void updateUserProfileAvatar(String url) {
+    public void updateUserProfileAvatar(final String url) {
         Picasso.get().load(url)
+                .networkPolicy(NetworkPolicy.OFFLINE)
                 .placeholder(R.drawable.user_default_avatar)
-                .into(mBinding.profileAvatar);
+                .into(mBinding.profileAvatar, new Callback() {
+                    @Override
+                    public void onSuccess() {
+                        /* This means we have user avatar stored locally, so no need to make network
+                         * connection. It will update ImageView with locally stored user avatar
+                         * Do nothing */
+                    }
+
+                    @Override
+                    public void onError(Exception e) {
+                        // If we don't have locally stored avatar, download it from database
+                        Picasso.get().load(url)
+                                .placeholder(R.drawable.user_default_avatar)
+                                .into(mBinding.profileAvatar);
+                    }
+                });
     }
 
     /**

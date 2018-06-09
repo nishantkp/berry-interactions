@@ -33,6 +33,8 @@ import com.example.nishant.berry.config.IFirebaseConfig;
 import com.example.nishant.berry.databinding.AllUsersListItemBinding;
 import com.example.nishant.berry.ui.model.AllUsers;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 /**
@@ -48,7 +50,7 @@ public class AllUsersViewHolder extends RecyclerView.ViewHolder {
     }
 
     // Bind data to list-item view
-    public void bind(AllUsers users) {
+    public void bind(final AllUsers users) {
         mBinding.setUsers(users);
 
         // load default avatar
@@ -57,8 +59,24 @@ public class AllUsersViewHolder extends RecyclerView.ViewHolder {
         } else {
             // load avatar thumbnail into circular ImageView
             Picasso.get().load(users.getThumbnail())
+                    .networkPolicy(NetworkPolicy.OFFLINE)
                     .placeholder(R.drawable.user_default_avatar)
-                    .into(mBinding.allUsersListItemAvatar);
+                    .into(mBinding.allUsersListItemAvatar, new Callback() {
+                        @Override
+                        public void onSuccess() {
+                            /* This means we have user avatar stored locally, so no need to make network
+                             * connection. It will update ImageView with locally stored user avatar
+                             * Do nothing */
+                        }
+
+                        @Override
+                        public void onError(Exception e) {
+                            // If we don't have locally stored avatar, download it from database
+                            Picasso.get().load(users.getThumbnail())
+                                    .placeholder(R.drawable.user_default_avatar)
+                                    .into(mBinding.allUsersListItemAvatar);
+                        }
+                    });
         }
     }
 }

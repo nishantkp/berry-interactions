@@ -52,6 +52,8 @@ public class AllUsersPresenter
         mQuery = FirebaseDatabase.getInstance()
                 .getReference()
                 .child(IFirebaseConfig.USERS_OBJECT);
+        // Adds offline functionality
+        mQuery.keepSynced(true);
     }
 
     @Override
