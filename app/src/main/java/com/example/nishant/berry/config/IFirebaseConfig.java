@@ -49,4 +49,11 @@ public interface IFirebaseConfig {
     int REQ_SENT = 102;
     int REQ_RECEIVED = 103;
     int FRIENDS = 104;
+
+    /**
+     * Notification related keys and constants
+     */
+    interface INotification {
+        String KEY_FROM_USER_ID = "user_id";
+    }
 }

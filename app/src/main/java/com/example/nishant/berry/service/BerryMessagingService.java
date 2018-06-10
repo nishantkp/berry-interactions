@@ -25,10 +25,14 @@
 
 package com.example.nishant.berry.service;
 
+import android.app.PendingIntent;
+import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 
 import com.example.nishant.berry.R;
+import com.example.nishant.berry.config.IConstants;
+import com.example.nishant.berry.config.IFirebaseConfig;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
@@ -36,6 +40,12 @@ import java.util.Objects;
 
 /**
  * Firebase messaging service
+ * When app is in background or is closed, and user receives friend request.
+ * When user clicks on that notification, {@link com.example.nishant.berry.ui.profile.UserProfileActivity}
+ * will open and we can extract data in onCreate method by getIntent().getExtra("key").
+ * <p>
+ * When app is in foreground, and user received notification, and click on it, onMessageReceived()
+ * method will trigger
  */
 public class BerryMessagingService extends FirebaseMessagingService {
 
@@ -45,21 +55,61 @@ public class BerryMessagingService extends FirebaseMessagingService {
     public void onMessageReceived(RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
 
-        // Extract title and body from firebase message
+        // Show friend request notification
+        showNotification(remoteMessage);
+    }
+
+    /**
+     * Call this method to show notification
+     * Format of a message received from firebase
+     * <p>
+     * payload = {
+     * notification: {
+     * title: "Friend Request",
+     * body: `${userName} has sent you friend request!`,
+     * icon: "default",
+     * click_action: "com.example.nishant.berry.FRIEND_REQUEST_NOTIFICATION"
+     * },
+     * data:{
+     * user_id: fromUserId
+     * }
+     * }
+     *
+     * @param remoteMessage Message received from firebase
+     */
+    private void showNotification(RemoteMessage remoteMessage) {
+        // Extract title, body, user id from firebase message
         String notificationTitle = Objects.requireNonNull(remoteMessage.getNotification()).getTitle();
         String notificationBody = remoteMessage.getNotification().getBody();
+        String clickAction = remoteMessage.getNotification().getClickAction();
+        // UserId of a user who sent friend request
+        String fromUserId = remoteMessage.getData().get(IFirebaseConfig.INotification.KEY_FROM_USER_ID);
 
+        // Intent to open Profile activity, when user clicks on notification
+        // Add the user Id of a user who sent a friend request to intent extra
+        Intent resultIntent = new Intent(clickAction);
+        resultIntent.putExtra(IConstants.KEY_USER_ID, fromUserId);
+
+        // Pending intent
+        PendingIntent resultPendingIntent = PendingIntent.getActivity(
+                this,
+                0,
+                resultIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT);
+
+        // Notification builder
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_baseline_person_add_24px)
                 .setContentTitle(notificationTitle)
                 .setContentText(notificationBody)
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setContentIntent(resultPendingIntent);
 
         // Notification Id : current time ensures uniqueness of Id
         // so we can receive different notifications
-        int notification_id = (int) System.currentTimeMillis();
+        int notificationId = (int) System.currentTimeMillis();
 
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
-        notificationManager.notify(notification_id, mBuilder.build());
+        notificationManager.notify(notificationId, mBuilder.build());
     }
 }

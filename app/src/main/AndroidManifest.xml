@@ -23,6 +23,7 @@
   ~ Last Modified on 01/06/18 8:16 PM
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.example.nishant.berry">
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
@@ -62,7 +63,15 @@
         <activity
             android:name=".ui.allusers.AllUsersActivity"
             android:parentActivityName=".ui.dashboard.DashboardActivity" />
-        <activity android:name=".ui.profile.UserProfileActivity" />
+
+        <!-- User profile activity, Intent filter to open Profile activity when user
+         clicks on friend request notification -->
+        <activity android:name=".ui.profile.UserProfileActivity">
+            <intent-filter>
+                <action android:name="com.example.nishant.berry.FRIEND_REQUEST_NOTIFICATION" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
 
         <!-- Firebase messaging service -->
         <service android:name=".service.BerryMessagingService">
