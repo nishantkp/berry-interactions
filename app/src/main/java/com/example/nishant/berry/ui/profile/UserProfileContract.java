@@ -50,8 +50,6 @@ public interface UserProfileContract {
 
         void acceptRequest();
 
-        void removeRefFromFriendRequestTable();
-
         void updateButtonTextToAcceptFriendRequest();
 
         void updateButtonTextToUnfriend();
@@ -59,8 +57,6 @@ public interface UserProfileContract {
         void removeFriend();
 
         void onDeclineFriendRequestBtnClick();
-
-        void createNotification();
 
         void unableToSendFriendRequestError();
     }

@@ -35,6 +35,7 @@ public interface IFirebaseConfig {
     String STATUS = "status";
     String IMAGE = "image";
     String DEVICE_TOKEN_ID = "token_id";
+    String NOTIFICATION_ID = "notification_id";
     String AVATAR_STORAGE_DIR = "profile_images";
     String DEFAULT_VALUE = "default";
     String DEFAULT_STATUS = "Hi there, it's berry!";
@@ -42,6 +43,7 @@ public interface IFirebaseConfig {
     String FRIEND_REQUEST_TYPE = "request_type";
     String FRIEND_REQUEST_SENT = "sent";
     String FRIEND_REQUEST_RECEIVED = "received";
+    String FRIEND_SINCE = "date";
     String NOTIFICATION_FROM = "from";
     String NOTIFICATION_TYPE = "type";
     String NOTIFICATION_TYPE_REQUEST = "request";
