@@ -19,32 +19,32 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  *
- * File Created on 04/06/18 8:57 PM by nishant
- * Last Modified on 04/06/18 8:57 PM
+ * File Created on 10/06/18 7:39 PM by nishant
+ * Last Modified on 10/06/18 6:36 PM
  */
 
-package com.example.nishant.berry.ui.allusers;
+package com.example.nishant.berry.ui.adapter;
 
 import android.support.v7.widget.RecyclerView;
-import android.view.View;
 
 import com.example.nishant.berry.R;
 import com.example.nishant.berry.config.IFirebaseConfig;
 import com.example.nishant.berry.databinding.AllUsersListItemBinding;
+import com.example.nishant.berry.ui.allusers.AllUsersActivity;
+import com.example.nishant.berry.ui.dashboard.fragment.friends.FriendsFragment;
 import com.example.nishant.berry.ui.model.AllUsers;
-import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 /**
- * View Holder for displaying each users in {@link AllUsersActivity}
+ * View Holder for displaying each users in {@link AllUsersActivity} and {@link FriendsFragment}
  * This view holder is used in conjunction with FirebaseRecyclerAdapter
  */
 public class AllUsersViewHolder extends RecyclerView.ViewHolder {
     private AllUsersListItemBinding mBinding;
 
-    AllUsersViewHolder(AllUsersListItemBinding binding) {
+    public AllUsersViewHolder(AllUsersListItemBinding binding) {
         super(binding.getRoot());
         mBinding = binding;
     }
@@ -54,7 +54,7 @@ public class AllUsersViewHolder extends RecyclerView.ViewHolder {
         mBinding.setUsers(users);
 
         // load default avatar
-        if (users.getImage().equals(IFirebaseConfig.DEFAULT_VALUE)) {
+        if (users.getThumbnail().equals(IFirebaseConfig.DEFAULT_VALUE)) {
             mBinding.allUsersListItemAvatar.setImageResource(R.drawable.user_default_avatar);
         } else {
             // load avatar thumbnail into circular ImageView

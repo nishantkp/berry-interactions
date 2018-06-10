@@ -19,11 +19,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  *
- * File Created on 04/06/18 8:42 PM by nishant
- * Last Modified on 04/06/18 8:42 PM
+ * File Created on 10/06/18 5:34 PM by nishant
+ * Last Modified on 10/06/18 5:34 PM
  */
 
-package com.example.nishant.berry.ui.allusers;
+package com.example.nishant.berry.ui.dashboard.fragment.friends;
 
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
@@ -36,34 +36,47 @@ import com.example.nishant.berry.config.IFirebaseConfig;
 import com.example.nishant.berry.databinding.AllUsersListItemBinding;
 import com.example.nishant.berry.ui.adapter.AllUsersViewHolder;
 import com.example.nishant.berry.ui.model.AllUsers;
+import com.example.nishant.berry.ui.model.Friends;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
-public class AllUsersPresenter
-        extends BasePresenter<AllUsersContract.View>
-        implements AllUsersContract.Presenter {
+import java.util.Objects;
+
+public class FriendsPresenter
+        extends BasePresenter<FriendsContract.View>
+        implements FriendsContract.Presenter {
 
     private Query mQuery;
+    private DatabaseReference mUsersDatabaseReference;
 
-    AllUsersPresenter() {
-
-        // Create a query for Database reference pointing to "users"
+    FriendsPresenter() {
         mQuery = FirebaseDatabase.getInstance()
                 .getReference()
-                .child(IFirebaseConfig.USERS_OBJECT);
-        // Adds offline functionality
+                .child(IFirebaseConfig.FRIENDS_OBJECT)
+                .child(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()));
+        // provide offline feature
         mQuery.keepSynced(true);
+
+        // Users database reference
+        mUsersDatabaseReference = FirebaseDatabase.getInstance().getReference().child(IFirebaseConfig.USERS_OBJECT);
+        // provide offline feature
+        mUsersDatabaseReference.keepSynced(true);
     }
 
     @Override
-    public AllUsersContract.View getView() {
+    public FriendsContract.View getView() {
         return super.getView();
     }
 
     @Override
-    public void attachView(AllUsersContract.View view) {
+    public void attachView(FriendsContract.View view) {
         super.attachView(view);
 
         // After attaching a view, setup firebase adapter
@@ -72,17 +85,38 @@ public class AllUsersPresenter
 
     @Override
     public void setupFirebaseRecyclerAdapter(Query query) {
-        FirebaseRecyclerOptions<AllUsers> options =
-                new FirebaseRecyclerOptions.Builder<AllUsers>().setQuery(query, AllUsers.class)
+        FirebaseRecyclerOptions<Friends> options =
+                new FirebaseRecyclerOptions.Builder<Friends>().setQuery(query, Friends.class)
                         .build();
 
-        FirebaseRecyclerAdapter<AllUsers, AllUsersViewHolder> adapter
-                = new FirebaseRecyclerAdapter<AllUsers, AllUsersViewHolder>(options) {
+        FirebaseRecyclerAdapter<Friends, AllUsersViewHolder> adapter
+                = new FirebaseRecyclerAdapter<Friends, AllUsersViewHolder>(options) {
             @Override
-            protected void onBindViewHolder(@NonNull AllUsersViewHolder holder,
+            protected void onBindViewHolder(@NonNull final AllUsersViewHolder holder,
                                             final int position,
-                                            @NonNull final AllUsers model) {
-                holder.bind(model);
+                                            @NonNull final Friends model) {
+                // Get the user id
+                String listUserId = getRef(position).getKey();
+                assert listUserId != null;
+                mUsersDatabaseReference.child(listUserId).addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        String displayName = Objects.requireNonNull(dataSnapshot.child(IFirebaseConfig.NAME).getValue()).toString();
+                        String status = Objects.requireNonNull(dataSnapshot.child(IFirebaseConfig.STATUS).getValue()).toString();
+                        String thumbnail = Objects.requireNonNull(dataSnapshot.child(IFirebaseConfig.THUMBNAIL).getValue()).toString();
+
+                        AllUsers users = new AllUsers();
+                        users.setName(displayName);
+                        users.setStatus(status);
+                        users.setThumbnail(thumbnail);
+                        holder.bind(users);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
 
                 // Set onclick listener on ViewHolder
                 holder.itemView.setOnClickListener(new View.OnClickListener() {
