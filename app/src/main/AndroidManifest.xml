@@ -64,11 +64,14 @@
             android:name=".ui.allusers.AllUsersActivity"
             android:parentActivityName=".ui.dashboard.DashboardActivity" />
 
-        <!-- User profile activity, Intent filter to open Profile activity when user
-         clicks on friend request notification -->
+        <!--
+         User profile activity, Intent filter to open Profile activity when user
+         clicks on friend request notification
+        -->
         <activity android:name=".ui.profile.UserProfileActivity">
             <intent-filter>
                 <action android:name="com.example.nishant.berry.FRIEND_REQUEST_NOTIFICATION" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
@@ -86,6 +89,8 @@
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
         </service>
+
+        <activity android:name=".base.BaseActivity"></activity>
     </application>
 
 </manifest>

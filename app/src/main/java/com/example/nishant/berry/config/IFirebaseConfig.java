@@ -34,8 +34,8 @@ public interface IFirebaseConfig {
     String THUMBNAIL = "thumbnail";
     String STATUS = "status";
     String IMAGE = "image";
+    String ONLINE = "online";
     String DEVICE_TOKEN_ID = "token_id";
-    String NOTIFICATION_ID = "notification_id";
     String AVATAR_STORAGE_DIR = "profile_images";
     String DEFAULT_VALUE = "default";
     String DEFAULT_STATUS = "Hi there, it's berry!";

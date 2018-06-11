@@ -26,10 +26,19 @@
 package com.example.nishant.berry.application;
 
 import android.app.Application;
+import android.support.annotation.NonNull;
 
+import com.example.nishant.berry.config.IFirebaseConfig;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.OkHttp3Downloader;
 import com.squareup.picasso.Picasso;
+
+import java.util.Objects;
 
 /**
  * Application class
@@ -50,5 +59,27 @@ public class BerryApp extends Application {
         picasso.setIndicatorsEnabled(true);
         picasso.setLoggingEnabled(true);
         Picasso.setSingletonInstance(picasso);
+
+        // Current user id
+        String userId = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
+        // Users database reference
+        final DatabaseReference usersDatabaseReference = FirebaseDatabase.getInstance().getReference()
+                .child(IFirebaseConfig.USERS_OBJECT)
+                .child(userId);
+
+        usersDatabaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                // If this query gets disconnected from firebase it will set it's value to false
+                usersDatabaseReference.child(IFirebaseConfig.ONLINE).onDisconnect().setValue(false);
+                // Otherwise set it ti true
+                usersDatabaseReference.child(IFirebaseConfig.ONLINE).setValue(true);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                /* Do nothing */
+            }
+        });
     }
 }
