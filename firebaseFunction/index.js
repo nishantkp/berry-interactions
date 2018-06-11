@@ -15,47 +15,37 @@ exports.sendNotification = functions.database.ref('/notifications/{userId}/{noti
         return console.log('A notification has been deleted from database : ', context.params.notificationId);
     }
 
-    return admin.database().ref(`/users/${context.params.userId}/token_id`)
+
+    // Retrive the data from notifications object
+    return admin.database().ref(`/notifications/${context.params.userId}/${context.params.notificationId}`)
         .once('value').then(function(snapshot) {
 
-            // Device toke Id or a user to whome we are sending a friend request
-            const tokenId = snapshot.val();
-            // log the token Id
-            console.log('Device token id is : ', tokenId);
+            // Id of a user who sent a friend request
+            const fromUserId = snapshot.val().from;
+            console.log('You have new notification from : ', fromUserId);
 
-            // Retrive the data from notifications object
-            const fromUser = admin.database().ref(`/notifications/${context.params.userId}/${context.params.notificationId}`)
-                .once('value').then(function(snapshot) {
+            const deviceToken = admin.database().ref(`/users/${context.params.userId}/token_id`).once('value');
+            const userQuerry = admin.database().ref(`/users/${fromUserId}/name`).once('value');
 
-                    // Id of a user who sent a friend request
-                    const fromUserId = snapshot.val().from;
-                    console.log('You have new notification from : ', fromUserId);
+            return Promise.all([deviceToken, userQuerry]).then(function(snapshot) {
+                const deviceTokenId = snapshot[0].val();
+                const userName = snapshot[1].val();
 
-                    // Get the user name from users database
-                    const userQuerry = admin.database().ref(`/users/${fromUserId}/name`)
-                        .once('value').then(function(snapshot) {
+                // Custom notification payload
+                const payload = {
+                    notification: {
+                        title: "Friend Request",
+                        body: `${userName} has sent you friend request!`,
+                        icon: "default",
+                        click_action: "com.example.nishant.berry.FRIEND_REQUEST_NOTIFICATION"
+                    },
+                    data: {
+                        user_id: fromUserId
+                    }
+                };
 
-                            // Name of a person who sent friend request
-                            const userName = snapshot.val();
-
-                            // Custom notification payload
-                            const payload = {
-                                notification: {
-                                    title: "Friend Request",
-                                    body: `${userName} has sent you friend request!`,
-                                    icon: "default",
-                                    click_action: "com.example.nishant.berry.FRIEND_REQUEST_NOTIFICATION"
-                                },
-                                data:{
-                                  user_id: fromUserId
-                                }
-                            };
-
-                            // Send a notification to user for friend request
-                            return admin.messaging().sendToDevice(tokenId, payload);
-                        });
-                    return;
-                });
-            return;
+                // Send a notification to user for friend request
+                return admin.messaging().sendToDevice(deviceTokenId, payload);
+            });
         });
 });
