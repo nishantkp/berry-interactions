@@ -33,6 +33,7 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 
 import com.example.nishant.berry.R;
+import com.example.nishant.berry.base.BaseActivity;
 import com.example.nishant.berry.config.IConstants;
 import com.example.nishant.berry.databinding.ActivityAllUsersBinding;
 import com.example.nishant.berry.ui.profile.UserProfileActivity;
@@ -46,7 +47,7 @@ import static android.support.v7.widget.LinearLayoutManager.VERTICAL;
  * Displays all users in database
  */
 public class AllUsersActivity
-        extends AppCompatActivity
+        extends BaseActivity
         implements AllUsersContract.View {
 
     private ActivityAllUsersBinding mBinding;
@@ -90,6 +91,16 @@ public class AllUsersActivity
         super.onStop();
         // Stop listening to data by calling stopListening() on adapter
         mFirebaseRecyclerAdapter.stopListening();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
     }
 
     @Override

@@ -31,6 +31,7 @@ import android.os.Bundle;
 import android.widget.Toast;
 
 import com.example.nishant.berry.R;
+import com.example.nishant.berry.base.BaseActivity;
 import com.example.nishant.berry.config.IConstants;
 import com.example.nishant.berry.databinding.ActivityUserProfileBinding;
 import com.example.nishant.berry.ui.model.UserProfile;
@@ -39,7 +40,7 @@ import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 public class UserProfileActivity
-        extends AppCompatActivity
+        extends BaseActivity
         implements UserProfileContract.View {
 
     private UserProfilePresenter mPresenter;
@@ -62,6 +63,16 @@ public class UserProfileActivity
 
         // Attach presenter to binding
         mBinding.setPresenter(mPresenter);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
     }
 
     /**

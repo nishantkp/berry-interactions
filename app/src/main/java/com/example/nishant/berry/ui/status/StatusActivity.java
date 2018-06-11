@@ -32,6 +32,7 @@ import android.os.Bundle;
 import android.widget.Toast;
 
 import com.example.nishant.berry.R;
+import com.example.nishant.berry.base.BaseActivity;
 import com.example.nishant.berry.config.IConstants;
 import com.example.nishant.berry.databinding.ActivityStatusBinding;
 import com.example.nishant.berry.ui.model.User;
@@ -39,7 +40,7 @@ import com.example.nishant.berry.ui.model.User;
 import java.util.Objects;
 
 public class StatusActivity
-        extends AppCompatActivity
+        extends BaseActivity
         implements StatusContract.View {
 
     private ActivityStatusBinding mBinding;
@@ -71,6 +72,16 @@ public class StatusActivity
         mPresenter = new StatusPresenter();
         mPresenter.attachView(this);
         mBinding.setPresenter(mPresenter);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
     }
 
     @Override

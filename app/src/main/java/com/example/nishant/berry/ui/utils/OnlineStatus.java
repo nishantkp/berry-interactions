@@ -41,19 +41,33 @@ public class OnlineStatus implements LoginStats {
 
     public OnlineStatus() {
         mAuth = FirebaseAuth.getInstance();
+        if (mAuth.getCurrentUser() == null) return;
+        // Database reference pointing to online_status of particular user
         mUsersDatabaseReference = FirebaseDatabase.getInstance().getReference()
                 .child(IFirebaseConfig.USERS_OBJECT)
-                .child(Objects.requireNonNull(mAuth.getUid()))
+                .child(mAuth.getCurrentUser().getUid())
                 .child(IFirebaseConfig.ONLINE);
     }
 
+    /**
+     * This method update the online_status to true
+     * Advise : Call this method on onResume() method of activity because onResume() method will
+     * always be called
+     */
     @Override
     public void onlineUser() {
+        if (mAuth.getCurrentUser() == null) return;
         mUsersDatabaseReference.setValue(true);
     }
 
+    /**
+     * This method update the online_status to false
+     * Advise : Call this method on onPause() method of activity because onPause() method will
+     * always be called
+     */
     @Override
     public void offlineUser() {
+        if (mAuth.getCurrentUser() == null) return;
         mUsersDatabaseReference.setValue(false);
     }
 }

@@ -73,8 +73,6 @@ public class BerryApp extends Application {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 // If this query gets disconnected from firebase it will set it's value to false
                 usersDatabaseReference.child(IFirebaseConfig.ONLINE).onDisconnect().setValue(false);
-                // Otherwise set it ti true
-                usersDatabaseReference.child(IFirebaseConfig.ONLINE).setValue(true);
             }
 
             @Override

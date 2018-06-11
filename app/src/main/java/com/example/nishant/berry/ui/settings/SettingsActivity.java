@@ -37,6 +37,7 @@ import android.os.Bundle;
 import android.widget.Toast;
 
 import com.example.nishant.berry.R;
+import com.example.nishant.berry.base.BaseActivity;
 import com.example.nishant.berry.config.IConstants;
 import com.example.nishant.berry.databinding.ActivitySettingsBinding;
 import com.example.nishant.berry.ui.status.StatusActivity;
@@ -53,7 +54,7 @@ import java.io.IOException;
 import id.zelory.compressor.Compressor;
 
 public class SettingsActivity
-        extends AppCompatActivity
+        extends BaseActivity
         implements SettingsContract.View {
 
     private ActivitySettingsBinding mBinding;
@@ -70,6 +71,16 @@ public class SettingsActivity
 
         mPresenter = new SettingsPresenter();
         mPresenter.attachView(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
     }
 
     @Override

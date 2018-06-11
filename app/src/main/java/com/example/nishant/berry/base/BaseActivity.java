@@ -29,12 +29,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import com.example.nishant.berry.ui.utils.OnlineStatus;
+import com.google.firebase.auth.FirebaseAuth;
 
 /**
  * BaseActivity
  */
 public class BaseActivity extends AppCompatActivity {
-
+    // OnlineStatus object to update database with users online_status
     private OnlineStatus mOnlineStatus;
 
     @Override

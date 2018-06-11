@@ -33,6 +33,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.example.nishant.berry.R;
+import com.example.nishant.berry.base.BaseActivity;
 import com.example.nishant.berry.databinding.ActivityDashboardBinding;
 import com.example.nishant.berry.ui.adapter.SectionsPagerAdapter;
 import com.example.nishant.berry.ui.allusers.AllUsersActivity;
@@ -42,7 +43,7 @@ import com.example.nishant.berry.ui.start.StartActivity;
 import java.util.Objects;
 
 public class DashboardActivity
-        extends AppCompatActivity
+        extends BaseActivity
         implements DashboardContract.View {
 
     private DashboardPresenter mPresenter;
@@ -70,6 +71,16 @@ public class DashboardActivity
     protected void onStart() {
         super.onStart();
         mPresenter.checkCurrentUser();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
     }
 
     /**
