@@ -28,11 +28,13 @@ package com.example.nishant.berry.ui.adapter;
 import android.support.v7.widget.RecyclerView;
 
 import com.example.nishant.berry.R;
+import com.example.nishant.berry.config.IConstants;
 import com.example.nishant.berry.config.IFirebaseConfig;
 import com.example.nishant.berry.databinding.AllUsersListItemBinding;
 import com.example.nishant.berry.ui.allusers.AllUsersActivity;
 import com.example.nishant.berry.ui.dashboard.fragment.friends.FriendsFragment;
 import com.example.nishant.berry.ui.model.AllUsers;
+import com.google.android.gms.common.internal.ICancelToken;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
@@ -51,6 +53,11 @@ public class AllUsersViewHolder extends RecyclerView.ViewHolder {
 
     // Bind data to list-item view
     public void bind(final AllUsers users) {
+        if (users.isOnline()) {
+            users.setOnlineStatus(IConstants.VIEW_VISIBLE);
+        } else {
+            users.setOnlineStatus(IConstants.VIEW_INVISIBLE);
+        }
         mBinding.setUsers(users);
 
         // load default avatar

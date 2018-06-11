@@ -34,15 +34,18 @@ public class AllUsers {
     private String image;
     private String status;
     private String thumbnail;
+    private boolean online;
+    private int onlineStatus;
 
     public AllUsers() {
     }
 
-    public AllUsers(String name, String image, String status, String thumbnail) {
+    public AllUsers(String name, String image, String status, String thumbnail, boolean online) {
         this.name = name;
         this.image = image;
         this.status = status;
         this.thumbnail = thumbnail;
+        this.online = online;
     }
 
     public String getName() {
@@ -75,5 +78,21 @@ public class AllUsers {
 
     public void setThumbnail(String thumbnail) {
         this.thumbnail = thumbnail;
+    }
+
+    public boolean isOnline() {
+        return online;
+    }
+
+    public void setOnline(boolean online) {
+        this.online = online;
+    }
+
+    public int getOnlineStatus() {
+        return onlineStatus;
+    }
+
+    public void setOnlineStatus(int onlineStatus) {
+        this.onlineStatus = onlineStatus;
     }
 }

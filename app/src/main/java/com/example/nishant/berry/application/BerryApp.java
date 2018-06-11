@@ -60,6 +60,7 @@ public class BerryApp extends Application {
         picasso.setLoggingEnabled(true);
         Picasso.setSingletonInstance(picasso);
 
+        if (FirebaseAuth.getInstance().getCurrentUser() == null) return;
         // Current user id
         String userId = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
         // Users database reference

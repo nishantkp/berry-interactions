@@ -40,6 +40,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.iid.FirebaseInstanceId;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class SignUpPresenter
         extends BasePresenter<SignUpContract.View>
@@ -124,12 +125,13 @@ public class SignUpPresenter
                         .child(userId);
 
         // Value Map for Firebase database
-        HashMap<String, String> userMap = new HashMap<>();
+        Map<String, Object> userMap = new HashMap<>();
         userMap.put(IFirebaseConfig.NAME, displayName);
         userMap.put(IFirebaseConfig.STATUS, IFirebaseConfig.DEFAULT_STATUS);
         userMap.put(IFirebaseConfig.IMAGE, IFirebaseConfig.DEFAULT_VALUE);
         userMap.put(IFirebaseConfig.THUMBNAIL, IFirebaseConfig.DEFAULT_VALUE);
         userMap.put(IFirebaseConfig.DEVICE_TOKEN_ID, deviceToken);
+        userMap.put(IFirebaseConfig.ONLINE, true);
 
         // Set the values to Firebase database
         mDatabaseReference.setValue(userMap)

@@ -86,5 +86,18 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             app:layout_constraintGuide_percent="0.5" />
+
+        <ImageView
+            android:id="@+id/all_users_online_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginTop="8dp"
+            android:visibility="@{users.onlineStatus}"
+            app:layout_constraintBottom_toBottomOf="@+id/all_users_list_item_display_name"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/all_users_list_item_display_name"
+            app:srcCompat="@drawable/online_status_circle" />
     </android.support.constraint.ConstraintLayout>
 </layout>

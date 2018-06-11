@@ -104,11 +104,13 @@ public class FriendsPresenter
                         String displayName = Objects.requireNonNull(dataSnapshot.child(IFirebaseConfig.NAME).getValue()).toString();
                         String status = Objects.requireNonNull(dataSnapshot.child(IFirebaseConfig.STATUS).getValue()).toString();
                         String thumbnail = Objects.requireNonNull(dataSnapshot.child(IFirebaseConfig.THUMBNAIL).getValue()).toString();
+                        boolean onlineStatus = (boolean) dataSnapshot.child(IFirebaseConfig.ONLINE).getValue();
 
                         AllUsers users = new AllUsers();
                         users.setName(displayName);
                         users.setStatus(status);
                         users.setThumbnail(thumbnail);
+                        users.setOnline(onlineStatus);
                         holder.bind(users);
                     }
 
