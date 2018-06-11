@@ -313,7 +313,7 @@ public class UserProfilePresenter
     @Override
     public void updateButtonTextToAcceptFriendRequest() {
         mFriendReqDatabaseReference.child(mCurrentUserId)
-                .addListenerForSingleValueEvent(new ValueEventListener() {
+                .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         if (dataSnapshot.hasChild(mNewUserId)) {
@@ -330,7 +330,6 @@ public class UserProfilePresenter
                                     mCurrentState = IFirebaseConfig.REQ_RECEIVED;
                                     mUserProfile.setFriendReqButtonText("accept friend request");
                                     mUserProfile.setDeclineFriendReqButtonVisibility(IConstants.VIEW_VISIBLE);
-                                    getView().updateProfile(mUserProfile);
                                     break;
                                 case IFirebaseConfig.FRIEND_REQUEST_SENT:
                                     // If the request type is "sent", change the button text to
@@ -338,17 +337,65 @@ public class UserProfilePresenter
                                     mCurrentState = IFirebaseConfig.REQ_SENT;
                                     mUserProfile.setFriendReqButtonText("cancel friend request");
                                     mUserProfile.setDeclineFriendReqButtonVisibility(IConstants.VIEW_GONE);
-                                    getView().updateProfile(mUserProfile);
                                     break;
                             }
+
+                        } else {
+                            // if we don't have any user id, that means user has decline the friend
+                            // request or has cancel the friend request
+                            // So set the btn text to "send friend request"
+                            // and set current state to not_friends
+                            mCurrentState = IFirebaseConfig.NOT_FRIEND;
+                            mUserProfile.setFriendReqButtonText("send friend request");
+                            mUserProfile.setDeclineFriendReqButtonVisibility(IConstants.VIEW_GONE);
                         }
+                        getView().updateProfile(mUserProfile);
                     }
+
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError databaseError) {
                         getView().onError("Error retrieving user profile!");
                     }
                 });
+
+//        mFriendReqDatabaseReference.child(mCurrentUserId)
+//                .addListenerForSingleValueEvent(new ValueEventListener() {
+//                    @Override
+//                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                        if (dataSnapshot.hasChild(mNewUserId)) {
+//                            // Get the request_type from user on whose profile right now we are at
+//                            String reqType = Objects.requireNonNull(dataSnapshot.child(mNewUserId)
+//                                    .child(IFirebaseConfig.FRIEND_REQUEST_TYPE)
+//                                    .getValue())
+//                                    .toString();
+//
+//                            switch (reqType) {
+//                                case IFirebaseConfig.FRIEND_REQUEST_RECEIVED:
+//                                    // If the request type is "received", change the button text to
+//                                    // accept the friend request
+//                                    mCurrentState = IFirebaseConfig.REQ_RECEIVED;
+//                                    mUserProfile.setFriendReqButtonText("accept friend request");
+//                                    mUserProfile.setDeclineFriendReqButtonVisibility(IConstants.VIEW_VISIBLE);
+//                                    getView().updateProfile(mUserProfile);
+//                                    break;
+//                                case IFirebaseConfig.FRIEND_REQUEST_SENT:
+//                                    // If the request type is "sent", change the button text to
+//                                    // cancel the friend request
+//                                    mCurrentState = IFirebaseConfig.REQ_SENT;
+//                                    mUserProfile.setFriendReqButtonText("cancel friend request");
+//                                    mUserProfile.setDeclineFriendReqButtonVisibility(IConstants.VIEW_GONE);
+//                                    getView().updateProfile(mUserProfile);
+//                                    break;
+//                            }
+//                        }
+//                    }
+//
+//                    @Override
+//                    public void onCancelled(@NonNull DatabaseError databaseError) {
+//                        getView().onError("Error retrieving user profile!");
+//                    }
+//                });
     }
 
     /**
@@ -358,15 +405,21 @@ public class UserProfilePresenter
      */
     @Override
     public void updateButtonTextToUnfriend() {
-        mFriendsDatabaseReference.child(mCurrentUserId).addListenerForSingleValueEvent(new ValueEventListener() {
+        mFriendsDatabaseReference.child(mCurrentUserId).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.hasChild(mNewUserId)) {
                     mCurrentState = IFirebaseConfig.FRIENDS;
                     mUserProfile.setFriendReqButtonText("unfriend");
                     mUserProfile.setDeclineFriendReqButtonVisibility(IConstants.VIEW_GONE);
-                    getView().updateProfile(mUserProfile);
+                } else {
+                    // If we don't find any new user's Id, that means current user is no longer
+                    // friends with the new user
+                    mCurrentState = IFirebaseConfig.NOT_FRIEND;
+                    mUserProfile.setDeclineFriendReqButtonVisibility(IConstants.VIEW_GONE);
+                    mUserProfile.setFriendReqButtonText("send friend request");
                 }
+                getView().updateProfile(mUserProfile);
             }
 
             @Override
@@ -374,6 +427,23 @@ public class UserProfilePresenter
                 getView().onError("Error retrieving user profile!");
             }
         });
+
+//        mFriendsDatabaseReference.child(mCurrentUserId).addListenerForSingleValueEvent(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                if (dataSnapshot.hasChild(mNewUserId)) {
+//                    mCurrentState = IFirebaseConfig.FRIENDS;
+//                    mUserProfile.setFriendReqButtonText("unfriend");
+//                    mUserProfile.setDeclineFriendReqButtonVisibility(IConstants.VIEW_GONE);
+//                    getView().updateProfile(mUserProfile);
+//                }
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError databaseError) {
+//                getView().onError("Error retrieving user profile!");
+//            }
+//        });
     }
 
     /**
