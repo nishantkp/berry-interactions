@@ -25,6 +25,10 @@
 
 package com.example.nishant.berry.ui.dashboard.fragment.friends;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DividerItemDecoration;
@@ -34,7 +38,12 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.nishant.berry.R;
+import com.example.nishant.berry.config.IConstants;
+import com.example.nishant.berry.databinding.AlertDialogFriendsListBinding;
 import com.example.nishant.berry.databinding.FragmentFriendsBinding;
+import com.example.nishant.berry.ui.interaction.InteractionActivity;
+import com.example.nishant.berry.ui.model.UserProfile;
+import com.example.nishant.berry.ui.profile.UserProfileActivity;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 
 import static android.support.v7.widget.LinearLayoutManager.VERTICAL;
@@ -101,7 +110,39 @@ public class FriendsFragment
      * @param userId user id of a person, on which click action is performed
      */
     @Override
-    public void onListItemClick(String userId) {
-        //TODO implement for list item click
+    public void onListItemClick(final String userId) {
+        // Create a custom dialog from layout resource file
+        View alertView = getLayoutInflater().inflate(R.layout.alert_dialog_friends_list, null);
+        AlertDialogFriendsListBinding binding = AlertDialogFriendsListBinding.bind(alertView);
+
+        // AlertDialog builder
+        final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setView(alertView);
+        final AlertDialog dialog = builder.create();
+        dialog.show();
+
+        // When user clicks on send message, start InteractionActivity
+        binding.alertSendMessage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+                startActivity(
+                        new Intent(getContext(), InteractionActivity.class)
+                                .putExtra(IConstants.KEY_USER_ID, userId)
+                );
+            }
+        });
+
+        // When user clicks on view profile, start UserProfileActivity
+        binding.alertViewProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+                startActivity(
+                        new Intent(getContext(), UserProfileActivity.class)
+                                .putExtra(IConstants.KEY_USER_ID, userId)
+                );
+            }
+        });
     }
 }

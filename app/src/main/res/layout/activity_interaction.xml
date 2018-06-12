@@ -19,19 +19,17 @@
   ~ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
   ~ SOFTWARE.
   ~
-  ~ File Created on 02/06/18 12:55 AM by nishant
-  ~ Last Modified on 01/06/18 9:54 PM
+  ~ File Created on 11/06/18 11:09 PM by nishant
+  ~ Last Modified on 11/06/18 11:09 PM
   -->
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
-<resources>
-    <color name="colorPrimary">#eceff1</color>
-    <color name="colorPrimaryLight">#ffffff</color>
-    <color name="colorPrimaryDark">#babdbe</color>
-    <color name="colorSecondary">#ff1744</color>
-    <color name="colorSecondaryLight">#ff616f</color>
-    <color name="colorSecondaryDark">#c4001d</color>
-    <color name="primaryTextColor">#000000</color>
-    <color name="secondaryTextColor">#fafafa</color>
-    <color name="tabTextColor">#757575</color>
-    <color name="selectorColor">#eeeeee</color>
-</resources>
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".ui.interaction.InteractionActivity">
+
+    </android.support.constraint.ConstraintLayout>
+</layout>

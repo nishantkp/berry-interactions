@@ -19,19 +19,22 @@
   ~ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
   ~ SOFTWARE.
   ~
-  ~ File Created on 02/06/18 12:55 AM by nishant
-  ~ Last Modified on 01/06/18 9:54 PM
-  -->
+  ~ File Created on 11/06/18 10:34 PM by nishant
+  ~ Last Modified on 11/06/18 10:34 PM
+  --><!--Item Selector-->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_activated="true">
+        <color android:color="@color/selectorColor" />
+    </item>
+    <item android:state_selected="true">
+        <color android:color="@color/selectorColor" />
+    </item>
+    <item android:state_pressed="true">
+        <color android:color="@color/selectorColor" />
+    </item>
 
-<resources>
-    <color name="colorPrimary">#eceff1</color>
-    <color name="colorPrimaryLight">#ffffff</color>
-    <color name="colorPrimaryDark">#babdbe</color>
-    <color name="colorSecondary">#ff1744</color>
-    <color name="colorSecondaryLight">#ff616f</color>
-    <color name="colorSecondaryDark">#c4001d</color>
-    <color name="primaryTextColor">#000000</color>
-    <color name="secondaryTextColor">#fafafa</color>
-    <color name="tabTextColor">#757575</color>
-    <color name="selectorColor">#eeeeee</color>
-</resources>
+    <!--Default color-->
+    <item>
+        <color android:color="@android:color/transparent" />
+    </item>
+</selector>

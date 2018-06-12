@@ -90,7 +90,8 @@
             </intent-filter>
         </service>
 
-        <activity android:name=".base.BaseActivity"></activity>
+        <activity android:name=".base.BaseActivity" />
+        <activity android:name=".ui.interaction.InteractionActivity"></activity>
     </application>
 
 </manifest>

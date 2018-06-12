@@ -43,4 +43,7 @@
     <string name="change_status_label">Change status</string>
     <string name="status_hint">Status</string>
     <string name="save_label">Save</string>
+    <string name="alert_view_profile_label">View profile</string>
+    <string name="alert_send_message_label">Send message</string>
+    <string name="alert_select_options_label">Select Options</string>
 </resources>
