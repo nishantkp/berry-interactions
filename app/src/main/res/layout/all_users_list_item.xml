@@ -36,6 +36,7 @@
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@drawable/item_selector"
         android:paddingBottom="8dp"
         android:paddingEnd="16dp"
         android:paddingStart="16dp"
