@@ -31,28 +31,31 @@
         android:gravity="center_vertical"
         android:orientation="horizontal">
 
-        <ImageView
+        <ImageButton
             android:id="@+id/interaction_bottom_add"
+            style="@style/Widget.AppCompat.Button.Borderless"
             android:layout_width="0dp"
-            android:layout_height="48dp"
+            android:layout_height="56dp"
             android:layout_weight="1"
             android:scaleType="centerInside"
             android:src="@drawable/ic_baseline_add_24px" />
 
-        <TextView
-            android:id="@+id/interaction_bottom_tv"
+        <EditText
+            android:id="@+id/interaction_bottom_edit_text"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_gravity="center_vertical"
             android:layout_weight="4"
+            android:background="@android:color/transparent"
+            android:hint="Start interactions..."
             android:padding="8dp"
-            android:text="TextView"
             android:textSize="18sp" />
 
-        <ImageView
+        <ImageButton
             android:id="@+id/interaction_bottom_send"
+            style="@style/Widget.AppCompat.Button.Borderless"
             android:layout_width="0dp"
-            android:layout_height="48dp"
+            android:layout_height="56dp"
             android:layout_weight="1"
             android:scaleType="centerInside"
             android:src="@drawable/ic_baseline_send_24px" />
