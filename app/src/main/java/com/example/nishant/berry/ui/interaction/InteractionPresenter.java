@@ -27,39 +27,56 @@ package com.example.nishant.berry.ui.interaction;
 
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.util.Log;
 
 import com.example.nishant.berry.base.BasePresenter;
 import com.example.nishant.berry.config.IConstants;
 import com.example.nishant.berry.config.IFirebaseConfig;
 import com.example.nishant.berry.ui.utils.GetTimeAgo;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
 public class InteractionPresenter
         extends BasePresenter<InteractionContract.View>
         implements InteractionContract.Presenter {
 
-    private String mUserId;
+    private String mInteractionUserId;
+    private String mCurrentUserId;
     private String mDisplayName;
-    private DatabaseReference mUsersRootRef;
     private String mLastSeen;
     private String mAvatarThumbUrl;
     private String mOnlineStatus;
+    private DatabaseReference mRootRef;
+    private DatabaseReference mUsersRootRef;
+    private DatabaseReference mInteractionsRootRef;
 
     InteractionPresenter(Intent receivedIntent) {
         // Extract the userId and user displayName from intent
-        mUserId = receivedIntent.hasExtra(IConstants.KEY_USER_ID) ?
+        mInteractionUserId = receivedIntent.hasExtra(IConstants.KEY_USER_ID) ?
                 receivedIntent.getStringExtra(IConstants.KEY_USER_ID) : null;
         mDisplayName = receivedIntent.hasExtra(IConstants.KEY_USER_DISPLAY_NAME) ?
                 receivedIntent.getStringExtra(IConstants.KEY_USER_DISPLAY_NAME) : null;
-        if (mUserId == null) return;
+        if (mInteractionUserId == null) return;
 
-        // Root reference to Users database
-        mUsersRootRef = FirebaseDatabase.getInstance().getReference().child(IFirebaseConfig.USERS_OBJECT);
+        // Current user Id
+        mCurrentUserId = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
+
+        // Root reference to databases
+        mRootRef = FirebaseDatabase.getInstance().getReference();
+        mUsersRootRef = mRootRef.child(IFirebaseConfig.USERS_OBJECT);
+        mInteractionsRootRef = mRootRef.child(IFirebaseConfig.INTERACTIONS_OBJECT);
         extractBasicInfoDatabase();
+        initInteractionDatabase();
     }
 
     @Override
@@ -78,7 +95,7 @@ public class InteractionPresenter
      */
     @Override
     public void extractBasicInfoDatabase() {
-        mUsersRootRef.child(mUserId).addValueEventListener(new ValueEventListener() {
+        mUsersRootRef.child(mInteractionUserId).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 mAvatarThumbUrl = dataSnapshot.child(IFirebaseConfig.THUMBNAIL).getValue().toString();
@@ -97,6 +114,44 @@ public class InteractionPresenter
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
                 getView().setActionBar("Berry", "default", "Hey It's Berry");
+            }
+        });
+    }
+
+    /**
+     * Call this method to initialize Interactions database
+     */
+    @Override
+    public void initInteractionDatabase() {
+        mInteractionsRootRef.child(mCurrentUserId).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (!dataSnapshot.hasChild(mInteractionUserId)) {
+
+                    Map<String, Object> interactionMap = new HashMap<>();
+                    interactionMap.put(IFirebaseConfig.ONLINE, false);
+                    interactionMap.put(IFirebaseConfig.TIMESTAMP, ServerValue.TIMESTAMP);
+
+                    // Create entries for interactions database
+                    Map<String, Object> interactionUserMap = new HashMap<>();
+                    interactionUserMap.put(IFirebaseConfig.INTERACTIONS_OBJECT + "/" + mCurrentUserId + "/" + mInteractionUserId, interactionMap);
+                    interactionUserMap.put(IFirebaseConfig.INTERACTIONS_OBJECT + "/" + mInteractionUserId + "/" + mCurrentUserId, interactionMap);
+
+                    mRootRef.updateChildren(interactionUserMap, new DatabaseReference.CompletionListener() {
+                        @Override
+                        public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
+                            // If there an error updating children, log the error message
+                            if (databaseError != null) {
+                                Log.d("CHAT_LOG", databaseError.getMessage());
+                            }
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
             }
         });
     }

@@ -30,6 +30,7 @@ public interface IFirebaseConfig {
     String FRIEND_REQUEST_OBJECT = "friend_requests";
     String FRIENDS_OBJECT = "friends";
     String NOTIFICATION_OBJECT = "notifications";
+    String INTERACTIONS_OBJECT = "interactions";
     String NAME = "name";
     String THUMBNAIL = "thumbnail";
     String STATUS = "status";
@@ -37,6 +38,7 @@ public interface IFirebaseConfig {
     String ONLINE = "online";
     String LAST_SEEN = "last_seen";
     String DEVICE_TOKEN_ID = "token_id";
+    String TIMESTAMP = "timestamp";
     String AVATAR_STORAGE_DIR = "profile_images";
     String DEFAULT_VALUE = "default";
     String DEFAULT_STATUS = "Hi there, it's berry!";

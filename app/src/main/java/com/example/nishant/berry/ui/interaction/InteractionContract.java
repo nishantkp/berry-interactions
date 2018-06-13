@@ -34,5 +34,7 @@ public interface InteractionContract {
 
     interface Presenter {
         void extractBasicInfoDatabase();
+
+        void initInteractionDatabase();
     }
 }

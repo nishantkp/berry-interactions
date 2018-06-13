@@ -55,7 +55,6 @@ public class FriendsPresenter
 
     private Query mQuery;
     private DatabaseReference mUsersDatabaseReference;
-    private String mDiaplayName;
 
     FriendsPresenter() {
         mQuery = FirebaseDatabase.getInstance()
@@ -102,32 +101,32 @@ public class FriendsPresenter
                 mUsersDatabaseReference.child(listUserId).addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        mDiaplayName = Objects.requireNonNull(dataSnapshot.child(IFirebaseConfig.NAME).getValue()).toString();
+                        final String displayName = Objects.requireNonNull(dataSnapshot.child(IFirebaseConfig.NAME).getValue()).toString();
                         String status = Objects.requireNonNull(dataSnapshot.child(IFirebaseConfig.STATUS).getValue()).toString();
                         String thumbnail = Objects.requireNonNull(dataSnapshot.child(IFirebaseConfig.THUMBNAIL).getValue()).toString();
                         boolean onlineStatus = (boolean) dataSnapshot.child(IFirebaseConfig.ONLINE).getValue();
 
                         AllUsers users = new AllUsers();
-                        users.setName(mDiaplayName);
+                        users.setName(displayName);
                         users.setStatus(status);
                         users.setThumbnail(thumbnail);
                         users.setOnline(onlineStatus);
                         holder.bind(users);
+
+                        // Set onclick listener on ViewHolder
+                        holder.itemView.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                // set call back with user id parameter
+                                getView().onListItemClick(getRef(holder.getAdapterPosition()).getKey(), displayName);
+                            }
+                        });
                     }
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError databaseError) {
                         /*Do nothing for now*/
                         /*TODO Set error message callBack*/
-                    }
-                });
-
-                // Set onclick listener on ViewHolder
-                holder.itemView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        // set call back with user id parameter
-                        getView().onListItemClick(getRef(holder.getAdapterPosition()).getKey(), mDiaplayName);
                     }
                 });
             }
