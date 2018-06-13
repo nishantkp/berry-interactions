@@ -34,6 +34,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.OkHttp3Downloader;
 import com.squareup.picasso.Picasso;
@@ -72,7 +73,9 @@ public class BerryApp extends Application {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 // If this query gets disconnected from firebase it will set it's value to false
+                // and update the last_seen value to Firebase server's TimeStamp
                 usersDatabaseReference.child(IFirebaseConfig.ONLINE).onDisconnect().setValue(false);
+                usersDatabaseReference.child(IFirebaseConfig.LAST_SEEN).onDisconnect().setValue(ServerValue.TIMESTAMP);
             }
 
             @Override

@@ -29,24 +29,33 @@ import com.example.nishant.berry.config.IFirebaseConfig;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ServerValue;
 
+import java.sql.Timestamp;
 import java.util.Objects;
 
 /**
  * Class for updating database with current user status, whether user is online or not
  */
 public class OnlineStatus implements LoginStats {
-    private DatabaseReference mUsersDatabaseReference;
+    private DatabaseReference mUsersDatabaseOnlineReference;
+    private DatabaseReference mUsersDatabaseLastSeenReference;
     private FirebaseAuth mAuth;
 
     public OnlineStatus() {
         mAuth = FirebaseAuth.getInstance();
         if (mAuth.getCurrentUser() == null) return;
         // Database reference pointing to online_status of particular user
-        mUsersDatabaseReference = FirebaseDatabase.getInstance().getReference()
+        mUsersDatabaseOnlineReference = FirebaseDatabase.getInstance().getReference()
                 .child(IFirebaseConfig.USERS_OBJECT)
                 .child(mAuth.getCurrentUser().getUid())
                 .child(IFirebaseConfig.ONLINE);
+
+        // Database reference pointing to last_seen of particular user
+        mUsersDatabaseLastSeenReference = FirebaseDatabase.getInstance().getReference()
+                .child(IFirebaseConfig.USERS_OBJECT)
+                .child(mAuth.getCurrentUser().getUid())
+                .child(IFirebaseConfig.LAST_SEEN);
     }
 
     /**
@@ -57,17 +66,19 @@ public class OnlineStatus implements LoginStats {
     @Override
     public void onlineUser() {
         if (mAuth.getCurrentUser() == null) return;
-        mUsersDatabaseReference.setValue(true);
+        mUsersDatabaseOnlineReference.setValue(true);
     }
 
     /**
-     * This method update the online_status to false
+     * This method update the online_status to false and update last_seen value to server timeStamp
+     * i.e Firebase server's TimeStamp is more accurate
      * Advise : Call this method on onPause() method of activity because onPause() method will
      * always be called
      */
     @Override
     public void offlineUser() {
         if (mAuth.getCurrentUser() == null) return;
-        mUsersDatabaseReference.setValue(false);
+        mUsersDatabaseOnlineReference.setValue(false);
+        mUsersDatabaseLastSeenReference.setValue(ServerValue.TIMESTAMP);
     }
 }

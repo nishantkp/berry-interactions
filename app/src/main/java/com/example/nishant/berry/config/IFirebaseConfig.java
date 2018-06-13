@@ -35,6 +35,7 @@ public interface IFirebaseConfig {
     String STATUS = "status";
     String IMAGE = "image";
     String ONLINE = "online";
+    String LAST_SEEN = "last_seen";
     String DEVICE_TOKEN_ID = "token_id";
     String AVATAR_STORAGE_DIR = "profile_images";
     String DEFAULT_VALUE = "default";
