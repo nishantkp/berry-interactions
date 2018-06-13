@@ -55,6 +55,7 @@ public class FriendsPresenter
 
     private Query mQuery;
     private DatabaseReference mUsersDatabaseReference;
+    private String mDiaplayName;
 
     FriendsPresenter() {
         mQuery = FirebaseDatabase.getInstance()
@@ -101,13 +102,13 @@ public class FriendsPresenter
                 mUsersDatabaseReference.child(listUserId).addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        String displayName = Objects.requireNonNull(dataSnapshot.child(IFirebaseConfig.NAME).getValue()).toString();
+                        mDiaplayName = Objects.requireNonNull(dataSnapshot.child(IFirebaseConfig.NAME).getValue()).toString();
                         String status = Objects.requireNonNull(dataSnapshot.child(IFirebaseConfig.STATUS).getValue()).toString();
                         String thumbnail = Objects.requireNonNull(dataSnapshot.child(IFirebaseConfig.THUMBNAIL).getValue()).toString();
                         boolean onlineStatus = (boolean) dataSnapshot.child(IFirebaseConfig.ONLINE).getValue();
 
                         AllUsers users = new AllUsers();
-                        users.setName(displayName);
+                        users.setName(mDiaplayName);
                         users.setStatus(status);
                         users.setThumbnail(thumbnail);
                         users.setOnline(onlineStatus);
@@ -116,7 +117,8 @@ public class FriendsPresenter
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError databaseError) {
-
+                        /*Do nothing for now*/
+                        /*TODO Set error message callBack*/
                     }
                 });
 
@@ -125,7 +127,7 @@ public class FriendsPresenter
                     @Override
                     public void onClick(View v) {
                         // set call back with user id parameter
-                        getView().onListItemClick(getRef(position).getKey());
+                        getView().onListItemClick(getRef(holder.getAdapterPosition()).getKey(), mDiaplayName);
                     }
                 });
             }

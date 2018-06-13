@@ -25,16 +25,67 @@
 
 package com.example.nishant.berry.ui.interaction;
 
-import android.support.v7.app.AppCompatActivity;
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
+import android.view.View;
 
 import com.example.nishant.berry.R;
+import com.example.nishant.berry.base.BaseActivity;
+import com.example.nishant.berry.databinding.ActivityInteractionBinding;
+import com.example.nishant.berry.databinding.InteractionCustomBarBinding;
 
-public class InteractionActivity extends AppCompatActivity {
+/**
+ * Activity that handles all interactions between users
+ */
+public class InteractionActivity
+        extends BaseActivity
+        implements InteractionContract.View {
+
+    private InteractionPresenter mPresenter;
+    private ActivityInteractionBinding mBinding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_interaction);
+        mBinding = DataBindingUtil.setContentView(this, R.layout.activity_interaction);
+
+        // Setup support action bar
+        setSupportActionBar(mBinding.interactionsAppBar.mainAppBar);
+
+        // Attach view to presenter
+        mPresenter = new InteractionPresenter(getIntent());
+        mPresenter.attachView(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    /**
+     * Implement this method to set custom actionbar
+     *
+     * @param displayName display name
+     * @param avatarUrl   url of avatar thumbnail
+     */
+    @Override
+    public void setActionBar(String displayName, String avatarUrl) {
+        if (displayName == null) displayName = "Berry";
+        ActionBar customActionBar = getSupportActionBar();
+        View appBarView = getLayoutInflater().inflate(R.layout.interaction_custom_bar, null);
+        InteractionCustomBarBinding customBarBinding = InteractionCustomBarBinding.bind(appBarView);
+
+        if (customActionBar != null) {
+            customActionBar.setDisplayHomeAsUpEnabled(true);
+            customActionBar.setDisplayShowCustomEnabled(true);
+            customActionBar.setCustomView(customBarBinding.getRoot());
+            customBarBinding.customAppBarDisplayName.setText(displayName);
+        }
     }
 }

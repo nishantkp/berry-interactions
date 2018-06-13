@@ -19,24 +19,20 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  *
- * File Created on 10/06/18 5:34 PM by nishant
- * Last Modified on 10/06/18 5:34 PM
+ * File Created on 11/06/18 11:27 PM by nishant
+ * Last Modified on 11/06/18 11:27 PM
  */
 
-package com.example.nishant.berry.ui.dashboard.fragment.friends;
+package com.example.nishant.berry.ui.interaction;
 
 import com.example.nishant.berry.base.MvpView;
-import com.firebase.ui.database.FirebaseRecyclerAdapter;
-import com.google.firebase.database.Query;
 
-public interface FriendsContract {
+public interface InteractionContract {
     interface View extends MvpView {
-        void getFirebaseRecyclerAdapter(FirebaseRecyclerAdapter adapter);
-
-        void onListItemClick(String userId, String displayName);
+        void setActionBar(String displayName, String avatarUrl);
     }
 
     interface Presenter {
-        void setupFirebaseRecyclerAdapter(Query query);
+
     }
 }

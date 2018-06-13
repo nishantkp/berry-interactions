@@ -31,5 +31,12 @@
         android:layout_height="match_parent"
         tools:context=".ui.interaction.InteractionActivity">
 
+        <include
+            android:id="@+id/interactions_app_bar"
+            layout="@layout/app_bar_layout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
     </android.support.constraint.ConstraintLayout>
 </layout>

@@ -91,7 +91,11 @@
         </service>
 
         <activity android:name=".base.BaseActivity" />
-        <activity android:name=".ui.interaction.InteractionActivity"></activity>
+
+        <!-- Activity that handles interactions -->
+        <activity
+            android:name=".ui.interaction.InteractionActivity"
+            android:parentActivityName=".ui.dashboard.DashboardActivity" />
     </application>
 
 </manifest>

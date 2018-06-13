@@ -107,10 +107,11 @@ public class FriendsFragment
     /**
      * When user clicks on list item from friends list, this method will execute
      *
-     * @param userId user id of a person, on which click action is performed
+     * @param userId      user id of a person, on which click action is performed
+     * @param displayName name of user
      */
     @Override
-    public void onListItemClick(final String userId) {
+    public void onListItemClick(final String userId, final String displayName) {
         // Create a custom dialog from layout resource file
         View alertView = getLayoutInflater().inflate(R.layout.alert_dialog_friends_list, null);
         AlertDialogFriendsListBinding binding = AlertDialogFriendsListBinding.bind(alertView);
@@ -129,6 +130,7 @@ public class FriendsFragment
                 startActivity(
                         new Intent(getContext(), InteractionActivity.class)
                                 .putExtra(IConstants.KEY_USER_ID, userId)
+                                .putExtra(IConstants.KEY_USER_DISPLAY_NAME, displayName)
                 );
             }
         });
