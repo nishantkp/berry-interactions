@@ -31,6 +31,7 @@ import android.support.annotation.NonNull;
 import com.example.nishant.berry.base.BasePresenter;
 import com.example.nishant.berry.config.IConstants;
 import com.example.nishant.berry.config.IFirebaseConfig;
+import com.example.nishant.berry.ui.utils.GetTimeAgo;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -86,7 +87,8 @@ public class InteractionPresenter
                 if (online) {
                     mOnlineStatus = "Online";
                 } else {
-                    mOnlineStatus = mLastSeen;
+                    // Get the last seen time in human readable format
+                    mOnlineStatus = GetTimeAgo.getTimeAgo(Long.parseLong(mLastSeen));
                 }
                 // Set call back for setting up action bar
                 getView().setActionBar(mDisplayName, mAvatarThumbUrl, mOnlineStatus);
