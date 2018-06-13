@@ -26,9 +26,16 @@
 package com.example.nishant.berry.ui.interaction;
 
 import android.content.Intent;
+import android.support.annotation.NonNull;
 
 import com.example.nishant.berry.base.BasePresenter;
 import com.example.nishant.berry.config.IConstants;
+import com.example.nishant.berry.config.IFirebaseConfig;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 public class InteractionPresenter
         extends BasePresenter<InteractionContract.View>
@@ -36,6 +43,10 @@ public class InteractionPresenter
 
     private String mUserId;
     private String mDisplayName;
+    private DatabaseReference mUsersRootRef;
+    private String mLastSeen;
+    private String mAvatarThumbUrl;
+    private String mOnlineStatus;
 
     InteractionPresenter(Intent receivedIntent) {
         // Extract the userId and user displayName from intent
@@ -43,6 +54,11 @@ public class InteractionPresenter
                 receivedIntent.getStringExtra(IConstants.KEY_USER_ID) : null;
         mDisplayName = receivedIntent.hasExtra(IConstants.KEY_USER_DISPLAY_NAME) ?
                 receivedIntent.getStringExtra(IConstants.KEY_USER_DISPLAY_NAME) : null;
+        if (mUserId == null) return;
+
+        // Root reference to Users database
+        mUsersRootRef = FirebaseDatabase.getInstance().getReference().child(IFirebaseConfig.USERS_OBJECT);
+        extractBasicInfoDatabase();
     }
 
     @Override
@@ -53,6 +69,33 @@ public class InteractionPresenter
     @Override
     public void attachView(InteractionContract.View view) {
         super.attachView(view);
-        getView().setActionBar(mDisplayName, null);
+    }
+
+    /**
+     * Call this method to extract the basic information about user from database
+     * like display name, thumb avatar url, user online status etc
+     */
+    @Override
+    public void extractBasicInfoDatabase() {
+        mUsersRootRef.child(mUserId).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                mAvatarThumbUrl = dataSnapshot.child(IFirebaseConfig.THUMBNAIL).getValue().toString();
+                mLastSeen = dataSnapshot.child(IFirebaseConfig.LAST_SEEN).getValue().toString();
+                boolean online = (boolean) dataSnapshot.child(IFirebaseConfig.ONLINE).getValue();
+                if (online) {
+                    mOnlineStatus = "Online";
+                } else {
+                    mOnlineStatus = mLastSeen;
+                }
+                // Set call back for setting up action bar
+                getView().setActionBar(mDisplayName, mAvatarThumbUrl, mOnlineStatus);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                getView().setActionBar("Berry", "default", "Hey It's Berry");
+            }
+        });
     }
 }

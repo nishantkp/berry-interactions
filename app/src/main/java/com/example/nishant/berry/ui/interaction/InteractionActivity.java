@@ -34,6 +34,9 @@ import com.example.nishant.berry.R;
 import com.example.nishant.berry.base.BaseActivity;
 import com.example.nishant.berry.databinding.ActivityInteractionBinding;
 import com.example.nishant.berry.databinding.InteractionCustomBarBinding;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.NetworkPolicy;
+import com.squareup.picasso.Picasso;
 
 /**
  * Activity that handles all interactions between users
@@ -71,21 +74,43 @@ public class InteractionActivity
     /**
      * Implement this method to set custom actionbar
      *
-     * @param displayName display name
-     * @param avatarUrl   url of avatar thumbnail
+     * @param displayName  display name
+     * @param avatarUrl    url of avatar thumbnail
+     * @param onlineStatus online status of user, either "Online" or last seen timing
      */
     @Override
-    public void setActionBar(String displayName, String avatarUrl) {
+    public void setActionBar(String displayName, final String avatarUrl, String onlineStatus) {
         if (displayName == null) displayName = "Berry";
-        ActionBar customActionBar = getSupportActionBar();
+        final ActionBar customActionBar = getSupportActionBar();
         View appBarView = getLayoutInflater().inflate(R.layout.interaction_custom_bar, null);
-        InteractionCustomBarBinding customBarBinding = InteractionCustomBarBinding.bind(appBarView);
+        final InteractionCustomBarBinding customBarBinding = InteractionCustomBarBinding.bind(appBarView);
 
-        if (customActionBar != null) {
-            customActionBar.setDisplayHomeAsUpEnabled(true);
-            customActionBar.setDisplayShowCustomEnabled(true);
-            customActionBar.setCustomView(customBarBinding.getRoot());
-            customBarBinding.customAppBarDisplayName.setText(displayName);
-        }
+        if (customActionBar == null) return;
+        customActionBar.setDisplayHomeAsUpEnabled(true);
+        customActionBar.setDisplayShowCustomEnabled(true);
+        customActionBar.setCustomView(customBarBinding.getRoot());
+        customBarBinding.customAppBarDisplayName.setText(displayName);
+        customBarBinding.customAppBarLastOnline.setText(onlineStatus);
+
+        // load avatar thumbnail into circular ImageView
+        Picasso.get().load(avatarUrl)
+                .networkPolicy(NetworkPolicy.OFFLINE)
+                .placeholder(R.drawable.user_default_avatar)
+                .into(customBarBinding.customAppBarAvatar, new Callback() {
+                    @Override
+                    public void onSuccess() {
+                        /* This means we have user avatar stored locally, so no need to make network
+                         * connection. It will update ImageView with locally stored user avatar
+                         * Do nothing */
+                    }
+
+                    @Override
+                    public void onError(Exception e) {
+                        // If we don't have locally stored avatar, download it from database
+                        Picasso.get().load(avatarUrl)
+                                .placeholder(R.drawable.user_default_avatar)
+                                .into(customBarBinding.customAppBarAvatar);
+                    }
+                });
     }
 }

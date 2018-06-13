@@ -29,10 +29,10 @@ import com.example.nishant.berry.base.MvpView;
 
 public interface InteractionContract {
     interface View extends MvpView {
-        void setActionBar(String displayName, String avatarUrl);
+        void setActionBar(String displayName, String avatarUrl, String onlineStatus);
     }
 
     interface Presenter {
-
+        void extractBasicInfoDatabase();
     }
 }
