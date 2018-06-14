@@ -132,6 +132,15 @@ public class InteractionActivity
     }
 
     /**
+     * This method will be called when user hits send and message is successfully updated to database
+     * Provide implementation of this method to clear message editText
+     */
+    @Override
+    public void clearEditTextField() {
+        mBinding.interactionsBottomBar.interactionBottomEditText.getText().clear();
+    }
+
+    /**
      * Call this method to setup recycler view
      */
     private void setUpRecyclerView() {

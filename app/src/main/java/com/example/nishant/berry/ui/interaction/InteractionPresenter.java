@@ -200,9 +200,11 @@ public class InteractionPresenter
             public void onComplete(@Nullable DatabaseError databaseError,
                                    @NonNull DatabaseReference databaseReference) {
                 // If there an error updating children, log the error message
-                // If the task is successful we don't want to display anything to user
+                // If the task is successful set callBack to clear the EditText field
                 if (databaseError != null) {
                     Log.d("CHAT_LOG", databaseError.getMessage());
+                } else {
+                    getView().clearEditTextField();
                 }
             }
         });

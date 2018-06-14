@@ -35,6 +35,8 @@ public interface InteractionContract {
         void setActionBar(String displayName, String avatarUrl, String onlineStatus);
 
         void updateMessageList(List<Message> messageList);
+
+        void clearEditTextField();
     }
 
     interface Presenter {
