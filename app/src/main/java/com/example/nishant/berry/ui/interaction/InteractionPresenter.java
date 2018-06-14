@@ -28,6 +28,7 @@ package com.example.nishant.berry.ui.interaction;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.example.nishant.berry.base.BasePresenter;
@@ -164,6 +165,41 @@ public class InteractionPresenter
      */
     @Override
     public void onInteractions(String message) {
+        if (TextUtils.isEmpty(message)) return;
 
+        String currentUserRef = IFirebaseConfig.MESSAGE_OBJECT + "/" + mCurrentUserId + "/" + mInteractionUserId;
+        String interactionUserRef = IFirebaseConfig.MESSAGE_OBJECT + "/" + mInteractionUserId + "/" + mCurrentUserId;
+
+        // Get the push ID
+        DatabaseReference messagePushRef = mRootRef.child(IFirebaseConfig.MESSAGE_OBJECT)
+                .child(mCurrentUserId)
+                .child(mInteractionUserId)
+                .push();
+        String messagePushId = messagePushRef.getKey();
+
+        // Values to store at each user-reference
+        Map<String, Object> messageMap = new HashMap<>();
+        messageMap.put(IFirebaseConfig.MESSAGE_DATA, message);
+        messageMap.put(IFirebaseConfig.MESSAGE_SEEN, false);
+        messageMap.put(IFirebaseConfig.MESSAGE_TYPE, "text");
+        messageMap.put(IFirebaseConfig.MESSAGE_TIME, ServerValue.TIMESTAMP);
+
+        // Map to update user-references
+        Map<String, Object> messageUserMap = new HashMap<>();
+        messageUserMap.put(currentUserRef + "/" + messagePushId, messageMap);
+        messageUserMap.put(interactionUserRef + "/" + messagePushId, messageMap);
+
+        // Update the database
+        mRootRef.updateChildren(messageUserMap, new DatabaseReference.CompletionListener() {
+            @Override
+            public void onComplete(@Nullable DatabaseError databaseError,
+                                   @NonNull DatabaseReference databaseReference) {
+                // If there an error updating children, log the error message
+                // If the task is successful we don't want to display anything to user
+                if (databaseError != null) {
+                    Log.d("CHAT_LOG", databaseError.getMessage());
+                }
+            }
+        });
     }
 }

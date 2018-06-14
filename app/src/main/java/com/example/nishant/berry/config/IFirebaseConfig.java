@@ -31,6 +31,11 @@ public interface IFirebaseConfig {
     String FRIENDS_OBJECT = "friends";
     String NOTIFICATION_OBJECT = "notifications";
     String INTERACTIONS_OBJECT = "interactions";
+    String MESSAGE_OBJECT = "message";
+    String MESSAGE_SEEN = "message_seen";
+    String MESSAGE_DATA = "data";
+    String MESSAGE_TYPE = "type";
+    String MESSAGE_TIME = "time";
     String NAME = "name";
     String THUMBNAIL = "thumbnail";
     String STATUS = "status";
