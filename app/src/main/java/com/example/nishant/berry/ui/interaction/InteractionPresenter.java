@@ -188,6 +188,7 @@ public class InteractionPresenter
         messageMap.put(IFirebaseConfig.MESSAGE_SEEN, false);
         messageMap.put(IFirebaseConfig.MESSAGE_TYPE, "text");
         messageMap.put(IFirebaseConfig.MESSAGE_TIME, ServerValue.TIMESTAMP);
+        messageMap.put(IFirebaseConfig.MESSAGE_FROM, mCurrentUserId);
 
         // Map to update user-references
         Map<String, Object> messageUserMap = new HashMap<>();

@@ -36,6 +36,7 @@ public interface IFirebaseConfig {
     String MESSAGE_DATA = "data";
     String MESSAGE_TYPE = "type";
     String MESSAGE_TIME = "time";
+    String MESSAGE_FROM = "from";
     String NAME = "name";
     String THUMBNAIL = "thumbnail";
     String STATUS = "status";
