@@ -42,12 +42,12 @@
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:background="@color/selectorColor"
-            app:layout_constraintBottom_toTopOf="@+id/include"
+            app:layout_constraintBottom_toTopOf="@+id/interactions_bottom_bar"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 
         <include
-            android:id="@+id/include"
+            android:id="@+id/interactions_bottom_bar"
             layout="@layout/interaction_bottom_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

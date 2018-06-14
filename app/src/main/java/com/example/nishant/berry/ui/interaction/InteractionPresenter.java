@@ -155,4 +155,15 @@ public class InteractionPresenter
             }
         });
     }
+
+    /**
+     * This method will be invoked when user clicks send button from @{@link InteractionActivity}
+     * layout
+     *
+     * @param message message user want to send
+     */
+    @Override
+    public void onInteractions(String message) {
+
+    }
 }

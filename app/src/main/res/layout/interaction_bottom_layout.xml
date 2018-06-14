@@ -24,6 +24,17 @@
   -->
 <layout xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <data>
+
+        <variable
+            name="presenter"
+            type="com.example.nishant.berry.ui.interaction.InteractionContract.Presenter" />
+
+        <variable
+            name="data"
+            type="com.example.nishant.berry.ui.model.Interaction" />
+    </data>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="56dp"
@@ -49,6 +60,7 @@
             android:background="@android:color/transparent"
             android:hint="Start interactions..."
             android:padding="8dp"
+            android:text="@={data.interaction}"
             android:textSize="18sp" />
 
         <ImageButton
@@ -57,6 +69,7 @@
             android:layout_width="0dp"
             android:layout_height="56dp"
             android:layout_weight="1"
+            android:onClick="@{()->presenter.onInteractions(data.interaction)}"
             android:scaleType="centerInside"
             android:src="@drawable/ic_baseline_send_24px" />
     </LinearLayout>

@@ -19,24 +19,30 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  *
- * File Created on 11/06/18 11:27 PM by nishant
- * Last Modified on 11/06/18 11:27 PM
+ * File Created on 13/06/18 8:04 PM by nishant
+ * Last Modified on 13/06/18 8:04 PM
  */
 
-package com.example.nishant.berry.ui.interaction;
+package com.example.nishant.berry.ui.model;
 
-import com.example.nishant.berry.base.MvpView;
+import android.databinding.BaseObservable;
+import android.databinding.Bindable;
 
-public interface InteractionContract {
-    interface View extends MvpView {
-        void setActionBar(String displayName, String avatarUrl, String onlineStatus);
+import com.android.databinding.library.baseAdapters.BR;
+
+/**
+ * Model class deals with two-way data binding for interactions edit text
+ */
+public class Interaction extends BaseObservable {
+    private String interaction;
+
+    @Bindable
+    public String getInteraction() {
+        return interaction;
     }
 
-    interface Presenter {
-        void extractBasicInfoDatabase();
-
-        void initInteractionDatabase();
-
-        void onInteractions(String message);
+    public void setInteraction(String interaction) {
+        this.interaction = interaction;
+        notifyPropertyChanged(BR.interaction);
     }
 }

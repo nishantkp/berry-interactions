@@ -34,6 +34,7 @@ import com.example.nishant.berry.R;
 import com.example.nishant.berry.base.BaseActivity;
 import com.example.nishant.berry.databinding.ActivityInteractionBinding;
 import com.example.nishant.berry.databinding.InteractionCustomBarBinding;
+import com.example.nishant.berry.ui.model.Interaction;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
@@ -52,6 +53,7 @@ public class InteractionActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_interaction);
+        mBinding.interactionsBottomBar.setData(new Interaction());
 
         // Setup support action bar
         setSupportActionBar(mBinding.interactionsAppBar.mainAppBar);
@@ -59,6 +61,7 @@ public class InteractionActivity
         // Attach view to presenter
         mPresenter = new InteractionPresenter(getIntent());
         mPresenter.attachView(this);
+        mBinding.interactionsBottomBar.setPresenter(mPresenter);
     }
 
     @Override
