@@ -28,16 +28,21 @@ package com.example.nishant.berry.ui.interaction;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
+import android.support.v7.widget.LinearLayoutManager;
 import android.view.View;
 
 import com.example.nishant.berry.R;
 import com.example.nishant.berry.base.BaseActivity;
 import com.example.nishant.berry.databinding.ActivityInteractionBinding;
 import com.example.nishant.berry.databinding.InteractionCustomBarBinding;
+import com.example.nishant.berry.ui.adapter.MessageAdapter;
 import com.example.nishant.berry.ui.model.Interaction;
+import com.example.nishant.berry.ui.model.Message;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
+
+import java.util.List;
 
 /**
  * Activity that handles all interactions between users
@@ -48,6 +53,7 @@ public class InteractionActivity
 
     private InteractionPresenter mPresenter;
     private ActivityInteractionBinding mBinding;
+    private MessageAdapter mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +63,9 @@ public class InteractionActivity
 
         // Setup support action bar
         setSupportActionBar(mBinding.interactionsAppBar.mainAppBar);
+
+        // Setup recycler view
+        setUpRecyclerView();
 
         // Attach view to presenter
         mPresenter = new InteractionPresenter(getIntent());
@@ -115,5 +124,20 @@ public class InteractionActivity
                                 .into(customBarBinding.customAppBarAvatar);
                     }
                 });
+    }
+
+    @Override
+    public void updateMessageList(List<Message> messageList) {
+        mAdapter.swapData(messageList);
+    }
+
+    /**
+     * Call this method to setup recycler view
+     */
+    private void setUpRecyclerView() {
+        mBinding.interactionsMessageList.setHasFixedSize(true);
+        mBinding.interactionsMessageList.setLayoutManager(new LinearLayoutManager(this));
+        mAdapter = new MessageAdapter(null);
+        mBinding.interactionsMessageList.setAdapter(mAdapter);
     }
 }

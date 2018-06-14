@@ -19,31 +19,58 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  *
- * File Created on 11/06/18 11:27 PM by nishant
- * Last Modified on 11/06/18 11:27 PM
+ * File Created on 13/06/18 10:44 PM by nishant
+ * Last Modified on 13/06/18 10:44 PM
  */
 
-package com.example.nishant.berry.ui.interaction;
+package com.example.nishant.berry.ui.model;
 
-import com.example.nishant.berry.base.MvpView;
-import com.example.nishant.berry.ui.model.Message;
+public class Message {
+    private String data;
 
-import java.util.List;
-
-public interface InteractionContract {
-    interface View extends MvpView {
-        void setActionBar(String displayName, String avatarUrl, String onlineStatus);
-
-        void updateMessageList(List<Message> messageList);
+    public Message() {
     }
 
-    interface Presenter {
-        void extractBasicInfoDatabase();
+    public Message(String data, boolean last_seen, String type, long time) {
+        this.data = data;
+        this.last_seen = last_seen;
+        this.type = type;
+        this.time = time;
+    }
 
-        void initInteractionDatabase();
+    private boolean last_seen;
+    private String type;
+    private long time;
 
-        void onInteractions(String message);
+    public String getData() {
+        return data;
+    }
 
-        void updateMessageList();
+    public void setData(String data) {
+        this.data = data;
+    }
+
+    public boolean isLast_seen() {
+        return last_seen;
+    }
+
+    public void setLast_seen(boolean last_seen) {
+        this.last_seen = last_seen;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public long getTime() {
+        return time;
+    }
+
+    public void setTime(long time) {
+        this.time = time;
     }
 }

@@ -34,8 +34,10 @@ import android.util.Log;
 import com.example.nishant.berry.base.BasePresenter;
 import com.example.nishant.berry.config.IConstants;
 import com.example.nishant.berry.config.IFirebaseConfig;
+import com.example.nishant.berry.ui.model.Message;
 import com.example.nishant.berry.ui.utils.GetTimeAgo;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -43,7 +45,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -78,6 +82,7 @@ public class InteractionPresenter
         mInteractionsRootRef = mRootRef.child(IFirebaseConfig.INTERACTIONS_OBJECT);
         extractBasicInfoDatabase();
         initInteractionDatabase();
+        updateMessageList();
     }
 
     @Override
@@ -201,5 +206,44 @@ public class InteractionPresenter
                 }
             }
         });
+    }
+
+    /**
+     * Get the messages from database and set callback to update recycler view
+     */
+    @Override
+    public void updateMessageList() {
+        final List<Message> messageList = new ArrayList<>();
+        mRootRef.child(IFirebaseConfig.MESSAGE_OBJECT)
+                .child(mCurrentUserId)
+                .child(mInteractionUserId)
+                .addChildEventListener(new ChildEventListener() {
+                    @Override
+                    public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                        Message message = dataSnapshot.getValue(Message.class);
+                        messageList.add(message);
+                        getView().updateMessageList(messageList);
+                    }
+
+                    @Override
+                    public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+                    }
+
+                    @Override
+                    public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+                    }
+
+                    @Override
+                    public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
     }
 }
