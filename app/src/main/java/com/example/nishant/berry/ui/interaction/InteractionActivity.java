@@ -129,6 +129,7 @@ public class InteractionActivity
     @Override
     public void updateMessageList(List<Message> messageList) {
         mAdapter.swapData(messageList);
+        mBinding.interactionsMessageList.scrollToPosition(messageList.size() - 1);
     }
 
     /**
