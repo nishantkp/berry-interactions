@@ -23,6 +23,7 @@
   ~ Last Modified on 13/06/18 10:32 PM
   -->
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
@@ -32,29 +33,32 @@
             type="com.example.nishant.berry.ui.model.Message" />
     </data>
 
-    <RelativeLayout
+    <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical">
+        android:gravity="center_vertical"
+        android:paddingBottom="4dp"
+        android:paddingEnd="16dp"
+        android:paddingStart="16dp"
+        android:paddingTop="4dp">
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/message_list_item_avatar"
-            android:layout_width="45dp"
-            android:layout_height="45dp"
-            android:layout_margin="12dp"
-            android:src="@drawable/user_default_avatar" />
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:src="@drawable/user_default_avatar"
+            app:layout_constraintBottom_toBottomOf="@+id/message_list_item_message"
+            app:layout_constraintStart_toStartOf="parent" />
 
         <TextView
             android:id="@+id/message_list_item_message"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp"
-            android:layout_marginEnd="12dp"
-            android:layout_marginTop="12dp"
+            android:layout_marginStart="8dp"
             android:layout_toEndOf="@id/message_list_item_avatar"
             android:background="@drawable/message_background"
             android:fontFamily="sans-serif"
-            android:gravity="start"
+            android:maxWidth="250dp"
             android:paddingBottom="10dp"
             android:paddingEnd="20dp"
             android:paddingStart="20dp"
@@ -62,6 +66,8 @@
             android:text="@{message.data}"
             android:textColor="@color/primaryTextColor"
             android:textSize="16sp"
+            app:layout_constraintStart_toEndOf="@+id/message_list_item_avatar"
+            app:layout_constraintTop_toTopOf="parent"
             tools:text="this is sample message" />
-    </RelativeLayout>
+    </android.support.constraint.ConstraintLayout>
 </layout>

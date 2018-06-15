@@ -25,16 +25,15 @@
 
 package com.example.nishant.berry.ui.adapter;
 
-import android.content.Context;
 import android.support.annotation.NonNull;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.nishant.berry.R;
-import com.example.nishant.berry.databinding.MessageListItemBinding;
+import com.example.nishant.berry.databinding.MessageListItemReceivedBinding;
+import com.example.nishant.berry.databinding.MessageListItemSentBinding;
 import com.example.nishant.berry.ui.interaction.InteractionActivity;
 import com.example.nishant.berry.ui.model.Message;
 import com.google.firebase.auth.FirebaseAuth;
@@ -46,25 +45,61 @@ import java.util.Objects;
  * RecyclerView adapter to display messages for {@link InteractionActivity}
  */
 public class MessageAdapter
-        extends RecyclerView.Adapter<MessageAdapter.MessageViewHolder> {
+        extends RecyclerView.Adapter {
     private List<Message> mMessageList;
-    private FirebaseAuth mAuth;
+    private String mCurrentUserId;
+    private static final int SENT_MESSAGE = 1;
+    private static final int RECEIVED_MESSAGE = 2;
 
     public MessageAdapter(List<Message> messageList) {
         mMessageList = messageList;
-        mAuth = FirebaseAuth.getInstance();
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        mCurrentUserId = Objects.requireNonNull(mAuth.getCurrentUser()).getUid();
     }
 
     @NonNull
     @Override
-    public MessageViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.message_list_item, parent, false);
-        return new MessageViewHolder(MessageListItemBinding.bind(view));
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        if (viewType == SENT_MESSAGE) {
+            View sentView = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.message_list_item_sent, parent, false);
+            return new SentMessageViewHolder(MessageListItemSentBinding.bind(sentView));
+        } else {
+            View receivedView = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.message_list_item_received, parent, false);
+            return new ReceivedMessageViewHolder(MessageListItemReceivedBinding.bind(receivedView));
+        }
     }
 
+
     @Override
-    public void onBindViewHolder(@NonNull MessageViewHolder holder, int position) {
-        holder.bind(mMessageList.get(position));
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+        Message message = mMessageList.get(position);
+        switch (holder.getItemViewType()) {
+            case SENT_MESSAGE:
+                ((SentMessageViewHolder) holder).bind(message);
+                break;
+            case RECEIVED_MESSAGE:
+                ((ReceivedMessageViewHolder) holder).bind(message);
+                break;
+        }
+    }
+
+    /**
+     * Determine Item type whether message which is being displayed, is sent by current user or
+     * it is received message
+     *
+     * @param position adapter position
+     * @return view type
+     */
+    @Override
+    public int getItemViewType(int position) {
+        Message currentMessage = mMessageList.get(position);
+        if (currentMessage.getFrom().equals(mCurrentUserId)) {
+            return SENT_MESSAGE;
+        } else {
+            return RECEIVED_MESSAGE;
+        }
     }
 
     @Override
@@ -83,33 +118,35 @@ public class MessageAdapter
         notifyDataSetChanged();
     }
 
-    class MessageViewHolder extends RecyclerView.ViewHolder {
-        private MessageListItemBinding messageListItemBinding;
+    /**
+     * Received message ViewHolder
+     */
+    class ReceivedMessageViewHolder extends RecyclerView.ViewHolder {
+        private MessageListItemReceivedBinding messageListItemBinding;
 
-        MessageViewHolder(MessageListItemBinding binding) {
+        ReceivedMessageViewHolder(MessageListItemReceivedBinding binding) {
             super(binding.getRoot());
             messageListItemBinding = binding;
         }
 
         public void bind(Message message) {
-            String currentUserId = Objects.requireNonNull(mAuth.getCurrentUser()).getUid();
             messageListItemBinding.setMessage(message);
-            Context context = messageListItemBinding.getRoot().getContext();
+        }
+    }
 
-            // If current userId is same as "from" userId, that means current user has sent
-            // the message so change the background color of message TextView to blue
-            if (currentUserId.equals(message.getFrom())) {
-                messageListItemBinding.messageListItemMessage
-                        .setBackgroundResource(R.drawable.current_user_message_background);
-                messageListItemBinding.messageListItemMessage
-                        .setTextColor(context.getResources().getColor(R.color.secondaryTextColor));
-            } else {
-                // Otherwise set it to default
-                messageListItemBinding.messageListItemMessage
-                        .setBackgroundResource(R.drawable.message_background);
-                messageListItemBinding.messageListItemMessage
-                        .setTextColor(context.getResources().getColor(R.color.primaryTextColor));
-            }
+    /**
+     * Sent message ViewHolder
+     */
+    class SentMessageViewHolder extends RecyclerView.ViewHolder {
+        private MessageListItemSentBinding mBinding;
+
+        SentMessageViewHolder(MessageListItemSentBinding binding) {
+            super(binding.getRoot());
+            mBinding = binding;
+        }
+
+        public void bind(Message message) {
+            mBinding.setMessage(message);
         }
     }
 }
