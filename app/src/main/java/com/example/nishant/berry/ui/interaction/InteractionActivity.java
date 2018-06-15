@@ -64,9 +64,6 @@ public class InteractionActivity
         // Setup support action bar
         setSupportActionBar(mBinding.interactionsAppBar.mainAppBar);
 
-        // Setup recycler view
-        setUpRecyclerView();
-
         // Attach view to presenter
         mPresenter = new InteractionPresenter(getIntent());
         mPresenter.attachView(this);
@@ -141,13 +138,11 @@ public class InteractionActivity
         mBinding.interactionsBottomBar.interactionBottomEditText.getText().clear();
     }
 
-    /**
-     * Call this method to setup recycler view
-     */
-    private void setUpRecyclerView() {
+    @Override
+    public void setUpRecyclerView(String thumbUrl) {
         mBinding.interactionsMessageList.setHasFixedSize(true);
         mBinding.interactionsMessageList.setLayoutManager(new LinearLayoutManager(this));
-        mAdapter = new MessageAdapter(null);
+        mAdapter = new MessageAdapter(null, thumbUrl);
         mBinding.interactionsMessageList.setAdapter(mAdapter);
     }
 }

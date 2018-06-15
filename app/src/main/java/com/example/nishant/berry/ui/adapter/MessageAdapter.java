@@ -36,6 +36,7 @@ import com.example.nishant.berry.databinding.MessageListItemReceivedBinding;
 import com.example.nishant.berry.databinding.MessageListItemSentBinding;
 import com.example.nishant.berry.ui.interaction.InteractionActivity;
 import com.example.nishant.berry.ui.model.Message;
+import com.example.nishant.berry.ui.utils.ImageLoad;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.List;
@@ -48,11 +49,13 @@ public class MessageAdapter
         extends RecyclerView.Adapter {
     private List<Message> mMessageList;
     private String mCurrentUserId;
+    private String mInteractionUserThumbUrl;
     private static final int SENT_MESSAGE = 1;
     private static final int RECEIVED_MESSAGE = 2;
 
-    public MessageAdapter(List<Message> messageList) {
+    public MessageAdapter(List<Message> messageList, String thumbUrl) {
         mMessageList = messageList;
+        mInteractionUserThumbUrl = thumbUrl;
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         mCurrentUserId = Objects.requireNonNull(mAuth.getCurrentUser()).getUid();
     }
@@ -131,6 +134,8 @@ public class MessageAdapter
 
         public void bind(Message message) {
             messageListItemBinding.setMessage(message);
+            // Load interaction user avatar
+            ImageLoad.load(mInteractionUserThumbUrl, messageListItemBinding.messageListItemAvatar);
         }
     }
 

@@ -82,7 +82,7 @@ public class InteractionPresenter
         mInteractionsRootRef = mRootRef.child(IFirebaseConfig.INTERACTIONS_OBJECT);
         extractBasicInfoDatabase();
         initInteractionDatabase();
-        updateMessageList();
+        extractInteractionUserData();
     }
 
     @Override
@@ -246,6 +246,27 @@ public class InteractionPresenter
                     @Override
                     public void onCancelled(@NonNull DatabaseError databaseError) {
 
+                    }
+                });
+    }
+
+    /**
+     * Call this method to get the basic information for interaction user
+     */
+    @Override
+    public void extractInteractionUserData() {
+        mUsersRootRef.child(mInteractionUserId)
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        String thumbUrl = Objects.requireNonNull(dataSnapshot.child(IFirebaseConfig.THUMBNAIL).getValue()).toString();
+                        getView().setUpRecyclerView(thumbUrl);
+                        updateMessageList();
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                        /* Do nothing for now */
                     }
                 });
     }

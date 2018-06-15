@@ -37,6 +37,8 @@ public interface InteractionContract {
         void updateMessageList(List<Message> messageList);
 
         void clearEditTextField();
+
+        void setUpRecyclerView(String thumbUrl);
     }
 
     interface Presenter {
@@ -47,5 +49,7 @@ public interface InteractionContract {
         void onInteractions(String message);
 
         void updateMessageList();
+
+        void extractInteractionUserData();
     }
 }
