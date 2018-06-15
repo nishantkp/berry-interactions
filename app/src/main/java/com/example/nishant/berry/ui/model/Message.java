@@ -27,20 +27,21 @@ package com.example.nishant.berry.ui.model;
 
 public class Message {
     private String data;
+    private String type;
+    private String from;
+    private boolean last_seen;
+    private long time;
 
     public Message() {
     }
 
-    public Message(String data, boolean last_seen, String type, long time) {
+    public Message(String data, boolean last_seen, String type, long time, String from) {
         this.data = data;
         this.last_seen = last_seen;
         this.type = type;
         this.time = time;
+        this.from = from;
     }
-
-    private boolean last_seen;
-    private String type;
-    private long time;
 
     public String getData() {
         return data;
@@ -72,5 +73,13 @@ public class Message {
 
     public void setTime(long time) {
         this.time = time;
+    }
+
+    public String getFrom() {
+        return from;
+    }
+
+    public void setFrom(String from) {
+        this.from = from;
     }
 }

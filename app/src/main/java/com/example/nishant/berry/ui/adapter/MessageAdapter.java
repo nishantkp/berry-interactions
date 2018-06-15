@@ -25,7 +25,9 @@
 
 package com.example.nishant.berry.ui.adapter;
 
+import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,8 +37,10 @@ import com.example.nishant.berry.R;
 import com.example.nishant.berry.databinding.MessageListItemBinding;
 import com.example.nishant.berry.ui.interaction.InteractionActivity;
 import com.example.nishant.berry.ui.model.Message;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * RecyclerView adapter to display messages for {@link InteractionActivity}
@@ -44,9 +48,11 @@ import java.util.List;
 public class MessageAdapter
         extends RecyclerView.Adapter<MessageAdapter.MessageViewHolder> {
     private List<Message> mMessageList;
+    private FirebaseAuth mAuth;
 
     public MessageAdapter(List<Message> messageList) {
         mMessageList = messageList;
+        mAuth = FirebaseAuth.getInstance();
     }
 
     @NonNull
@@ -86,7 +92,24 @@ public class MessageAdapter
         }
 
         public void bind(Message message) {
+            String currentUserId = Objects.requireNonNull(mAuth.getCurrentUser()).getUid();
             messageListItemBinding.setMessage(message);
+            Context context = messageListItemBinding.getRoot().getContext();
+
+            // If current userId is same as "from" userId, that means current user has sent
+            // the message so change the background color of message TextView to blue
+            if (currentUserId.equals(message.getFrom())) {
+                messageListItemBinding.messageListItemMessage
+                        .setBackgroundResource(R.drawable.current_user_message_background);
+                messageListItemBinding.messageListItemMessage
+                        .setTextColor(context.getResources().getColor(R.color.secondaryTextColor));
+            } else {
+                // Otherwise set it to default
+                messageListItemBinding.messageListItemMessage
+                        .setBackgroundResource(R.drawable.message_background);
+                messageListItemBinding.messageListItemMessage
+                        .setTextColor(context.getResources().getColor(R.color.primaryTextColor));
+            }
         }
     }
 }

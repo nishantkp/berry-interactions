@@ -19,20 +19,12 @@
   ~ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
   ~ SOFTWARE.
   ~
-  ~ File Created on 02/06/18 12:55 AM by nishant
-  ~ Last Modified on 01/06/18 9:54 PM
+  ~ File Created on 14/06/18 7:31 PM by nishant
+  ~ Last Modified on 14/06/18 7:31 PM
   -->
 
-<resources>
-    <color name="colorPrimary">#eceff1</color>
-    <color name="colorPrimaryLight">#ffffff</color>
-    <color name="colorPrimaryDark">#babdbe</color>
-    <color name="colorSecondary">#ff1744</color>
-    <color name="colorSecondaryLight">#ff616f</color>
-    <color name="colorSecondaryDark">#c4001d</color>
-    <color name="primaryTextColor">#000000</color>
-    <color name="secondaryTextColor">#fafafa</color>
-    <color name="tabTextColor">#757575</color>
-    <color name="selectorColor">#eeeeee</color>
-    <color name="currentUserMessageColor">#0091ea</color>
-</resources>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="@color/currentUserMessageColor" />
+    <corners android:radius="20dp" />
+</shape>

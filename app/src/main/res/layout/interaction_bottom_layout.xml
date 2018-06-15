@@ -58,6 +58,7 @@
             android:layout_gravity="center_vertical"
             android:layout_weight="4"
             android:background="@android:color/transparent"
+            android:focusableInTouchMode="true"
             android:hint="Start interactions..."
             android:padding="8dp"
             android:text="@={data.interaction}"
