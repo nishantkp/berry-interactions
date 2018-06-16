@@ -34,6 +34,7 @@ import com.example.nishant.berry.databinding.AllUsersListItemBinding;
 import com.example.nishant.berry.ui.allusers.AllUsersActivity;
 import com.example.nishant.berry.ui.dashboard.fragment.friends.FriendsFragment;
 import com.example.nishant.berry.ui.model.AllUsers;
+import com.example.nishant.berry.ui.utils.ImageLoad;
 import com.google.android.gms.common.internal.ICancelToken;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.NetworkPolicy;
@@ -65,25 +66,7 @@ public class AllUsersViewHolder extends RecyclerView.ViewHolder {
             mBinding.allUsersListItemAvatar.setImageResource(R.drawable.user_default_avatar);
         } else {
             // load avatar thumbnail into circular ImageView
-            Picasso.get().load(users.getThumbnail())
-                    .networkPolicy(NetworkPolicy.OFFLINE)
-                    .placeholder(R.drawable.user_default_avatar)
-                    .into(mBinding.allUsersListItemAvatar, new Callback() {
-                        @Override
-                        public void onSuccess() {
-                            /* This means we have user avatar stored locally, so no need to make network
-                             * connection. It will update ImageView with locally stored user avatar
-                             * Do nothing */
-                        }
-
-                        @Override
-                        public void onError(Exception e) {
-                            // If we don't have locally stored avatar, download it from database
-                            Picasso.get().load(users.getThumbnail())
-                                    .placeholder(R.drawable.user_default_avatar)
-                                    .into(mBinding.allUsersListItemAvatar);
-                        }
-                    });
+            ImageLoad.load(users.getThumbnail(), mBinding.allUsersListItemAvatar);
         }
     }
 }

@@ -31,6 +31,7 @@ import android.databinding.DataBindingUtil;
 import android.graphics.Bitmap;
 import android.icu.text.UnicodeSetSpanner;
 import android.net.Uri;
+import android.provider.ContactsContract;
 import android.support.v4.widget.CircularProgressDrawable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -41,6 +42,7 @@ import com.example.nishant.berry.base.BaseActivity;
 import com.example.nishant.berry.config.IConstants;
 import com.example.nishant.berry.databinding.ActivitySettingsBinding;
 import com.example.nishant.berry.ui.status.StatusActivity;
+import com.example.nishant.berry.ui.utils.ImageLoad;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
@@ -96,27 +98,8 @@ public class SettingsActivity
 
     @Override
     public void setImage(final String imageUri) {
-        if (imageUri == null)
-            return;
-        // First try to load image from disk, if it's not available only then download
-        // image from database
-        Picasso.get().load(imageUri)
-                .networkPolicy(NetworkPolicy.OFFLINE)
-                .placeholder(R.drawable.user_default_avatar)
-                .into(mBinding.settingsAvatar, new Callback() {
-                    @Override
-                    public void onSuccess() {
-                        /* This means we have avatar available locally, so load it from there */
-                        /* do nothing */
-                    }
-
-                    @Override
-                    public void onError(Exception e) {
-                        Picasso.get().load(imageUri)
-                                .placeholder(R.drawable.user_default_avatar)
-                                .into(mBinding.settingsAvatar);
-                    }
-                });
+        if (imageUri == null) return;
+        ImageLoad.load(imageUri, mBinding.settingsAvatar);
     }
 
     @Override
