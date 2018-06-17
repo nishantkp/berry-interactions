@@ -38,7 +38,13 @@ public interface InteractionContract {
 
         void clearEditTextField();
 
-        void setUpRecyclerView(String thumbUrl);
+        void setUpRecyclerView();
+
+        void onSwipeRefreshComplete();
+
+        void interactionUserAvatar(String url);
+
+        void setLayoutManagerOffset(int position);
     }
 
     interface Presenter {
@@ -50,6 +56,8 @@ public interface InteractionContract {
 
         void updateMessageList();
 
-        void extractInteractionUserData();
+        void updateMoreMessageToList();
+
+        void swipeMessageRefresh();
     }
 }

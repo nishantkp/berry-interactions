@@ -42,6 +42,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 
@@ -55,15 +56,21 @@ public class InteractionPresenter
         extends BasePresenter<InteractionContract.View>
         implements InteractionContract.Presenter {
 
+    private static final int NUMBER_OF_MESSAGES_PER_PAGE = 20;
     private String mInteractionUserId;
     private String mCurrentUserId;
     private String mDisplayName;
     private String mLastSeen;
     private String mAvatarThumbUrl;
     private String mOnlineStatus;
+    private String mLastMessageKey = "";
+    private String mPreviousMessageKey = "";
     private DatabaseReference mRootRef;
     private DatabaseReference mUsersRootRef;
     private DatabaseReference mInteractionsRootRef;
+    private int mCurrentPage = 1;
+    private int mItemPosition = 0;
+    private List<Message> mMessageList = new ArrayList<>();
 
     InteractionPresenter(Intent receivedIntent) {
         // Extract the userId and user displayName from intent
@@ -80,9 +87,6 @@ public class InteractionPresenter
         mRootRef = FirebaseDatabase.getInstance().getReference();
         mUsersRootRef = mRootRef.child(IFirebaseConfig.USERS_OBJECT);
         mInteractionsRootRef = mRootRef.child(IFirebaseConfig.INTERACTIONS_OBJECT);
-        extractBasicInfoDatabase();
-        initInteractionDatabase();
-        extractInteractionUserData();
     }
 
     @Override
@@ -93,6 +97,10 @@ public class InteractionPresenter
     @Override
     public void attachView(InteractionContract.View view) {
         super.attachView(view);
+        getView().setUpRecyclerView();
+        updateMessageList();
+        extractBasicInfoDatabase();
+        initInteractionDatabase();
     }
 
     /**
@@ -115,6 +123,8 @@ public class InteractionPresenter
                 }
                 // Set call back for setting up action bar
                 getView().setActionBar(mDisplayName, mAvatarThumbUrl, mOnlineStatus);
+                // Callback for updating RecyclerView with interaction user avatar
+                getView().interactionUserAvatar(mAvatarThumbUrl);
             }
 
             @Override
@@ -216,58 +226,109 @@ public class InteractionPresenter
      */
     @Override
     public void updateMessageList() {
-        final List<Message> messageList = new ArrayList<>();
-        mRootRef.child(IFirebaseConfig.MESSAGE_OBJECT)
+        DatabaseReference messageRef = mRootRef.child(IFirebaseConfig.MESSAGE_OBJECT)
                 .child(mCurrentUserId)
-                .child(mInteractionUserId)
-                .addChildEventListener(new ChildEventListener() {
-                    @Override
-                    public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                        Message message = dataSnapshot.getValue(Message.class);
-                        messageList.add(message);
-                        getView().updateMessageList(messageList);
-                    }
+                .child(mInteractionUserId);
+        Query query = messageRef.limitToLast(mCurrentPage * NUMBER_OF_MESSAGES_PER_PAGE);
 
-                    @Override
-                    public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+        query.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                Message message = dataSnapshot.getValue(Message.class);
+                mItemPosition++;
+                if (mItemPosition == 1) {
+                    mLastMessageKey = dataSnapshot.getKey();
+                    mPreviousMessageKey = mLastMessageKey;
+                }
+                mMessageList.add(message);
+                getView().updateMessageList(mMessageList);
+                getView().onSwipeRefreshComplete();
+            }
 
-                    }
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
 
-                    @Override
-                    public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+            }
 
-                    }
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
 
-                    @Override
-                    public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+            }
 
-                    }
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
 
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
+            }
 
-                    }
-                });
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
     /**
-     * Call this method to get the basic information for interaction user
+     * Call this method to refresh message list
      */
     @Override
-    public void extractInteractionUserData() {
-        mUsersRootRef.child(mInteractionUserId)
-                .addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        String thumbUrl = Objects.requireNonNull(dataSnapshot.child(IFirebaseConfig.THUMBNAIL).getValue()).toString();
-                        getView().setUpRecyclerView(thumbUrl);
-                        updateMessageList();
-                    }
+    public void swipeMessageRefresh() {
+        mItemPosition = 0;
+        mCurrentPage++;
+        updateMoreMessageToList();
+    }
 
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-                        /* Do nothing for now */
-                    }
-                });
+    /**
+     * Call this method to add more messages to list when user swipe message list to load more
+     * previous messages
+     */
+    @Override
+    public void updateMoreMessageToList() {
+        DatabaseReference messageRef = mRootRef.child(IFirebaseConfig.MESSAGE_OBJECT)
+                .child(mCurrentUserId)
+                .child(mInteractionUserId);
+
+        Query query = messageRef.orderByKey()
+                .endAt(mLastMessageKey)
+                .limitToLast(NUMBER_OF_MESSAGES_PER_PAGE);
+
+        query.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                Message message = dataSnapshot.getValue(Message.class);
+
+                // If our previous message key is not same as current message key, add that message
+                // to message list
+                if (!mPreviousMessageKey.equals(dataSnapshot.getKey())) {
+                    mMessageList.add(mItemPosition++, message);
+                } else {
+                    mPreviousMessageKey = mLastMessageKey;
+                }
+
+                if (mItemPosition == 1) mLastMessageKey = dataSnapshot.getKey();
+                getView().updateMessageList(mMessageList);
+                getView().setLayoutManagerOffset(NUMBER_OF_MESSAGES_PER_PAGE - 1);
+                getView().onSwipeRefreshComplete();
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 }

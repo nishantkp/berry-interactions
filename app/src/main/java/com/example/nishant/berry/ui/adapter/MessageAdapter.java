@@ -53,9 +53,8 @@ public class MessageAdapter
     private static final int SENT_MESSAGE = 1;
     private static final int RECEIVED_MESSAGE = 2;
 
-    public MessageAdapter(List<Message> messageList, String thumbUrl) {
+    public MessageAdapter(List<Message> messageList) {
         mMessageList = messageList;
-        mInteractionUserThumbUrl = thumbUrl;
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         mCurrentUserId = Objects.requireNonNull(mAuth.getCurrentUser()).getUid();
     }
@@ -118,6 +117,16 @@ public class MessageAdapter
     public void swapData(List<Message> messageList) {
         if (messageList == null || messageList.size() == 0) return;
         mMessageList = messageList;
+        notifyDataSetChanged();
+    }
+
+    public void updateInteractionUserAvatar(String thumbUrl) {
+        mInteractionUserThumbUrl = thumbUrl;
+        notifyDataSetChanged();
+    }
+
+    public void clearData() {
+        mMessageList.clear();
         notifyDataSetChanged();
     }
 

@@ -25,8 +25,10 @@
 
 package com.example.nishant.berry.ui.interaction;
 
+import android.databinding.BindingAdapter;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.view.View;
@@ -38,6 +40,7 @@ import com.example.nishant.berry.databinding.InteractionCustomBarBinding;
 import com.example.nishant.berry.ui.adapter.MessageAdapter;
 import com.example.nishant.berry.ui.model.Interaction;
 import com.example.nishant.berry.ui.model.Message;
+import com.example.nishant.berry.ui.utils.ImageLoad;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
@@ -54,6 +57,7 @@ public class InteractionActivity
     private InteractionPresenter mPresenter;
     private ActivityInteractionBinding mBinding;
     private MessageAdapter mAdapter;
+    private LinearLayoutManager mLinearLayoutManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,25 +106,8 @@ public class InteractionActivity
         customBarBinding.customAppBarLastOnline.setText(onlineStatus);
 
         // load avatar thumbnail into circular ImageView
-        Picasso.get().load(avatarUrl)
-                .networkPolicy(NetworkPolicy.OFFLINE)
-                .placeholder(R.drawable.user_default_avatar)
-                .into(customBarBinding.customAppBarAvatar, new Callback() {
-                    @Override
-                    public void onSuccess() {
-                        /* This means we have user avatar stored locally, so no need to make network
-                         * connection. It will update ImageView with locally stored user avatar
-                         * Do nothing */
-                    }
-
-                    @Override
-                    public void onError(Exception e) {
-                        // If we don't have locally stored avatar, download it from database
-                        Picasso.get().load(avatarUrl)
-                                .placeholder(R.drawable.user_default_avatar)
-                                .into(customBarBinding.customAppBarAvatar);
-                    }
-                });
+        ImageLoad.load(avatarUrl, customBarBinding.customAppBarAvatar);
+        mBinding.setActivity(this);
     }
 
     @Override
@@ -138,11 +125,56 @@ public class InteractionActivity
         mBinding.interactionsBottomBar.interactionBottomEditText.getText().clear();
     }
 
+    /**
+     * Provide implementation of RecyclerView
+     */
     @Override
-    public void setUpRecyclerView(String thumbUrl) {
+    public void setUpRecyclerView() {
+        mLinearLayoutManager = new LinearLayoutManager(this);
         mBinding.interactionsMessageList.setHasFixedSize(true);
-        mBinding.interactionsMessageList.setLayoutManager(new LinearLayoutManager(this));
-        mAdapter = new MessageAdapter(null, thumbUrl);
+        mBinding.interactionsMessageList.setLayoutManager(mLinearLayoutManager);
+        mAdapter = new MessageAdapter(null);
         mBinding.interactionsMessageList.setAdapter(mAdapter);
+
+        // Attach a swipe refresh listener
+        mBinding.interactionSwipeRefresh
+                .setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                    @Override
+                    public void onRefresh() {
+                        mPresenter.swipeMessageRefresh();
+                    }
+                });
+    }
+
+    /**
+     * This method will invoke when, previous messages are successfully loaded
+     * i.e, use this method to hide progressbar
+     */
+    @Override
+    public void onSwipeRefreshComplete() {
+        mBinding.interactionSwipeRefresh.setRefreshing(false);
+    }
+
+    /**
+     * This method will provide interaction user's thumbnail avatar url
+     * i.e update recycler adapter to display avatar thumbnail
+     *
+     * @param url url of thumbnail
+     */
+    @Override
+    public void interactionUserAvatar(String url) {
+        mAdapter.updateInteractionUserAvatar(url);
+    }
+
+    /**
+     * This method will invoked to set position offset
+     * i.e when user refreshes message list to load previous message, use this method to provide
+     * offset to layout manager
+     *
+     * @param position offset position
+     */
+    @Override
+    public void setLayoutManagerOffset(int position) {
+        mLinearLayoutManager.scrollToPositionWithOffset(position, 0);
     }
 }
