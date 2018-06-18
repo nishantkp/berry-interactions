@@ -26,30 +26,95 @@
 package com.example.nishant.berry.ui.dashboard.fragment.chat;
 
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.nishant.berry.config.IConstants;
+import com.example.nishant.berry.databinding.FragmentChatBinding;
+
+
 import com.example.nishant.berry.R;
+import com.example.nishant.berry.ui.interaction.InteractionActivity;
+import com.firebase.ui.database.FirebaseRecyclerAdapter;
+
+import static android.support.v7.widget.LinearLayoutManager.VERTICAL;
 
 /**
- * A simple {@link Fragment} subclass.
+ * A Fragment that deals with displaying a list of friends, with whom current user had
+ * conversation/ chat/ interaction
  */
-public class ChatFragment extends Fragment {
+public class ChatFragment
+        extends Fragment
+        implements ChatContract.View {
 
+    private FragmentChatBinding mBinding;
+    private ChatPresenter mPresenter;
+    private FirebaseRecyclerAdapter mAdapter;
 
     public ChatFragment() {
         // Required empty public constructor
     }
 
-
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_chat, container, false);
+        View view = inflater.inflate(R.layout.fragment_chat, container, false);
+        mBinding = FragmentChatBinding.bind(view);
+
+        mPresenter = new ChatPresenter();
+        mPresenter.attachView(this);
+
+        // Setup recycler view
+        mBinding.chatRv.setLayoutManager(new LinearLayoutManager(getContext()));
+        mBinding.chatRv.setHasFixedSize(true);
+
+        // Add divider between two items
+        DividerItemDecoration itemDecor =
+                new DividerItemDecoration(mBinding.chatRv.getContext(), VERTICAL);
+        mBinding.chatRv.addItemDecoration(itemDecor);
+
+        return mBinding.getRoot();
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        mAdapter.startListening();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        mAdapter.stopListening();
+    }
+
+    @Override
+    public void getFirebaseRecyclerAdapter(FirebaseRecyclerAdapter adapter) {
+        mAdapter = adapter;
+        mBinding.chatRv.setAdapter(adapter);
+    }
+
+    /**
+     * Implement this method to open @{link InteractionActivity} when user clicks on
+     * list item
+     *
+     * @param userId      User Id of user with whom we want to chat
+     * @param displayName Name of a user with whom we want to chat
+     */
+    @Override
+    public void onListItemClick(String userId, String displayName) {
+        startActivity(
+                new Intent(getContext(), InteractionActivity.class)
+                        .putExtra(IConstants.KEY_USER_ID, userId)
+                        .putExtra(IConstants.KEY_USER_DISPLAY_NAME, displayName)
+        );
+    }
 }

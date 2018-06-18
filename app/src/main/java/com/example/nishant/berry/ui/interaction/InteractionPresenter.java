@@ -145,7 +145,7 @@ public class InteractionPresenter
                 if (!dataSnapshot.hasChild(mInteractionUserId)) {
 
                     Map<String, Object> interactionMap = new HashMap<>();
-                    interactionMap.put(IFirebaseConfig.ONLINE, false);
+                    interactionMap.put(IFirebaseConfig.MESSAGE_SEEN, false);
                     interactionMap.put(IFirebaseConfig.TIMESTAMP, ServerValue.TIMESTAMP);
 
                     // Create entries for interactions database
