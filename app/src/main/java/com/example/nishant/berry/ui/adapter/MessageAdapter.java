@@ -97,6 +97,7 @@ public class MessageAdapter
     @Override
     public int getItemViewType(int position) {
         Message currentMessage = mMessageList.get(position);
+        if (currentMessage.getFrom() == null) return 0;
         if (currentMessage.getFrom().equals(mCurrentUserId)) {
             return SENT_MESSAGE;
         } else {

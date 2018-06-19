@@ -25,7 +25,6 @@
 
 package com.example.nishant.berry.ui.interaction;
 
-import android.databinding.BindingAdapter;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -41,9 +40,6 @@ import com.example.nishant.berry.ui.adapter.MessageAdapter;
 import com.example.nishant.berry.ui.model.Interaction;
 import com.example.nishant.berry.ui.model.Message;
 import com.example.nishant.berry.ui.utils.ImageLoad;
-import com.squareup.picasso.Callback;
-import com.squareup.picasso.NetworkPolicy;
-import com.squareup.picasso.Picasso;
 
 import java.util.List;
 

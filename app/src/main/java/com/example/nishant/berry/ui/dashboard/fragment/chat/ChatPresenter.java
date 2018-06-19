@@ -129,7 +129,6 @@ public class ChatPresenter
                                         final String displayName = Objects.requireNonNull(dataSnapshot.child(IFirebaseConfig.NAME).getValue()).toString();
                                         String thumbnail = Objects.requireNonNull(dataSnapshot.child(IFirebaseConfig.THUMBNAIL).getValue()).toString();
 
-                                        users[0] = new AllUsers();
                                         users[0].setName(displayName);
                                         users[0].setThumbnail(thumbnail);
                                         holder.bind(users[0]);
@@ -160,8 +159,10 @@ public class ChatPresenter
                                 String lastMessage = Objects.requireNonNull(dataSnapshot
                                         .child(IFirebaseConfig.MESSAGE_DATA)
                                         .getValue()).toString();
+                                boolean messageSeen = (boolean) dataSnapshot.child(IFirebaseConfig.MESSAGE_SEEN).getValue();
 
                                 users[0].setStatus(lastMessage);
+                                users[0].setMessageSeen(messageSeen);
                                 holder.bind(users[0]);
                             }
 

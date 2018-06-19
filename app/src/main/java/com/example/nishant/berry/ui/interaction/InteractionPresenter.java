@@ -26,6 +26,7 @@
 package com.example.nishant.berry.ui.interaction;
 
 import android.content.Intent;
+import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
@@ -51,6 +52,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.TreeMap;
 
 public class InteractionPresenter
         extends BasePresenter<InteractionContract.View>
@@ -205,6 +207,10 @@ public class InteractionPresenter
         messageUserMap.put(currentUserRef + "/" + messagePushId, messageMap);
         messageUserMap.put(interactionUserRef + "/" + messagePushId, messageMap);
 
+        // Update interaction database time stamp
+        mRootRef.child(IFirebaseConfig.INTERACTIONS_OBJECT).child(mCurrentUserId).child(mInteractionUserId).child(IFirebaseConfig.TIMESTAMP).setValue(ServerValue.TIMESTAMP);
+        mRootRef.child(IFirebaseConfig.INTERACTIONS_OBJECT).child(mInteractionUserId).child(mCurrentUserId).child(IFirebaseConfig.TIMESTAMP).setValue(ServerValue.TIMESTAMP);
+
         // Update the database
         mRootRef.updateChildren(messageUserMap, new DatabaseReference.CompletionListener() {
             @Override
@@ -242,6 +248,7 @@ public class InteractionPresenter
                 }
                 mMessageList.add(message);
                 getView().updateMessageList(mMessageList);
+                updateMessageSeenStatus(dataSnapshot.getKey());
                 getView().onSwipeRefreshComplete();
             }
 
@@ -330,5 +337,23 @@ public class InteractionPresenter
 
             }
         });
+    }
+
+    /**
+     * Update the message seen values : true or false
+     *
+     * @param key push key for messages
+     */
+    @Override
+    public void updateMessageSeenStatus(String key) {
+        if (key == null) return;
+        DatabaseReference seenMessageRef =
+                FirebaseDatabase.getInstance().getReference()
+                        .child(IFirebaseConfig.MESSAGE_OBJECT)
+                        .child(mCurrentUserId)
+                        .child(mInteractionUserId)
+                        .child(key)
+                        .child(IFirebaseConfig.MESSAGE_SEEN);
+        seenMessageRef.setValue(true);
     }
 }

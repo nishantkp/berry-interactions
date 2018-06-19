@@ -35,6 +35,7 @@ public class AllUsers {
     private String status;
     private String thumbnail;
     private boolean online;
+    private boolean messageSeen;
     private int onlineStatus;
 
     public AllUsers() {
@@ -94,5 +95,13 @@ public class AllUsers {
 
     public void setOnlineStatus(int onlineStatus) {
         this.onlineStatus = onlineStatus;
+    }
+
+    public boolean isMessageSeen() {
+        return messageSeen;
+    }
+
+    public void setMessageSeen(boolean messageSeen) {
+        this.messageSeen = messageSeen;
     }
 }

@@ -25,8 +25,13 @@
 
 package com.example.nishant.berry.ui.adapter;
 
+import android.content.Context;
+import android.graphics.Typeface;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
+import android.text.style.TextAppearanceSpan;
 
+import com.example.nishant.berry.R;
 import com.example.nishant.berry.databinding.FriendsMessageListItemBinding;
 import com.example.nishant.berry.ui.model.AllUsers;
 import com.example.nishant.berry.ui.utils.ImageLoad;
@@ -40,7 +45,16 @@ public class FriendsInteractionViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void bind(AllUsers allUsers) {
+        Context context = mBinding.getRoot().getContext();
+
         mBinding.setUser(allUsers);
         ImageLoad.load(allUsers.getThumbnail(), mBinding.chatListItemAvatar);
+
+        if (!allUsers.isMessageSeen()) {
+            mBinding.chatListItemMessage.setTextColor(context.getResources().getColor(R.color.colorSecondary));
+            mBinding.chatListItemMessage.setTypeface(null, Typeface.BOLD);
+        } else {
+            mBinding.chatListItemMessage.setTextAppearance(context, android.R.style.TextAppearance_Material_Body1);
+        }
     }
 }

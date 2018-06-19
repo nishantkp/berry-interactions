@@ -59,5 +59,7 @@ public interface InteractionContract {
         void updateMoreMessageToList();
 
         void swipeMessageRefresh();
+
+        void updateMessageSeenStatus(String key);
     }
 }
