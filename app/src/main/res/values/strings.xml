@@ -46,4 +46,6 @@
     <string name="alert_view_profile_label">View profile</string>
     <string name="alert_send_message_label">Send message</string>
     <string name="alert_select_options_label">Select Options</string>
+    <string name="friend_req_accept_label">Accept</string>
+    <string name="friend_req_decline_label">Decline</string>
 </resources>
