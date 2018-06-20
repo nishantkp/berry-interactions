@@ -30,6 +30,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,6 +52,9 @@ public class RequestFragment
     private FragmentRequestBinding mBinding;
     private RequestPresenter mPresenter;
     private FirebaseRecyclerAdapter mAdapter;
+
+    // Log tag
+    private static final String LOG_TAG = RequestFragment.class.getSimpleName();
 
     public RequestFragment() {
         // Required empty public constructor
@@ -114,6 +118,6 @@ public class RequestFragment
      */
     @Override
     public void onError(String error) {
-
+        Log.d(LOG_TAG, error);
     }
 }
