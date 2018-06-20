@@ -48,14 +48,15 @@
             android:layout_height="75dp"
             android:src="@drawable/user_default_avatar"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:loadImage="@{user.thumbnail}" />
 
         <TextView
             android:id="@+id/friend_req_list_item_display_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:text="@{users.name}"
+            android:text="@{user.name}"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
             android:textColor="@color/primaryTextColor"
             app:layout_constraintStart_toEndOf="@+id/friend_req_list_item_avatar"
@@ -68,7 +69,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:fontFamily="sans-serif"
-            android:text="@{users.status}"
+            android:text="@{user.status}"
             android:textColor="@color/primaryTextColor"
             app:layout_constraintStart_toStartOf="@+id/friend_req_list_item_display_name"
             app:layout_constraintTop_toBottomOf="@+id/friend_req_list_item_display_name"
@@ -85,6 +86,7 @@
             android:drawableStart="@drawable/ic_baseline_done_24px"
             android:text="@string/friend_req_accept_label"
             android:textSize="12sp"
+            android:visibility="@{user.acceptButtonVisibility}"
             app:layout_constraintEnd_toStartOf="@+id/friend_req_list_item_cancel"
             app:layout_constraintTop_toBottomOf="@+id/friend_req_list_item_message" />
 
@@ -93,11 +95,12 @@
             style="@style/Widget.AppCompat.Button.Borderless.Colored"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
             android:drawablePadding="8dp"
             android:drawableStart="@drawable/ic_baseline_cancel_24px"
-            android:text="@string/friend_req_decline_label"
+            android:text="@{user.declineButtonText}"
             android:textSize="12sp"
-            app:layout_constraintBottom_toBottomOf="@+id/friend_req_list_item_accept"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/friend_req_list_item_message" />
     </android.support.constraint.ConstraintLayout>
 </layout>

@@ -25,6 +25,10 @@
 
 package com.example.nishant.berry.ui.model;
 
+import android.view.View;
+
+import com.example.nishant.berry.config.IFirebaseConfig;
+
 /**
  * Users object for FirebaseRecyclerAdapter
  * This object should contain variable names exactly the same as Firebase Database
@@ -34,6 +38,9 @@ public class AllUsers {
     private String image;
     private String status;
     private String thumbnail;
+    private String friendRequestType;
+    private String declineButtonText;
+    private int acceptButtonVisibility;
     private boolean online;
     private boolean messageSeen;
     private int onlineStatus;
@@ -103,5 +110,39 @@ public class AllUsers {
 
     public void setMessageSeen(boolean messageSeen) {
         this.messageSeen = messageSeen;
+    }
+
+    public String getFriendRequestType() {
+        return friendRequestType;
+    }
+
+    public void setFriendRequestType(String friendRequestType) {
+        this.friendRequestType = friendRequestType;
+    }
+
+    public String getDeclineButtonText() {
+        switch (friendRequestType) {
+            case IFirebaseConfig.FRIEND_REQUEST_RECEIVED:
+                return "decline";
+            default:
+                return "cancel request";
+        }
+    }
+
+    public void setDeclineButtonText(String declineButtonText) {
+        this.declineButtonText = declineButtonText;
+    }
+
+    public int getAcceptButtonVisibility() {
+        switch (friendRequestType) {
+            case IFirebaseConfig.FRIEND_REQUEST_RECEIVED:
+                return View.VISIBLE;
+            default:
+                return View.GONE;
+        }
+    }
+
+    public void setAcceptButtonVisibility(int acceptButtonVisibility) {
+        this.acceptButtonVisibility = acceptButtonVisibility;
     }
 }
