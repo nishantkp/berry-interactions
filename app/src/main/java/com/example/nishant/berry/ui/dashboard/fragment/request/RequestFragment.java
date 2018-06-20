@@ -97,4 +97,9 @@ public class RequestFragment
         mAdapter = adapter;
         mBinding.requestRv.setAdapter(adapter);
     }
+
+    @Override
+    public void onError(String error) {
+
+    }
 }

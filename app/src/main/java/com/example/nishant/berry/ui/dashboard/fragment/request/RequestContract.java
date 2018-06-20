@@ -32,6 +32,8 @@ import com.google.firebase.database.Query;
 public class RequestContract {
     interface View extends MvpView {
         void setFirebaseAdapterWithRecyclerView(FirebaseRecyclerAdapter adapter);
+
+        void onError(String error);
     }
 
     interface Presenter {

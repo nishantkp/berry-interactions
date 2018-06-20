@@ -26,6 +26,7 @@
 package com.example.nishant.berry.ui.dashboard.fragment.request;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,6 +35,7 @@ import android.widget.Toast;
 
 import com.example.nishant.berry.R;
 import com.example.nishant.berry.base.BasePresenter;
+import com.example.nishant.berry.config.IConstants;
 import com.example.nishant.berry.config.IFirebaseConfig;
 import com.example.nishant.berry.databinding.FriendRequestListItemBinding;
 import com.example.nishant.berry.ui.adapter.FriendRequestViewHolder;
@@ -50,6 +52,10 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.DateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -60,6 +66,7 @@ public class RequestPresenter
         implements RequestContract.Presenter, FriendRequestViewHolder.onButtonClick {
 
     private DatabaseReference mUsersDatabaseReference;
+    private DatabaseReference mRootReference;
     private Query mRequestQuery;
     private String mCurrentUserId;
 
@@ -67,12 +74,13 @@ public class RequestPresenter
         // Current user Id
         mCurrentUserId = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
 
+        mRootReference = FirebaseDatabase.getInstance().getReference();
+
         //Database reference to Users object
-        mUsersDatabaseReference = FirebaseDatabase.getInstance().getReference()
-                .child(IFirebaseConfig.USERS_OBJECT);
+        mUsersDatabaseReference = mRootReference.child(IFirebaseConfig.USERS_OBJECT);
 
         // Firebase query for Friend request object
-        mRequestQuery = FirebaseDatabase.getInstance().getReference()
+        mRequestQuery = mRootReference
                 .child(IFirebaseConfig.FRIEND_REQUEST_OBJECT)
                 .child(mCurrentUserId);
     }
@@ -130,26 +138,72 @@ public class RequestPresenter
 
                     @NonNull
                     @Override
-                    public FriendRequestViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+                    public FriendRequestViewHolder onCreateViewHolder(@NonNull ViewGroup parent,
+                                                                      int viewType) {
 
                         // Inflate the view
                         View view = LayoutInflater.from(parent.getContext())
                                 .inflate(R.layout.friend_request_list_item, parent, false);
 
-                        return new FriendRequestViewHolder(FriendRequestListItemBinding.bind(view), RequestPresenter.this);
+                        return new FriendRequestViewHolder(FriendRequestListItemBinding.bind(view),
+                                RequestPresenter.this);
                     }
                 };
 
         getView().setFirebaseAdapterWithRecyclerView(adapter);
     }
 
+    /**
+     * Provide implementation of this method for what to do when user clicks on "Accept" button
+     *
+     * @param currentUserId current user's Id
+     * @param listUserId    Id of a user who had sent current user a friend a request
+     */
     @Override
     public void onPositiveClick(String currentUserId, String listUserId) {
-        Log.i("button click", "POSITIVE : current id : " + currentUserId + "list user id: " + listUserId);
+        // Get the current date and time
+        final String currentDateTime = DateFormat.getDateTimeInstance().format(new Date());
+
+        // HashMap for updating friends object and friend requests object
+        Map<String, Object> friendsMap = new HashMap<>();
+        friendsMap.put(IFirebaseConfig.FRIENDS_OBJECT + "/" + currentUserId + "/" + listUserId + "/" + IFirebaseConfig.FRIEND_SINCE, currentDateTime);
+        friendsMap.put(IFirebaseConfig.FRIENDS_OBJECT + "/" + listUserId + "/" + currentUserId + "/" + IFirebaseConfig.FRIEND_SINCE, currentDateTime);
+        friendsMap.put(IFirebaseConfig.FRIEND_REQUEST_OBJECT + "/" + currentUserId + "/" + listUserId, null);
+        friendsMap.put(IFirebaseConfig.FRIEND_REQUEST_OBJECT + "/" + listUserId + "/" + currentUserId, null);
+
+        mRootReference.updateChildren(friendsMap, new DatabaseReference.CompletionListener() {
+            @Override
+            public void onComplete(@Nullable DatabaseError databaseError,
+                                   @NonNull DatabaseReference databaseReference) {
+                if (databaseError != null) {
+                    getView().onError("Unable to accept request!");
+                }
+            }
+        });
     }
 
+    /**
+     * Provide implementation of this method for what to do when user clicks on "decline" or
+     * "cancel request" button
+     *
+     * @param currentUserId current user's Id
+     * @param listUserId    Id of a user to whom current user has sent friend request or
+     *                      user who has sent current user a friend request
+     */
     @Override
     public void onNegativeClick(String currentUserId, String listUserId) {
-        Log.i("button click", "NEGATIVE current id : " + currentUserId + "list user id: " + listUserId);
+        // HashMap to delete friend requests from friend requests table
+        Map<String, Object> cancelMap = new HashMap<>();
+        cancelMap.put(IFirebaseConfig.FRIEND_REQUEST_OBJECT + "/" + currentUserId + "/" + listUserId, null);
+        cancelMap.put(IFirebaseConfig.FRIEND_REQUEST_OBJECT + "/" + listUserId + "/" + currentUserId, null);
+
+        mRootReference.updateChildren(cancelMap, new DatabaseReference.CompletionListener() {
+            @Override
+            public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
+                if (databaseError != null) {
+                    getView().onError("Unable to cancel request!");
+                }
+            }
+        });
     }
 }
