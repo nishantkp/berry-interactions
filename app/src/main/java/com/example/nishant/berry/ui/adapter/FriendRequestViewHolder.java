@@ -38,11 +38,27 @@ import com.example.nishant.berry.ui.utils.ImageLoad;
  */
 public class FriendRequestViewHolder extends RecyclerView.ViewHolder {
 
+    private String mCurrentUserId;
+    private String mListUserId;
+    private onButtonClick mClick;
     private FriendRequestListItemBinding mBinding;
 
-    public FriendRequestViewHolder(FriendRequestListItemBinding binding) {
+    /**
+     * Callback for positive button click and negative button clicks
+     * i.e,
+     * onPositiveClick() -> when user clicks on "Accept request" button
+     * onNegativeClick() -> when user clicks on "decline" or "cancel request" button
+     */
+    public interface onButtonClick {
+        void onPositiveClick(String currentUserId, String listUserId);
+
+        void onNegativeClick(String currentUserId, String listUserId);
+    }
+
+    public FriendRequestViewHolder(FriendRequestListItemBinding binding, final onButtonClick click) {
         super(binding.getRoot());
         mBinding = binding;
+        mClick = click;
     }
 
     /**
@@ -50,8 +66,11 @@ public class FriendRequestViewHolder extends RecyclerView.ViewHolder {
      *
      * @param allUsers AllUsers object
      */
-    public void bind(AllUsers allUsers) {
+    public void bind(AllUsers allUsers, String currentUserId, String listUserId) {
         mBinding.setUser(allUsers);
+        mBinding.setViewHolder(this);
+        mCurrentUserId = currentUserId;
+        mListUserId = listUserId;
     }
 
     /**
@@ -63,5 +82,21 @@ public class FriendRequestViewHolder extends RecyclerView.ViewHolder {
     @BindingAdapter({"app:loadImage"})
     public static void setImage(ImageView view, String url) {
         ImageLoad.load(url, view);
+    }
+
+    /**
+     * When user clicks on "Accept" button, setup call back with current userId and
+     * Id of user on which click action is performed
+     */
+    public void onPositiveButtonClick() {
+        mClick.onPositiveClick(mCurrentUserId, mListUserId);
+    }
+
+    /**
+     * When user clicks on "decline" or "cancel request" button, setup callback
+     * with current userId and Id of user on which click action is performed
+     */
+    public void onNegativeButtonClick() {
+        mClick.onNegativeClick(mCurrentUserId, mListUserId);
     }
 }

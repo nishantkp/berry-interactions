@@ -26,15 +26,18 @@
 package com.example.nishant.berry.ui.dashboard.fragment.request;
 
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.example.nishant.berry.R;
 import com.example.nishant.berry.base.BasePresenter;
 import com.example.nishant.berry.config.IFirebaseConfig;
 import com.example.nishant.berry.databinding.FriendRequestListItemBinding;
 import com.example.nishant.berry.ui.adapter.FriendRequestViewHolder;
+import com.example.nishant.berry.ui.adapter.FriendsInteractionViewHolder;
 import com.example.nishant.berry.ui.model.AllUsers;
 import com.example.nishant.berry.ui.model.FriendRequest;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
@@ -54,7 +57,7 @@ import java.util.Objects;
  */
 public class RequestPresenter
         extends BasePresenter<RequestContract.View>
-        implements RequestContract.Presenter {
+        implements RequestContract.Presenter, FriendRequestViewHolder.onButtonClick {
 
     private DatabaseReference mUsersDatabaseReference;
     private Query mRequestQuery;
@@ -99,7 +102,7 @@ public class RequestPresenter
                     protected void onBindViewHolder(@NonNull final FriendRequestViewHolder holder,
                                                     int position,
                                                     @NonNull FriendRequest model) {
-                        String listUserId = getRef(position).getKey();
+                        final String listUserId = getRef(position).getKey();
                         final String requestType = model.getRequest_type();
                         if (listUserId == null) return;
                         mUsersDatabaseReference.child(listUserId)
@@ -115,7 +118,7 @@ public class RequestPresenter
                                         user.setStatus(status);
                                         user.setThumbnail(thumbnail);
                                         user.setFriendRequestType(requestType);
-                                        holder.bind(user);
+                                        holder.bind(user, mCurrentUserId, listUserId);
                                     }
 
                                     @Override
@@ -133,10 +136,20 @@ public class RequestPresenter
                         View view = LayoutInflater.from(parent.getContext())
                                 .inflate(R.layout.friend_request_list_item, parent, false);
 
-                        return new FriendRequestViewHolder(FriendRequestListItemBinding.bind(view));
+                        return new FriendRequestViewHolder(FriendRequestListItemBinding.bind(view), RequestPresenter.this);
                     }
                 };
 
         getView().setFirebaseAdapterWithRecyclerView(adapter);
+    }
+
+    @Override
+    public void onPositiveClick(String currentUserId, String listUserId) {
+        Log.i("button click", "POSITIVE : current id : " + currentUserId + "list user id: " + listUserId);
+    }
+
+    @Override
+    public void onNegativeClick(String currentUserId, String listUserId) {
+        Log.i("button click", "NEGATIVE current id : " + currentUserId + "list user id: " + listUserId);
     }
 }
