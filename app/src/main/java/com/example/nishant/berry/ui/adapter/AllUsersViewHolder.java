@@ -54,11 +54,6 @@ public class AllUsersViewHolder extends RecyclerView.ViewHolder {
 
     // Bind data to list-item view
     public void bind(final AllUsers users) {
-        if (users.isOnline()) {
-            users.setOnlineStatus(IConstants.VIEW_VISIBLE);
-        } else {
-            users.setOnlineStatus(IConstants.VIEW_INVISIBLE);
-        }
         mBinding.setUsers(users);
 
         // load default avatar

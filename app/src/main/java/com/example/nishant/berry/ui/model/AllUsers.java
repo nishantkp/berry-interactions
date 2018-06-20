@@ -97,7 +97,8 @@ public class AllUsers {
     }
 
     public int getOnlineStatus() {
-        return onlineStatus;
+        if (online) return View.VISIBLE;
+        else return View.INVISIBLE;
     }
 
     public void setOnlineStatus(int onlineStatus) {
