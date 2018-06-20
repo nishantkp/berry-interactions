@@ -35,6 +35,8 @@ import com.example.nishant.berry.ui.utils.ImageLoad;
 
 /**
  * RecyclerView ViewHolder to bind friend_request_list_item with AllUsers object
+ * This view holder is used in @{link RequestFragment}
+ * It is used in conjunction with FirebaseRecyclerAdapter
  */
 public class FriendRequestViewHolder extends RecyclerView.ViewHolder {
 
