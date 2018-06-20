@@ -25,7 +25,9 @@
 
 package com.example.nishant.berry.ui.adapter;
 
+import android.databinding.BindingAdapter;
 import android.support.v7.widget.RecyclerView;
+import android.widget.ImageView;
 
 import com.example.nishant.berry.R;
 import com.example.nishant.berry.config.IConstants;
@@ -55,13 +57,16 @@ public class AllUsersViewHolder extends RecyclerView.ViewHolder {
     // Bind data to list-item view
     public void bind(final AllUsers users) {
         mBinding.setUsers(users);
+    }
 
-        // load default avatar
-        if (users.getThumbnail().equals(IFirebaseConfig.DEFAULT_VALUE)) {
-            mBinding.allUsersListItemAvatar.setImageResource(R.drawable.user_default_avatar);
-        } else {
-            // load avatar thumbnail into circular ImageView
-            ImageLoad.load(users.getThumbnail(), mBinding.allUsersListItemAvatar);
-        }
+    /**
+     * Binding adapter for updating avatar in list item
+     *
+     * @param view ImageView in which we want to load avatar
+     * @param url  Download url of avatar
+     */
+    @BindingAdapter({"app:loadUserAvatar"})
+    public static void setImage(ImageView view, String url) {
+        ImageLoad.load(url, view);
     }
 }

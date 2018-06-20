@@ -49,7 +49,8 @@
             android:src="@drawable/user_default_avatar"
             app:layout_constraintBottom_toTopOf="@+id/all_users_list_item_guideline"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/all_users_list_item_guideline" />
+            app:layout_constraintTop_toTopOf="@+id/all_users_list_item_guideline"
+            app:loadUserAvatar="@{users.thumbnail}" />
 
         <TextView
             android:id="@+id/all_users_list_item_display_name"
