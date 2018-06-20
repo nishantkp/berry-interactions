@@ -83,21 +83,35 @@ public class RequestFragment
     @Override
     public void onStart() {
         super.onStart();
+        // start listening to firebase adapter
         mAdapter.startListening();
     }
 
     @Override
     public void onPause() {
         super.onPause();
+        // onPause() method will surely be called every time, but onStop() may not get call all the time
+        // so stop listening to firebase adapter on onPause() method instead
         mAdapter.stopListening();
     }
 
+    /**
+     * Implement this method to set firebase adapter on recycler view
+     *
+     * @param adapter Firebase recycler adapter
+     */
     @Override
     public void setFirebaseAdapterWithRecyclerView(FirebaseRecyclerAdapter adapter) {
         mAdapter = adapter;
         mBinding.requestRv.setAdapter(adapter);
     }
 
+    /**
+     * Provide implementation of this method either to Log error message or notify user about error
+     * by means of toast, snack bar or so on...
+     *
+     * @param error error message
+     */
     @Override
     public void onError(String error) {
 

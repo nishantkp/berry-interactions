@@ -98,12 +98,18 @@ public class RequestPresenter
         setupFirebaseRecyclerAdapter(mRequestQuery);
     }
 
+    /**
+     * Implement this method to setup Firebase recycler adapter
+     *
+     * @param query Database friend request object query
+     */
     @Override
     public void setupFirebaseRecyclerAdapter(Query query) {
         FirebaseRecyclerOptions<FriendRequest> options =
                 new FirebaseRecyclerOptions.Builder<FriendRequest>().setQuery(query, FriendRequest.class)
                         .build();
 
+        // Adapter
         FirebaseRecyclerAdapter<FriendRequest, FriendRequestViewHolder> adapter =
                 new FirebaseRecyclerAdapter<FriendRequest, FriendRequestViewHolder>(options) {
                     @Override
@@ -113,6 +119,9 @@ public class RequestPresenter
                         final String listUserId = getRef(position).getKey();
                         final String requestType = model.getRequest_type();
                         if (listUserId == null) return;
+
+                        // Get information about user who has sent the request or whom current
+                        // user has sent the request from Firebase's Users database
                         mUsersDatabaseReference.child(listUserId)
                                 .addValueEventListener(new ValueEventListener() {
                                     @Override
@@ -126,6 +135,8 @@ public class RequestPresenter
                                         user.setStatus(status);
                                         user.setThumbnail(thumbnail);
                                         user.setFriendRequestType(requestType);
+
+                                        // Update list item layout
                                         holder.bind(user, mCurrentUserId, listUserId);
                                     }
 
@@ -149,7 +160,9 @@ public class RequestPresenter
                                 RequestPresenter.this);
                     }
                 };
-
+        // Set call back for firebase recycler adapter, so that in fragment we can start and stop
+        // listing to adapter in onStart() and onPause() methods respectively
+        // By doing so we can get data from Firebase Database
         getView().setFirebaseAdapterWithRecyclerView(adapter);
     }
 
