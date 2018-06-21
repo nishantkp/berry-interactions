@@ -26,7 +26,6 @@
 package com.example.nishant.berry.ui.interaction;
 
 import android.content.Intent;
-import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
@@ -35,6 +34,7 @@ import android.util.Log;
 import com.example.nishant.berry.base.BasePresenter;
 import com.example.nishant.berry.config.IConstants;
 import com.example.nishant.berry.config.IFirebaseConfig;
+import com.example.nishant.berry.ui.model.InteractionActionBar;
 import com.example.nishant.berry.ui.model.Message;
 import com.example.nishant.berry.ui.utils.GetTimeAgo;
 import com.google.firebase.auth.FirebaseAuth;
@@ -52,7 +52,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.TreeMap;
 
 public class InteractionPresenter
         extends BasePresenter<InteractionContract.View>
@@ -123,15 +122,24 @@ public class InteractionPresenter
                     // Get the last seen time in human readable format
                     mOnlineStatus = GetTimeAgo.getTimeAgo(Long.parseLong(mLastSeen));
                 }
+
+                // Create a model for setting views in custom actionbar
+                InteractionActionBar model = new InteractionActionBar();
+                model.setAvatarUrl(mAvatarThumbUrl);
+                model.setName(mDisplayName);
+                model.setOnlineStatus(mOnlineStatus);
+
                 // Set call back for setting up action bar
-                getView().setActionBar(mDisplayName, mAvatarThumbUrl, mOnlineStatus);
+                getView().setActionBar(model);
                 // Callback for updating RecyclerView with interaction user avatar
                 getView().interactionUserAvatar(mAvatarThumbUrl);
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                getView().setActionBar("Berry", "default", "Hey It's Berry");
+                getView().setActionBar(
+                        new InteractionActionBar("Berry", "default", "Hey It's Berry")
+                );
             }
         });
     }

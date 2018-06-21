@@ -38,8 +38,8 @@ import com.example.nishant.berry.databinding.ActivityInteractionBinding;
 import com.example.nishant.berry.databinding.InteractionCustomBarBinding;
 import com.example.nishant.berry.ui.adapter.MessageAdapter;
 import com.example.nishant.berry.ui.model.Interaction;
+import com.example.nishant.berry.ui.model.InteractionActionBar;
 import com.example.nishant.berry.ui.model.Message;
-import com.example.nishant.berry.ui.utils.ImageLoad;
 
 import java.util.List;
 
@@ -83,13 +83,11 @@ public class InteractionActivity
     /**
      * Implement this method to set custom actionbar
      *
-     * @param displayName  display name
-     * @param avatarUrl    url of avatar thumbnail
-     * @param onlineStatus online status of user, either "Online" or last seen timing
+     * @param model InteractionActionBar model which has user name, online status and user avatar
+     *              download url
      */
     @Override
-    public void setActionBar(String displayName, final String avatarUrl, String onlineStatus) {
-        if (displayName == null) displayName = "Berry";
+    public void setActionBar(InteractionActionBar model) {
         final ActionBar customActionBar = getSupportActionBar();
         View appBarView = getLayoutInflater().inflate(R.layout.interaction_custom_bar, null);
         final InteractionCustomBarBinding customBarBinding = InteractionCustomBarBinding.bind(appBarView);
@@ -98,12 +96,7 @@ public class InteractionActivity
         customActionBar.setDisplayHomeAsUpEnabled(true);
         customActionBar.setDisplayShowCustomEnabled(true);
         customActionBar.setCustomView(customBarBinding.getRoot());
-        customBarBinding.customAppBarDisplayName.setText(displayName);
-        customBarBinding.customAppBarLastOnline.setText(onlineStatus);
-
-        // load avatar thumbnail into circular ImageView
-        ImageLoad.load(avatarUrl, customBarBinding.customAppBarAvatar);
-        mBinding.setActivity(this);
+        customBarBinding.setUser(model);
     }
 
     @Override

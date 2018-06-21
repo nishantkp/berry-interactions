@@ -19,48 +19,52 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  *
- * File Created on 11/06/18 11:27 PM by nishant
- * Last Modified on 11/06/18 11:27 PM
+ * File Created on 20/06/18 8:04 PM by nishant
+ * Last Modified on 20/06/18 8:04 PM
  */
 
-package com.example.nishant.berry.ui.interaction;
+package com.example.nishant.berry.ui.model;
 
-import com.example.nishant.berry.base.MvpView;
-import com.example.nishant.berry.ui.model.InteractionActionBar;
-import com.example.nishant.berry.ui.model.Message;
+import com.example.nishant.berry.ui.interaction.InteractionActivity;
 
-import java.util.List;
+/**
+ * Model used with dataBinding to set views in {@link InteractionActivity}'s custom action bar
+ */
+public class InteractionActionBar {
+    private String name;
+    private String onlineStatus;
+    private String avatarUrl;
 
-public interface InteractionContract {
-    interface View extends MvpView {
-        void setActionBar(InteractionActionBar model);
-
-        void updateMessageList(List<Message> messageList);
-
-        void clearEditTextField();
-
-        void setUpRecyclerView();
-
-        void onSwipeRefreshComplete();
-
-        void interactionUserAvatar(String url);
-
-        void setLayoutManagerOffset(int position);
+    public InteractionActionBar() {
     }
 
-    interface Presenter {
-        void extractBasicInfoDatabase();
+    public InteractionActionBar(String name, String onlineStatus, String avatarUrl) {
+        this.name = name;
+        this.onlineStatus = onlineStatus;
+        this.avatarUrl = avatarUrl;
+    }
 
-        void initInteractionDatabase();
+    public String getName() {
+        return name;
+    }
 
-        void onInteractions(String message);
+    public void setName(String name) {
+        this.name = name;
+    }
 
-        void updateMessageList();
+    public String getOnlineStatus() {
+        return onlineStatus;
+    }
 
-        void updateMoreMessageToList();
+    public void setOnlineStatus(String onlineStatus) {
+        this.onlineStatus = onlineStatus;
+    }
 
-        void swipeMessageRefresh();
+    public String getAvatarUrl() {
+        return avatarUrl;
+    }
 
-        void updateMessageSeenStatus(String key);
+    public void setAvatarUrl(String avatarUrl) {
+        this.avatarUrl = avatarUrl;
     }
 }
