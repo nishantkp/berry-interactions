@@ -25,22 +25,12 @@
 
 package com.example.nishant.berry.ui.adapter;
 
-import android.databinding.BindingAdapter;
 import android.support.v7.widget.RecyclerView;
-import android.widget.ImageView;
 
-import com.example.nishant.berry.R;
-import com.example.nishant.berry.config.IConstants;
-import com.example.nishant.berry.config.IFirebaseConfig;
 import com.example.nishant.berry.databinding.AllUsersListItemBinding;
 import com.example.nishant.berry.ui.allusers.AllUsersActivity;
 import com.example.nishant.berry.ui.dashboard.fragment.friends.FriendsFragment;
 import com.example.nishant.berry.ui.model.AllUsers;
-import com.example.nishant.berry.ui.utils.ImageLoad;
-import com.google.android.gms.common.internal.ICancelToken;
-import com.squareup.picasso.Callback;
-import com.squareup.picasso.NetworkPolicy;
-import com.squareup.picasso.Picasso;
 
 /**
  * View Holder for displaying each users in {@link AllUsersActivity} and {@link FriendsFragment}
@@ -57,16 +47,5 @@ public class AllUsersViewHolder extends RecyclerView.ViewHolder {
     // Bind data to list-item view
     public void bind(final AllUsers users) {
         mBinding.setUsers(users);
-    }
-
-    /**
-     * Binding adapter for updating avatar in list item
-     *
-     * @param view ImageView in which we want to load avatar
-     * @param url  Download url of avatar
-     */
-    @BindingAdapter({"app:loadUserAvatar"})
-    public static void setImage(ImageView view, String url) {
-        ImageLoad.load(url, view);
     }
 }

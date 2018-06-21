@@ -25,13 +25,10 @@
 
 package com.example.nishant.berry.ui.adapter;
 
-import android.databinding.BindingAdapter;
 import android.support.v7.widget.RecyclerView;
-import android.widget.ImageView;
 
 import com.example.nishant.berry.databinding.FriendRequestListItemBinding;
 import com.example.nishant.berry.ui.model.AllUsers;
-import com.example.nishant.berry.ui.utils.ImageLoad;
 
 /**
  * RecyclerView ViewHolder to bind friend_request_list_item with AllUsers object
@@ -73,17 +70,6 @@ public class FriendRequestViewHolder extends RecyclerView.ViewHolder {
         mBinding.setViewHolder(this);
         mCurrentUserId = currentUserId;
         mListUserId = listUserId;
-    }
-
-    /**
-     * Binding adapter lo load avatar into ImageView
-     *
-     * @param view ImageView
-     * @param url  url of a avatar
-     */
-    @BindingAdapter({"app:loadImage"})
-    public static void setImage(ImageView view, String url) {
-        ImageLoad.load(url, view);
     }
 
     /**

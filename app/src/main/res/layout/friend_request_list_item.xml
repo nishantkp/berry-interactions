@@ -53,7 +53,7 @@
             android:src="@drawable/user_default_avatar"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:loadImage="@{user.thumbnail}" />
+            app:loadImageFromUrl="@{user.thumbnail}" />
 
         <TextView
             android:id="@+id/friend_req_list_item_display_name"

@@ -25,6 +25,7 @@
 
 package com.example.nishant.berry.ui.utils;
 
+import android.databinding.BindingAdapter;
 import android.widget.ImageView;
 
 import com.example.nishant.berry.R;
@@ -64,5 +65,16 @@ public class ImageLoad {
                                 .into(view);
                     }
                 });
+    }
+
+    /**
+     * Binding adapter for updating avatar in ImageView
+     *
+     * @param view        ImageView in which we want to load avatar
+     * @param downloadUrl Download url of avatar
+     */
+    @BindingAdapter({"app:loadImageFromUrl"})
+    public static void setImageResource(ImageView view, String downloadUrl) {
+        load(downloadUrl, view);
     }
 }
