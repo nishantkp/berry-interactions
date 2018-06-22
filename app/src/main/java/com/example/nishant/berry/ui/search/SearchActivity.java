@@ -28,6 +28,7 @@ package com.example.nishant.berry.ui.search;
 import android.databinding.BindingAdapter;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.view.View;
 import android.widget.EditText;
@@ -37,6 +38,8 @@ import com.example.nishant.berry.base.BaseActivity;
 import com.example.nishant.berry.databinding.ActivitySearchBinding;
 import com.example.nishant.berry.ui.model.SearchUser;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
+
+import static android.support.v7.widget.LinearLayoutManager.VERTICAL;
 
 public class SearchActivity
         extends BaseActivity
@@ -58,6 +61,11 @@ public class SearchActivity
 
         // set layout manager on recycler view
         mBinding.searchRv.setLayoutManager(new LinearLayoutManager(this));
+
+        // Add divider between two items
+        DividerItemDecoration itemDecor =
+                new DividerItemDecoration(mBinding.searchRv.getContext(), VERTICAL);
+        mBinding.searchRv.addItemDecoration(itemDecor);
     }
 
     @Override
