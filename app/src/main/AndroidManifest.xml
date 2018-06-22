@@ -96,6 +96,11 @@
         <activity
             android:name=".ui.interaction.InteractionActivity"
             android:parentActivityName=".ui.dashboard.DashboardActivity" />
+        <activity android:name=".ui.search.SearchActivity"></activity>
+
+        <meta-data
+            android:name="preloaded_fonts"
+            android:resource="@array/preloaded_fonts" />
     </application>
 
 </manifest>

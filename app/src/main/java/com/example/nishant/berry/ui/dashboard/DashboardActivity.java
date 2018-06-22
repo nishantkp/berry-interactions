@@ -37,6 +37,7 @@ import com.example.nishant.berry.base.BaseActivity;
 import com.example.nishant.berry.databinding.ActivityDashboardBinding;
 import com.example.nishant.berry.ui.adapter.SectionsPagerAdapter;
 import com.example.nishant.berry.ui.allusers.AllUsersActivity;
+import com.example.nishant.berry.ui.search.SearchActivity;
 import com.example.nishant.berry.ui.settings.SettingsActivity;
 import com.example.nishant.berry.ui.start.StartActivity;
 
@@ -110,6 +111,9 @@ public class DashboardActivity
                 return true;
             case R.id.action_all_users:
                 startActivity(new Intent(this, AllUsersActivity.class));
+                return true;
+            case R.id.action_search:
+                startActivity(new Intent(this, SearchActivity.class));
                 return true;
         }
         return super.onOptionsItemSelected(item);

@@ -48,4 +48,6 @@
     <string name="alert_select_options_label">Select Options</string>
     <string name="friend_req_accept_label">Accept</string>
     <string name="friend_req_decline_label">Decline</string>
+    <string name="search_view_hint">Name...</string>
+    <string name="search_label">Search</string>
 </resources>

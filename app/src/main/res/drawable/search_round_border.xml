@@ -19,30 +19,14 @@
   ~ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
   ~ SOFTWARE.
   ~
-  ~ File Created on 21/06/18 10:45 PM by nishant
-  ~ Last Modified on 20/06/18 10:44 PM
+  ~ File Created on 20/06/18 10:32 PM by nishant
+  ~ Last Modified on 20/06/18 10:32 PM
   -->
 
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
-
-    <item
-        android:id="@+id/action_account_settings"
-        android:title="@string/menu_account_settings_label"
-        app:showAsAction="never" />
-
-    <item
-        android:id="@+id/action_all_users"
-        android:title="@string/menu_all_users_label"
-        app:showAsAction="never" />
-
-    <item
-        android:id="@+id/action_search"
-        android:title="Search"
-        app:showAsAction="never" />
-
-    <item
-        android:id="@+id/action_logout"
-        android:title="@string/menu_sign_out_label"
-        app:showAsAction="never" />
-</menu>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <stroke
+        android:width="2dp"
+        android:color="@color/currentUserMessageColor" />
+    <corners android:radius="50dp" />
+</shape>

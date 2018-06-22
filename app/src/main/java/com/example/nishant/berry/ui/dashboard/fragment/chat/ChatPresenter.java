@@ -196,6 +196,8 @@ public class ChatPresenter
                                 .inflate(R.layout.friends_message_list_item, parent, false);
                         return new FriendsInteractionViewHolder(FriendsMessageListItemBinding.bind(view));
                     }
+
+
                 };
 
         // Set call back for firebase recycler adapter
