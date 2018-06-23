@@ -91,13 +91,20 @@ public class SearchPresenter
         FirebaseRecyclerAdapter<AllUsers, AllUsersViewHolder> adapter =
                 new FirebaseRecyclerAdapter<AllUsers, AllUsersViewHolder>(options) {
                     @Override
-                    protected void onBindViewHolder(@NonNull AllUsersViewHolder holder,
+                    protected void onBindViewHolder(@NonNull final AllUsersViewHolder holder,
                                                     final int position,
                                                     @NonNull final AllUsers model) {
                         // Set the online status to false so user can not find other users are online
                         // or not while performing a search
                         model.setOnline(false);
                         holder.bind(model);
+                        holder.itemView.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                // Set callback to start ProfileActivity with userId
+                                getView().onListItemSelected(getRef(holder.getAdapterPosition()).getKey());
+                            }
+                        });
                     }
 
                     @NonNull

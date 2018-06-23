@@ -31,6 +31,8 @@ import com.firebase.ui.database.FirebaseRecyclerAdapter;
 public interface SearchContract {
     interface View extends MvpView {
         void setRecyclerView(FirebaseRecyclerAdapter adapter);
+
+        void onListItemSelected(String userId);
     }
 
     interface Presenter {

@@ -25,6 +25,7 @@
 
 package com.example.nishant.berry.ui.search;
 
+import android.content.Intent;
 import android.databinding.BindingAdapter;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
@@ -35,8 +36,10 @@ import android.widget.EditText;
 
 import com.example.nishant.berry.R;
 import com.example.nishant.berry.base.BaseActivity;
+import com.example.nishant.berry.config.IConstants;
 import com.example.nishant.berry.databinding.ActivitySearchBinding;
 import com.example.nishant.berry.ui.model.SearchUser;
+import com.example.nishant.berry.ui.profile.UserProfileActivity;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 
 import static android.support.v7.widget.LinearLayoutManager.VERTICAL;
@@ -100,6 +103,19 @@ public class SearchActivity
         mAdapter.startListening();
         mBinding.searchRv.setVisibility(View.VISIBLE);
         mBinding.searchRv.setAdapter(adapter);
+    }
+
+    /**
+     * Implement this functionality to set behavior when user clicks on list item from
+     * search users list
+     *
+     * @param userId Id of a user on which click event occurred
+     */
+    @Override
+    public void onListItemSelected(String userId) {
+        startActivity(
+                new Intent(this, UserProfileActivity.class)
+                        .putExtra(IConstants.KEY_USER_ID, userId));
     }
 
     /**
