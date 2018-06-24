@@ -25,6 +25,7 @@
 
 package com.example.nishant.berry.data;
 
+import com.example.nishant.berry.config.IFirebaseConfig;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -68,5 +69,14 @@ class FirebaseUtils {
      */
     DatabaseReference getMainObjectRef(String object) {
         return getRootRef().child(object);
+    }
+
+    /**
+     * Call this method to get reference of current user from Users object in root ref
+     *
+     * @return database reference for current user in users object
+     */
+    DatabaseReference getCurrentUserRefFromUsersObject() {
+        return getMainObjectRef(IFirebaseConfig.USERS_OBJECT).child(getCurrentUserId());
     }
 }

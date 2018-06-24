@@ -74,6 +74,15 @@ public class DataManager {
     }
 
     /**
+     * Call this method to get reference of current user from Users object in root ref
+     *
+     * @return database reference for current user in users object
+     */
+    public static DatabaseReference getCurretUsersRef() {
+        return sFirebaseUtils.getCurrentUserRefFromUsersObject();
+    }
+
+    /**
      * Call this method to get reference to Friend Requests object on root database
      *
      * @return firebase database reference to Friend Requests object
