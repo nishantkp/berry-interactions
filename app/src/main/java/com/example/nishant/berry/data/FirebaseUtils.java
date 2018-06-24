@@ -26,6 +26,8 @@
 package com.example.nishant.berry.data;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.Objects;
 
@@ -47,5 +49,24 @@ class FirebaseUtils {
      */
     String getCurrentUserId() {
         return Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
+    }
+
+    /**
+     * Call this method to get root firebase database reference
+     *
+     * @return root database reference
+     */
+    DatabaseReference getRootRef() {
+        return FirebaseDatabase.getInstance().getReference();
+    }
+
+    /**
+     * Call this method to get reference to objects in root database
+     *
+     * @param object object in root database
+     * @return database reference
+     */
+    DatabaseReference getMainObjectRef(String object) {
+        return getRootRef().child(object);
     }
 }

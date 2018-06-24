@@ -27,6 +27,9 @@ package com.example.nishant.berry.data;
 
 import android.content.Context;
 
+import com.example.nishant.berry.config.IFirebaseConfig;
+import com.google.firebase.database.DatabaseReference;
+
 /**
  * Data Manager class, that deals with business logic
  */
@@ -50,5 +53,68 @@ public class DataManager {
      */
     public static String getCurrentUserId() {
         return sFirebaseUtils.getCurrentUserId();
+    }
+
+    /**
+     * Call this method to get root firebase database reference
+     *
+     * @return root database reference
+     */
+    public static DatabaseReference getRootRef() {
+        return sFirebaseUtils.getRootRef();
+    }
+
+    /**
+     * Call this method to get reference to Users object on root database
+     *
+     * @return firebase database reference to Users object
+     */
+    public static DatabaseReference getUsersRef() {
+        return sFirebaseUtils.getMainObjectRef(IFirebaseConfig.USERS_OBJECT);
+    }
+
+    /**
+     * Call this method to get reference to Friend Requests object on root database
+     *
+     * @return firebase database reference to Friend Requests object
+     */
+    public static DatabaseReference getFriendReqRef() {
+        return sFirebaseUtils.getMainObjectRef(IFirebaseConfig.FRIEND_REQUEST_OBJECT);
+    }
+
+    /**
+     * Call this method to get reference to Friends object on root database
+     *
+     * @return firebase database reference to Friends object
+     */
+    public static DatabaseReference getFriendsRef() {
+        return sFirebaseUtils.getMainObjectRef(IFirebaseConfig.FRIENDS_OBJECT);
+    }
+
+    /**
+     * Call this method to get reference to Interactions object on root database
+     *
+     * @return firebase database reference to Interactions object
+     */
+    public static DatabaseReference getInteractionsRef() {
+        return sFirebaseUtils.getMainObjectRef(IFirebaseConfig.INTERACTIONS_OBJECT);
+    }
+
+    /**
+     * Call this method to get reference to Notification object on root database
+     *
+     * @return firebase database reference to Notification object
+     */
+    public static DatabaseReference getNotificationRef() {
+        return sFirebaseUtils.getMainObjectRef(IFirebaseConfig.NOTIFICATION_OBJECT);
+    }
+
+    /**
+     * Call this method to get reference to Message object on root database
+     *
+     * @return firebase database reference to Message object
+     */
+    public static DatabaseReference getMessageRef() {
+        return sFirebaseUtils.getMainObjectRef(IFirebaseConfig.MESSAGE_OBJECT);
     }
 }
