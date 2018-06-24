@@ -47,7 +47,8 @@ import java.util.Map;
 public class DataManager {
     private static DataManager sDataManager;
     private static FirebaseUtils sFirebaseUtils;
-    private SignInCallback mLoginCallback;
+    private SignInCallback mSignInCallback;
+    private SignUpCallback mSignUpCallback;
 
     // Singleton
     public static DataManager getInstance(Context context) {
@@ -219,7 +220,17 @@ public class DataManager {
      *                 call backs
      */
     public void setSignInCallback(SignInCallback callback) {
-        mLoginCallback = callback;
+        mSignInCallback = callback;
+    }
+
+    /**
+     * Set sign up callback for interface
+     *
+     * @param callback SignUpCallBack must be initialized with the class which implements
+     *                 call backs
+     */
+    public void setSignUpCallback(SignUpCallback callback) {
+        mSignUpCallback = callback;
     }
 
     /**
@@ -248,14 +259,69 @@ public class DataManager {
                                 @Override
                                 public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
                                     if (databaseError != null) {
-                                        mLoginCallback.signInError("Sign in error!");
+                                        mSignInCallback.signInError("Sign in error!");
                                     } else {
-                                        mLoginCallback.signInSuccess();
+                                        mSignInCallback.signInSuccess();
                                     }
                                 }
                             });
                         } else {
-                            mLoginCallback.signInError("Sign in error!");
+                            mSignInCallback.signInError("Sign in error!");
+                        }
+                    }
+                });
+    }
+
+    /**
+     * Call this method to register user in firebase
+     *
+     * @param displayName display name of user
+     * @param email       email
+     * @param password    password
+     */
+    public void signUpUser(final String displayName, String email, String password) {
+        // Register user with email, password and cancel progress dialog
+        sFirebaseUtils.getFirebaseAuth().createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isComplete() && task.isSuccessful()) {
+
+                            //Store data
+                            storeDataToFirebaseDatabase(displayName);
+                        } else {
+                            mSignUpCallback.signUpError("Error creating account!");
+                        }
+                    }
+                });
+    }
+
+    /**
+     * Store user data to database and sets callbacks for success and error
+     *
+     * @param displayName display name
+     */
+    private void storeDataToFirebaseDatabase(String displayName) {
+        String deviceToken = FirebaseInstanceId.getInstance().getToken();
+
+        // Value Map for Firebase database
+        Map<String, Object> userMap = new HashMap<>();
+        userMap.put(IFirebaseConfig.NAME, displayName);
+        userMap.put(IFirebaseConfig.STATUS, IFirebaseConfig.DEFAULT_STATUS);
+        userMap.put(IFirebaseConfig.IMAGE, IFirebaseConfig.DEFAULT_VALUE);
+        userMap.put(IFirebaseConfig.THUMBNAIL, IFirebaseConfig.DEFAULT_VALUE);
+        userMap.put(IFirebaseConfig.DEVICE_TOKEN_ID, deviceToken);
+        userMap.put(IFirebaseConfig.ONLINE, true);
+
+        // Set the values to Firebase database
+        DataManager.getCurrentUsersRef().setValue(userMap)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isComplete() && task.isSuccessful()) {
+                            mSignUpCallback.signUpSuccess();
+                        } else {
+                            mSignUpCallback.signUpError("Error creating account!");
                         }
                     }
                 });
@@ -269,5 +335,13 @@ public class DataManager {
 
         void signInError(String message);
     }
-}
 
+    /**
+     * SignUp Callbacks when user signs up
+     */
+    public interface SignUpCallback {
+        void signUpSuccess();
+
+        void signUpError(String message);
+    }
+}
