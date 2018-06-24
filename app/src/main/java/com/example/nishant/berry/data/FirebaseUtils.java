@@ -26,6 +26,7 @@
 package com.example.nishant.berry.data;
 
 import com.example.nishant.berry.config.IFirebaseConfig;
+import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -43,6 +44,15 @@ class FirebaseUtils {
             sFirebaseUtils = new FirebaseUtils();
         }
         return sFirebaseUtils;
+    }
+
+    /**
+     * Call this method to get firebase Auth instance
+     *
+     * @return Firebase Auth instance
+     */
+    FirebaseAuth getFirebaseAuth() {
+        return FirebaseAuth.getInstance();
     }
 
     /**

@@ -25,37 +25,20 @@
 
 package com.example.nishant.berry.ui.signin;
 
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-
 import com.example.nishant.berry.base.BasePresenter;
-import com.example.nishant.berry.config.IFirebaseConfig;
 import com.example.nishant.berry.data.DataManager;
 import com.example.nishant.berry.ui.model.User;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.iid.FirebaseInstanceId;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class SignInPresenter
         extends BasePresenter<SignInContract.View>
-        implements SignInContract.Presenter {
+        implements SignInContract.Presenter, DataManager.SignInCallback {
 
-    // Firebase
-    private FirebaseAuth mAuth;
-    private DatabaseReference mUserDatabaseReference;
+    // Data Manager
+    private DataManager mDataManager;
 
     SignInPresenter() {
-        mAuth = FirebaseAuth.getInstance();
-
-        // Database reference pointing to users object
-        mUserDatabaseReference = DataManager.getUsersRef();
+        mDataManager = new DataManager();
+        mDataManager.setSignInCallback(this);
     }
 
     @Override
@@ -83,61 +66,18 @@ public class SignInPresenter
 
         // Show progress dialog
         getView().showProgressDialog();
-
-        // SignIn user
-        mAuth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isComplete() && task.isSuccessful()) {
-                            storeDeviceToken();
-                        } else {
-                            getView().cancelProgressDialog();
-                            getView().signInError("Email or password is incorrect!");
-                        }
-                    }
-                });
+        mDataManager.loginUser(email, password);
     }
 
-    /**
-     * Call this method to store token Id to user database, when user logs in
-     */
     @Override
-    public void storeDeviceToken() {
-        // Get the device token
-        String deviceToken = FirebaseInstanceId.getInstance().getToken();
-        String userId = DataManager.getCurrentUserId();
+    public void signInSuccess() {
+        getView().cancelProgressDialog();
+        getView().signInSuccess();
+    }
 
-        Map<String, Object> singInMap = new HashMap<>();
-        singInMap.put(IFirebaseConfig.DEVICE_TOKEN_ID, deviceToken);
-        singInMap.put(IFirebaseConfig.ONLINE, true);
-
-        // Store token Id to users database
-        mUserDatabaseReference.child(userId).updateChildren(singInMap, new DatabaseReference.CompletionListener() {
-            @Override
-            public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
-                if (databaseError != null) {
-                    getView().cancelProgressDialog();
-                    getView().signInError("Sign in error!");
-                } else {
-                    getView().cancelProgressDialog();
-                    getView().signInSuccess();
-                }
-            }
-        });
-//                .child(IFirebaseConfig.DEVICE_TOKEN_ID)
-//                .setValue(deviceToken)
-//                .addOnCompleteListener(new OnCompleteListener<Void>() {
-//                    @Override
-//                    public void onComplete(@NonNull Task<Void> task) {
-//                        if (task.isComplete() && task.isSuccessful()) {
-//                            getView().cancelProgressDialog();
-//                            getView().signInSuccess();
-//                        } else {
-//                            getView().cancelProgressDialog();
-//                            getView().signInError("Sign in error!");
-//                        }
-//                    }
-//                });
+    @Override
+    public void signInError(String message) {
+        getView().cancelProgressDialog();
+        getView().signInError(message);
     }
 }

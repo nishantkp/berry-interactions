@@ -26,10 +26,20 @@
 package com.example.nishant.berry.data;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.example.nishant.berry.config.IFirebaseConfig;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.storage.StorageReference;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Data Manager class, that deals with business logic
@@ -37,6 +47,7 @@ import com.google.firebase.storage.StorageReference;
 public class DataManager {
     private static DataManager sDataManager;
     private static FirebaseUtils sFirebaseUtils;
+    private SignInCallback mLoginCallback;
 
     // Singleton
     public static DataManager getInstance(Context context) {
@@ -199,6 +210,64 @@ public class DataManager {
      */
     public static StorageReference getAvatarThumbStorageRef() {
         return sFirebaseUtils.getAvatarThumbnailStorageRef();
+    }
+
+    /**
+     * Set sign in callback for interface
+     *
+     * @param callback SignInCallBack must be initialized with the class which implements
+     *                 call backs
+     */
+    public void setSignInCallback(SignInCallback callback) {
+        mLoginCallback = callback;
+    }
+
+    /**
+     * Call this method to login user to it's account
+     *
+     * @param email    email of user
+     * @param password password provided by user
+     */
+    public void loginUser(String email, String password) {
+        sFirebaseUtils.getFirebaseAuth()
+                .signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // Get the device token
+                            String deviceToken = FirebaseInstanceId.getInstance().getToken();
+                            String userId = getCurrentUserId();
+
+                            Map<String, Object> singInMap = new HashMap<>();
+                            singInMap.put(IFirebaseConfig.DEVICE_TOKEN_ID, deviceToken);
+                            singInMap.put(IFirebaseConfig.ONLINE, true);
+
+                            // Store token Id to users database
+                            getUsersRef().child(userId).updateChildren(singInMap, new DatabaseReference.CompletionListener() {
+                                @Override
+                                public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
+                                    if (databaseError != null) {
+                                        mLoginCallback.signInError("Sign in error!");
+                                    } else {
+                                        mLoginCallback.signInSuccess();
+                                    }
+                                }
+                            });
+                        } else {
+                            mLoginCallback.signInError("Sign in error!");
+                        }
+                    }
+                });
+    }
+
+    /**
+     * SignIn Callbacks when user signs in
+     */
+    public interface SignInCallback {
+        void signInSuccess();
+
+        void signInError(String message);
     }
 }
 
