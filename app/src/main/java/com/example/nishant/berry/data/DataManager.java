@@ -32,12 +32,23 @@ import android.content.Context;
  */
 public class DataManager {
     private static DataManager sDataManager;
+    private static FirebaseUtils sFirebaseUtils;
 
     // Singleton
     public static DataManager getInstance(Context context) {
         if (sDataManager == null) {
             sDataManager = new DataManager();
+            sFirebaseUtils = FirebaseUtils.getInstance();
         }
         return sDataManager;
+    }
+
+    /**
+     * Call this method to get current user's ID
+     *
+     * @return user Id
+     */
+    public static String getCurrentUserId() {
+        return sFirebaseUtils.getCurrentUserId();
     }
 }

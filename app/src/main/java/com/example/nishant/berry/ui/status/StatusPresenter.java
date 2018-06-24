@@ -30,6 +30,7 @@ import android.text.TextUtils;
 
 import com.example.nishant.berry.base.BasePresenter;
 import com.example.nishant.berry.config.IFirebaseConfig;
+import com.example.nishant.berry.data.DataManager;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -43,12 +44,11 @@ public class StatusPresenter
     private DatabaseReference mDatabaseReference;
 
     StatusPresenter() {
-        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
         mDatabaseReference =
                 FirebaseDatabase.getInstance()
                         .getReference()
                         .child(IFirebaseConfig.USERS_OBJECT)
-                        .child(userId)
+                        .child(DataManager.getCurrentUserId())
                         .child(IFirebaseConfig.STATUS);
     }
 

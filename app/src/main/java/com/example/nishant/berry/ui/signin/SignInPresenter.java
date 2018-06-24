@@ -30,6 +30,7 @@ import android.support.annotation.Nullable;
 
 import com.example.nishant.berry.base.BasePresenter;
 import com.example.nishant.berry.config.IFirebaseConfig;
+import com.example.nishant.berry.data.DataManager;
 import com.example.nishant.berry.ui.model.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -108,7 +109,7 @@ public class SignInPresenter
     public void storeDeviceToken() {
         // Get the device token
         String deviceToken = FirebaseInstanceId.getInstance().getToken();
-        String userId = Objects.requireNonNull(mAuth.getCurrentUser()).getUid();
+        String userId = DataManager.getCurrentUserId();
 
         Map<String, Object> singInMap = new HashMap<>();
         singInMap.put(IFirebaseConfig.DEVICE_TOKEN_ID, deviceToken);

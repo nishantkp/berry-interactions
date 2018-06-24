@@ -26,6 +26,7 @@
 package com.example.nishant.berry.ui.utils;
 
 import com.example.nishant.berry.config.IFirebaseConfig;
+import com.example.nishant.berry.data.DataManager;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -48,13 +49,13 @@ public class OnlineStatus implements LoginStats {
         // Database reference pointing to online_status of particular user
         mUsersDatabaseOnlineReference = FirebaseDatabase.getInstance().getReference()
                 .child(IFirebaseConfig.USERS_OBJECT)
-                .child(mAuth.getCurrentUser().getUid())
+                .child(DataManager.getCurrentUserId())
                 .child(IFirebaseConfig.ONLINE);
 
         // Database reference pointing to last_seen of particular user
         mUsersDatabaseLastSeenReference = FirebaseDatabase.getInstance().getReference()
                 .child(IFirebaseConfig.USERS_OBJECT)
-                .child(mAuth.getCurrentUser().getUid())
+                .child(DataManager.getCurrentUserId())
                 .child(IFirebaseConfig.LAST_SEEN);
     }
 

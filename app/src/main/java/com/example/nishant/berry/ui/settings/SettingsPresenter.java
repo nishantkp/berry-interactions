@@ -31,6 +31,7 @@ import android.support.annotation.NonNull;
 
 import com.example.nishant.berry.base.BasePresenter;
 import com.example.nishant.berry.config.IFirebaseConfig;
+import com.example.nishant.berry.data.DataManager;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -58,8 +59,8 @@ public class SettingsPresenter
     private StorageReference mThumbnailStorageReference;
 
     SettingsPresenter() {
-
-        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        // Current user's Id
+        String userId = DataManager.getCurrentUserId();
 
         // Firebase database reference
         mDatabaseReference =

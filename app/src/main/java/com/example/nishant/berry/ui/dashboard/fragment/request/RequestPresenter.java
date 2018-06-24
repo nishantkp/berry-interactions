@@ -37,6 +37,7 @@ import com.example.nishant.berry.R;
 import com.example.nishant.berry.base.BasePresenter;
 import com.example.nishant.berry.config.IConstants;
 import com.example.nishant.berry.config.IFirebaseConfig;
+import com.example.nishant.berry.data.DataManager;
 import com.example.nishant.berry.databinding.FriendRequestListItemBinding;
 import com.example.nishant.berry.ui.adapter.FriendRequestViewHolder;
 import com.example.nishant.berry.ui.adapter.FriendsInteractionViewHolder;
@@ -68,12 +69,8 @@ public class RequestPresenter
     private DatabaseReference mUsersDatabaseReference;
     private DatabaseReference mRootReference;
     private Query mRequestQuery;
-    private String mCurrentUserId;
 
     RequestPresenter() {
-        // Current user Id
-        mCurrentUserId = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
-
         mRootReference = FirebaseDatabase.getInstance().getReference();
 
         //Database reference to Users object
@@ -82,7 +79,7 @@ public class RequestPresenter
         // Firebase query for Friend request object
         mRequestQuery = mRootReference
                 .child(IFirebaseConfig.FRIEND_REQUEST_OBJECT)
-                .child(mCurrentUserId);
+                .child(DataManager.getCurrentUserId());
     }
 
     @Override
@@ -137,7 +134,7 @@ public class RequestPresenter
                                         user.setFriendRequestType(requestType);
 
                                         // Update list item layout
-                                        holder.bind(user, mCurrentUserId, listUserId);
+                                        holder.bind(user, DataManager.getCurrentUserId(), listUserId);
                                     }
 
                                     @Override

@@ -31,8 +31,8 @@ import android.support.annotation.Nullable;
 import com.example.nishant.berry.base.BasePresenter;
 import com.example.nishant.berry.config.IConstants;
 import com.example.nishant.berry.config.IFirebaseConfig;
+import com.example.nishant.berry.data.DataManager;
 import com.example.nishant.berry.ui.model.UserProfile;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -87,7 +87,7 @@ public class UserProfilePresenter
 
 
         // Current firebase user id
-        mCurrentUserId = FirebaseAuth.getInstance().getUid();
+        mCurrentUserId = DataManager.getCurrentUserId();
 
         mCurrentState = IFirebaseConfig.NOT_FRIEND;
         getDataFromFirebaseDatabase();

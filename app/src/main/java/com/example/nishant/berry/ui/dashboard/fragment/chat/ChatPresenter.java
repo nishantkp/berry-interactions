@@ -34,6 +34,7 @@ import android.view.ViewGroup;
 import com.example.nishant.berry.R;
 import com.example.nishant.berry.base.BasePresenter;
 import com.example.nishant.berry.config.IFirebaseConfig;
+import com.example.nishant.berry.data.DataManager;
 import com.example.nishant.berry.databinding.FriendsMessageListItemBinding;
 import com.example.nishant.berry.ui.adapter.FriendsInteractionViewHolder;
 import com.example.nishant.berry.ui.model.AllUsers;
@@ -60,18 +61,15 @@ public class ChatPresenter
         implements ChatContract.Presenter {
 
     private Query mQuery;
-    private String mCurrentUserId;
     private DatabaseReference mUsersDatabaseReference;
     private DatabaseReference mMessageDatabaseReference;
 
     ChatPresenter() {
-        // Current user Id
-        mCurrentUserId = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
 
         // Query for Interactions database
         mQuery = FirebaseDatabase.getInstance().getReference()
                 .child(IFirebaseConfig.INTERACTIONS_OBJECT)
-                .child(mCurrentUserId)
+                .child(DataManager.getCurrentUserId())
                 .orderByChild(IFirebaseConfig.TIMESTAMP);
 
         // Users database reference
@@ -81,7 +79,7 @@ public class ChatPresenter
         // Message database reference
         mMessageDatabaseReference = FirebaseDatabase.getInstance().getReference()
                 .child(IFirebaseConfig.MESSAGE_OBJECT)
-                .child(mCurrentUserId);
+                .child(DataManager.getCurrentUserId());
     }
 
     @Override

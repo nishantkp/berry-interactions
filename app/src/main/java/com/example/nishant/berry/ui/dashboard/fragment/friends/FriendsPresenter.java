@@ -33,6 +33,7 @@ import android.view.ViewGroup;
 import com.example.nishant.berry.R;
 import com.example.nishant.berry.base.BasePresenter;
 import com.example.nishant.berry.config.IFirebaseConfig;
+import com.example.nishant.berry.data.DataManager;
 import com.example.nishant.berry.databinding.AllUsersListItemBinding;
 import com.example.nishant.berry.ui.adapter.AllUsersViewHolder;
 import com.example.nishant.berry.ui.model.AllUsers;
@@ -60,7 +61,7 @@ public class FriendsPresenter
         mQuery = FirebaseDatabase.getInstance()
                 .getReference()
                 .child(IFirebaseConfig.FRIENDS_OBJECT)
-                .child(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()));
+                .child(DataManager.getCurrentUserId());
         // provide offline feature
         mQuery.keepSynced(true);
 

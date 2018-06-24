@@ -34,6 +34,7 @@ import android.util.Log;
 import com.example.nishant.berry.base.BasePresenter;
 import com.example.nishant.berry.config.IConstants;
 import com.example.nishant.berry.config.IFirebaseConfig;
+import com.example.nishant.berry.data.DataManager;
 import com.example.nishant.berry.ui.model.InteractionActionBar;
 import com.example.nishant.berry.ui.model.Message;
 import com.example.nishant.berry.ui.utils.GetTimeAgo;
@@ -82,7 +83,7 @@ public class InteractionPresenter
         if (mInteractionUserId == null) return;
 
         // Current user Id
-        mCurrentUserId = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
+        mCurrentUserId = DataManager.getCurrentUserId();
 
         // Root reference to databases
         mRootRef = FirebaseDatabase.getInstance().getReference();

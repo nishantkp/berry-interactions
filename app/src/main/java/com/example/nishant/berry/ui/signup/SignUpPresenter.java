@@ -29,6 +29,7 @@ import android.support.annotation.NonNull;
 
 import com.example.nishant.berry.base.BasePresenter;
 import com.example.nishant.berry.config.IFirebaseConfig;
+import com.example.nishant.berry.data.DataManager;
 import com.example.nishant.berry.ui.model.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -115,7 +116,7 @@ public class SignUpPresenter
      */
     @Override
     public void storeDataToFirebaseDatabase(String displayName) {
-        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        String userId = DataManager.getCurrentUserId();
         String deviceToken = FirebaseInstanceId.getInstance().getToken();
         // Setup Firebase database reference
         DatabaseReference mDatabaseReference =
