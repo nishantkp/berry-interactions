@@ -34,6 +34,7 @@ import android.view.ViewGroup;
 import com.example.nishant.berry.R;
 import com.example.nishant.berry.base.BasePresenter;
 import com.example.nishant.berry.config.IFirebaseConfig;
+import com.example.nishant.berry.data.DataManager;
 import com.example.nishant.berry.databinding.AllUsersListItemBinding;
 import com.example.nishant.berry.ui.adapter.AllUsersViewHolder;
 import com.example.nishant.berry.ui.model.AllUsers;
@@ -77,7 +78,7 @@ public class SearchPresenter
         }
 
         // Firebase database Query of Users object
-        Query databaseQuery = FirebaseDatabase.getInstance().getReference().child(IFirebaseConfig.USERS_OBJECT)
+        Query databaseQuery = DataManager.getUsersRef()
                 .orderByChild(IFirebaseConfig.NAME)
                 .startAt(searchQuery.toUpperCase())
                 .endAt(searchQuery.toLowerCase() + "\uf8ff")

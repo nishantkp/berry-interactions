@@ -29,6 +29,8 @@ import com.example.nishant.berry.config.IFirebaseConfig;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.Objects;
 
@@ -62,6 +64,15 @@ class FirebaseUtils {
     }
 
     /**
+     * Call this method to get root firebase storage reference
+     *
+     * @return root storage reference
+     */
+    StorageReference getStorageRootRef() {
+        return FirebaseStorage.getInstance().getReference();
+    }
+
+    /**
      * Call this method to get reference to objects in root database
      *
      * @param object object in root database
@@ -72,11 +83,48 @@ class FirebaseUtils {
     }
 
     /**
-     * Call this method to get reference of current user from Users object in root ref
+     * Call this method to get reference to particular user in particular object in root ref
      *
+     * @param userId id of a user
+     * @param object object in root database
+     * @return database reference
+     */
+    DatabaseReference getUserObjectRef(String userId, String object) {
+        return getRootRef().child(object).child(userId);
+    }
+
+    /**
+     * Call this method to get reference of current user from main objects in root ref
+     *
+     * @param object Main object in root ref
      * @return database reference for current user in users object
      */
-    DatabaseReference getCurrentUserRefFromUsersObject() {
-        return getMainObjectRef(IFirebaseConfig.USERS_OBJECT).child(getCurrentUserId());
+    DatabaseReference getCurrentUserRefFromMainObject(String object) {
+        return getMainObjectRef(object).child(getCurrentUserId());
+    }
+
+    /**
+     * Call this method to get storage reference to user's avatar with file name of
+     * {userId.jpg}
+     *
+     * @return firebase storage reference to store user's avatar
+     */
+    StorageReference getAvatarStorageRef() {
+        return getStorageRootRef()
+                .child(IFirebaseConfig.AVATAR_STORAGE_DIR)
+                .child(getCurrentUserId() + ".jpg");
+    }
+
+    /**
+     * Call this method to get storage reference to user's avatar thumbnail with
+     * file name of {userId.jpg}
+     *
+     * @return firebase storage reference to store user's avatar thumbnail
+     */
+    StorageReference getAvatarThumbnailStorageRef() {
+        return getStorageRootRef()
+                .child(IFirebaseConfig.AVATAR_STORAGE_DIR)
+                .child(IFirebaseConfig.THUMBNAIL_STORAGE_DIR)
+                .child(getCurrentUserId() + ".jpg");
     }
 }

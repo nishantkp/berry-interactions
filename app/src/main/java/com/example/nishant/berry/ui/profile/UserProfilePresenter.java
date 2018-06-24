@@ -67,24 +67,16 @@ public class UserProfilePresenter
         mUserProfile = new UserProfile();
 
         // Root database reference
-        mRootReference = FirebaseDatabase.getInstance().getReference();
+        mRootReference = DataManager.getRootRef();
 
         // Database reference pointing to passed in userId
-        mUsersDatabaseReference = FirebaseDatabase.getInstance()
-                .getReference()
-                .child(IFirebaseConfig.USERS_OBJECT)
-                .child(userId);
+        mUsersDatabaseReference = DataManager.getNewUserRef(mNewUserId);
 
         // Database reference pointing to friend_request object
-        mFriendReqDatabaseReference = FirebaseDatabase.getInstance()
-                .getReference()
-                .child(IFirebaseConfig.FRIEND_REQUEST_OBJECT);
+        mFriendReqDatabaseReference = DataManager.getFriendReqRef();
 
         // Database reference pointing to friends object
-        mFriendsDatabaseReference = FirebaseDatabase.getInstance()
-                .getReference()
-                .child(IFirebaseConfig.FRIENDS_OBJECT);
-
+        mFriendsDatabaseReference = DataManager.getFriendsRef();
 
         // Current firebase user id
         mCurrentUserId = DataManager.getCurrentUserId();

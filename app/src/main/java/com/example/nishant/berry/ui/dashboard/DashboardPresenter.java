@@ -25,18 +25,13 @@
 
 package com.example.nishant.berry.ui.dashboard;
 
-import android.provider.ContactsContract;
-
 import com.example.nishant.berry.base.BasePresenter;
 import com.example.nishant.berry.config.IFirebaseConfig;
 import com.example.nishant.berry.data.DataManager;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ServerValue;
-
-import java.util.Objects;
 
 public class DashboardPresenter
         extends BasePresenter<DashboardContract.View>
@@ -72,9 +67,7 @@ public class DashboardPresenter
     @Override
     public void signOutUser() {
         // Update user's status offline and last_seen to firebase's timestamp before signing out
-        DatabaseReference usersDatabaseReference = FirebaseDatabase.getInstance().getReference()
-                .child(IFirebaseConfig.USERS_OBJECT)
-                .child(DataManager.getCurrentUserId());
+        DatabaseReference usersDatabaseReference = DataManager.getCurrentUsersRef();
         usersDatabaseReference.child(IFirebaseConfig.ONLINE).setValue(false);
         usersDatabaseReference.child(IFirebaseConfig.LAST_SEEN).setValue(ServerValue.TIMESTAMP);
         mAuth.signOut();

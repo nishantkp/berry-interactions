@@ -33,6 +33,7 @@ import android.view.ViewGroup;
 import com.example.nishant.berry.R;
 import com.example.nishant.berry.base.BasePresenter;
 import com.example.nishant.berry.config.IFirebaseConfig;
+import com.example.nishant.berry.data.DataManager;
 import com.example.nishant.berry.databinding.AllUsersListItemBinding;
 import com.example.nishant.berry.ui.adapter.AllUsersViewHolder;
 import com.example.nishant.berry.ui.model.AllUsers;
@@ -48,11 +49,8 @@ public class AllUsersPresenter
     private Query mQuery;
 
     AllUsersPresenter() {
-
         // Create a query for Database reference pointing to "users"
-        mQuery = FirebaseDatabase.getInstance()
-                .getReference()
-                .child(IFirebaseConfig.USERS_OBJECT);
+        mQuery = DataManager.getUsersRef();
         // Adds offline functionality
         mQuery.keepSynced(true);
     }
@@ -79,8 +77,8 @@ public class AllUsersPresenter
         FirebaseRecyclerAdapter<AllUsers, AllUsersViewHolder> adapter
                 = new FirebaseRecyclerAdapter<AllUsers, AllUsersViewHolder>(options) {
             @Override
-            protected void onBindViewHolder(@NonNull AllUsersViewHolder holder,
-                                            final int position,
+            protected void onBindViewHolder(@NonNull final AllUsersViewHolder holder,
+                                            int position,
                                             @NonNull final AllUsers model) {
                 holder.bind(model);
 
@@ -89,7 +87,7 @@ public class AllUsersPresenter
                     @Override
                     public void onClick(View v) {
                         // set call back with user id parameter
-                        getView().onListItemClick(getRef(position).getKey());
+                        getView().onListItemClick(getRef(holder.getAdapterPosition()).getKey());
                     }
                 });
             }

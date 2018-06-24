@@ -58,15 +58,12 @@ public class FriendsPresenter
     private DatabaseReference mUsersDatabaseReference;
 
     FriendsPresenter() {
-        mQuery = FirebaseDatabase.getInstance()
-                .getReference()
-                .child(IFirebaseConfig.FRIENDS_OBJECT)
-                .child(DataManager.getCurrentUserId());
+        mQuery = DataManager.getCurrentUserFriendsRef();
         // provide offline feature
         mQuery.keepSynced(true);
 
         // Users database reference
-        mUsersDatabaseReference = FirebaseDatabase.getInstance().getReference().child(IFirebaseConfig.USERS_OBJECT);
+        mUsersDatabaseReference = DataManager.getUsersRef();
         // provide offline feature
         mUsersDatabaseReference.keepSynced(true);
     }

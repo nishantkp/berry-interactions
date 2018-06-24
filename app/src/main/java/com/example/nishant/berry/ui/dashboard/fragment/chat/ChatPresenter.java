@@ -65,21 +65,14 @@ public class ChatPresenter
     private DatabaseReference mMessageDatabaseReference;
 
     ChatPresenter() {
-
         // Query for Interactions database
-        mQuery = FirebaseDatabase.getInstance().getReference()
-                .child(IFirebaseConfig.INTERACTIONS_OBJECT)
-                .child(DataManager.getCurrentUserId())
-                .orderByChild(IFirebaseConfig.TIMESTAMP);
+        mQuery = DataManager.getCurrentUserInteractionRef().orderByChild(IFirebaseConfig.TIMESTAMP);
 
         // Users database reference
-        mUsersDatabaseReference = FirebaseDatabase.getInstance().getReference()
-                .child(IFirebaseConfig.USERS_OBJECT);
+        mUsersDatabaseReference = DataManager.getUsersRef();
 
         // Message database reference
-        mMessageDatabaseReference = FirebaseDatabase.getInstance().getReference()
-                .child(IFirebaseConfig.MESSAGE_OBJECT)
-                .child(DataManager.getCurrentUserId());
+        mMessageDatabaseReference = DataManager.getCurrentUserMessageRef();
     }
 
     @Override

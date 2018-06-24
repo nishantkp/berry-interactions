@@ -68,10 +68,8 @@ public class BerryApp extends Application {
 
         if (FirebaseAuth.getInstance().getCurrentUser() == null) return;
 
-        // Users database reference
-        final DatabaseReference usersDatabaseReference = FirebaseDatabase.getInstance().getReference()
-                .child(IFirebaseConfig.USERS_OBJECT)
-                .child(DataManager.getCurrentUserId());
+        // Current Users database reference
+        final DatabaseReference usersDatabaseReference = DataManager.getCurrentUsersRef();
 
         usersDatabaseReference.addValueEventListener(new ValueEventListener() {
             @Override

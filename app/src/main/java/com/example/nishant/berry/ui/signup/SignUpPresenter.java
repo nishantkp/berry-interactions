@@ -116,14 +116,7 @@ public class SignUpPresenter
      */
     @Override
     public void storeDataToFirebaseDatabase(String displayName) {
-        String userId = DataManager.getCurrentUserId();
         String deviceToken = FirebaseInstanceId.getInstance().getToken();
-        // Setup Firebase database reference
-        DatabaseReference mDatabaseReference =
-                FirebaseDatabase.getInstance()
-                        .getReference()
-                        .child(IFirebaseConfig.USERS_OBJECT)
-                        .child(userId);
 
         // Value Map for Firebase database
         Map<String, Object> userMap = new HashMap<>();
@@ -135,7 +128,7 @@ public class SignUpPresenter
         userMap.put(IFirebaseConfig.ONLINE, true);
 
         // Set the values to Firebase database
-        mDatabaseReference.setValue(userMap)
+        DataManager.getCurrentUsersRef().setValue(userMap)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {

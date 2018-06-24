@@ -86,9 +86,9 @@ public class InteractionPresenter
         mCurrentUserId = DataManager.getCurrentUserId();
 
         // Root reference to databases
-        mRootRef = FirebaseDatabase.getInstance().getReference();
-        mUsersRootRef = mRootRef.child(IFirebaseConfig.USERS_OBJECT);
-        mInteractionsRootRef = mRootRef.child(IFirebaseConfig.INTERACTIONS_OBJECT);
+        mRootRef = DataManager.getRootRef();
+        mUsersRootRef = DataManager.getUsersRef();
+        mInteractionsRootRef = DataManager.getInteractionsRef();
     }
 
     @Override

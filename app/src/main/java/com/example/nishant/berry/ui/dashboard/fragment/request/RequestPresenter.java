@@ -71,15 +71,13 @@ public class RequestPresenter
     private Query mRequestQuery;
 
     RequestPresenter() {
-        mRootReference = FirebaseDatabase.getInstance().getReference();
+        mRootReference = DataManager.getRootRef();
 
         //Database reference to Users object
-        mUsersDatabaseReference = mRootReference.child(IFirebaseConfig.USERS_OBJECT);
+        mUsersDatabaseReference = DataManager.getUsersRef();
 
         // Firebase query for Friend request object
-        mRequestQuery = mRootReference
-                .child(IFirebaseConfig.FRIEND_REQUEST_OBJECT)
-                .child(DataManager.getCurrentUserId());
+        mRequestQuery = DataManager.getCurrentUserFriendsReqRef();
     }
 
     @Override

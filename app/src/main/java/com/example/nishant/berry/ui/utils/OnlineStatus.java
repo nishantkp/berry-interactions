@@ -46,17 +46,12 @@ public class OnlineStatus implements LoginStats {
     public OnlineStatus() {
         mAuth = FirebaseAuth.getInstance();
         if (mAuth.getCurrentUser() == null) return;
-        // Database reference pointing to online_status of particular user
-        mUsersDatabaseOnlineReference = FirebaseDatabase.getInstance().getReference()
-                .child(IFirebaseConfig.USERS_OBJECT)
-                .child(DataManager.getCurrentUserId())
-                .child(IFirebaseConfig.ONLINE);
 
-        // Database reference pointing to last_seen of particular user
-        mUsersDatabaseLastSeenReference = FirebaseDatabase.getInstance().getReference()
-                .child(IFirebaseConfig.USERS_OBJECT)
-                .child(DataManager.getCurrentUserId())
-                .child(IFirebaseConfig.LAST_SEEN);
+        // Database reference pointing to online_status of current user
+        mUsersDatabaseOnlineReference = DataManager.getCurrentUsersRef().child(IFirebaseConfig.ONLINE);
+
+        // Database reference pointing to last_seen of current user
+        mUsersDatabaseLastSeenReference = DataManager.getCurrentUsersRef().child(IFirebaseConfig.LAST_SEEN);
     }
 
     /**

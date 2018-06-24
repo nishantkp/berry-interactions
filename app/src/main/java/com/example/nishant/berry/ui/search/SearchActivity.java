@@ -89,6 +89,7 @@ public class SearchActivity
     @Override
     protected void onStop() {
         super.onStop();
+        if (mAdapter == null) return;
         mAdapter.stopListening();
     }
 

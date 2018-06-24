@@ -34,13 +34,10 @@ import com.example.nishant.berry.config.IFirebaseConfig;
 import com.example.nishant.berry.data.DataManager;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
@@ -59,23 +56,14 @@ public class SettingsPresenter
     private StorageReference mThumbnailStorageReference;
 
     SettingsPresenter() {
-        // Current user's Id
-        String userId = DataManager.getCurrentUserId();
-
-        // Firebase database reference
-        mDatabaseReference =
-                FirebaseDatabase.getInstance().getReference().child(IFirebaseConfig.USERS_OBJECT).child(userId);
+        // Firebase database reference for current user in Users object
+        mDatabaseReference = DataManager.getCurrentUsersRef();
 
         // Storage reference to store user avatar -> file name will be userId.jpg
-        mAvatarStorageReference = FirebaseStorage.getInstance().getReference()
-                .child(IFirebaseConfig.AVATAR_STORAGE_DIR)
-                .child(userId + ".jpg");
+        mAvatarStorageReference = DataManager.getAvatarStorageRef();
 
         // Storage reference to store user avatar thumbnail -> file name will be userId.jpg
-        mThumbnailStorageReference = FirebaseStorage.getInstance().getReference()
-                .child(IFirebaseConfig.AVATAR_STORAGE_DIR)
-                .child(IFirebaseConfig.THUMBNAIL_STORAGE_DIR)
-                .child(userId + ".jpg");
+        mThumbnailStorageReference = DataManager.getAvatarThumbStorageRef();
 
         retrieveDataFromFirebaseDatabase();
     }

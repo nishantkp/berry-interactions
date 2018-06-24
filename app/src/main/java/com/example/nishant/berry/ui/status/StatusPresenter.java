@@ -44,12 +44,7 @@ public class StatusPresenter
     private DatabaseReference mDatabaseReference;
 
     StatusPresenter() {
-        mDatabaseReference =
-                FirebaseDatabase.getInstance()
-                        .getReference()
-                        .child(IFirebaseConfig.USERS_OBJECT)
-                        .child(DataManager.getCurrentUserId())
-                        .child(IFirebaseConfig.STATUS);
+        mDatabaseReference = DataManager.getCurrentUsersRef().child(IFirebaseConfig.STATUS);
     }
 
     @Override

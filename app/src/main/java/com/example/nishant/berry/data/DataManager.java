@@ -29,6 +29,7 @@ import android.content.Context;
 
 import com.example.nishant.berry.config.IFirebaseConfig;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.storage.StorageReference;
 
 /**
  * Data Manager class, that deals with business logic
@@ -78,8 +79,27 @@ public class DataManager {
      *
      * @return database reference for current user in users object
      */
-    public static DatabaseReference getCurretUsersRef() {
-        return sFirebaseUtils.getCurrentUserRefFromUsersObject();
+    public static DatabaseReference getCurrentUsersRef() {
+        return sFirebaseUtils.getCurrentUserRefFromMainObject(IFirebaseConfig.USERS_OBJECT);
+    }
+
+    /**
+     * Call this method to get reference to particular user in Users object in root ref
+     *
+     * @param userId user Id
+     * @return database reference for a user whose userId is passed in
+     */
+    public static DatabaseReference getNewUserRef(String userId) {
+        return sFirebaseUtils.getUserObjectRef(userId, IFirebaseConfig.USERS_OBJECT);
+    }
+
+    /**
+     * Call this method to get database reference of user from Users object in root ref
+     *
+     * @return database reference for current user in users object
+     */
+    public static DatabaseReference getSecondUsersRef(String userId) {
+        return null;
     }
 
     /**
@@ -92,6 +112,15 @@ public class DataManager {
     }
 
     /**
+     * Call this method to get reference of current user from Friend requests object in root ref
+     *
+     * @return database reference for current user in Friend requests object
+     */
+    public static DatabaseReference getCurrentUserFriendsReqRef() {
+        return sFirebaseUtils.getCurrentUserRefFromMainObject(IFirebaseConfig.FRIEND_REQUEST_OBJECT);
+    }
+
+    /**
      * Call this method to get reference to Friends object on root database
      *
      * @return firebase database reference to Friends object
@@ -101,12 +130,30 @@ public class DataManager {
     }
 
     /**
+     * Call this method to get reference of current user from Friends object in root ref
+     *
+     * @return database reference for current user in Friends object
+     */
+    public static DatabaseReference getCurrentUserFriendsRef() {
+        return sFirebaseUtils.getCurrentUserRefFromMainObject(IFirebaseConfig.FRIENDS_OBJECT);
+    }
+
+    /**
      * Call this method to get reference to Interactions object on root database
      *
      * @return firebase database reference to Interactions object
      */
     public static DatabaseReference getInteractionsRef() {
         return sFirebaseUtils.getMainObjectRef(IFirebaseConfig.INTERACTIONS_OBJECT);
+    }
+
+    /**
+     * Call this method to get reference of current user from Interaction object in root ref
+     *
+     * @return database reference for current user in interaction object
+     */
+    public static DatabaseReference getCurrentUserInteractionRef() {
+        return sFirebaseUtils.getCurrentUserRefFromMainObject(IFirebaseConfig.INTERACTIONS_OBJECT);
     }
 
     /**
@@ -126,4 +173,32 @@ public class DataManager {
     public static DatabaseReference getMessageRef() {
         return sFirebaseUtils.getMainObjectRef(IFirebaseConfig.MESSAGE_OBJECT);
     }
+
+    /**
+     * Call this method to get reference of current user from Message object in root ref
+     *
+     * @return database reference for current user in Message object
+     */
+    public static DatabaseReference getCurrentUserMessageRef() {
+        return sFirebaseUtils.getCurrentUserRefFromMainObject(IFirebaseConfig.MESSAGE_OBJECT);
+    }
+
+    /**
+     * Call this method to get firebase storage reference to store user's avatar
+     *
+     * @return user's avatar storage reference
+     */
+    public static StorageReference getAvatarStorageRef() {
+        return sFirebaseUtils.getAvatarStorageRef();
+    }
+
+    /**
+     * Call this method to get firebase storage reference to store user's avatar thumbnail
+     *
+     * @return user's avatar thumbnail storage reference
+     */
+    public static StorageReference getAvatarThumbStorageRef() {
+        return sFirebaseUtils.getAvatarThumbnailStorageRef();
+    }
 }
+
