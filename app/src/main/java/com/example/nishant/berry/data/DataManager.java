@@ -50,6 +50,7 @@ public class DataManager {
     private static FirebaseUtils sFirebaseUtils;
     private SignInCallback mSignInCallback;
     private SignUpCallback mSignUpCallback;
+    private StatusCallback mStatusCallback;
 
     // Singleton
     public static DataManager getInstance(Context context) {
@@ -245,6 +246,16 @@ public class DataManager {
     }
 
     /**
+     * Set status callback for interface
+     *
+     * @param callback StatusCallback must be initialized with the class which implements
+     *                 call backs
+     */
+    public void setStatusCallback(StatusCallback callback) {
+        mStatusCallback = callback;
+    }
+
+    /**
      * Call this method to login user to it's account
      *
      * @param email    email of user
@@ -339,6 +350,25 @@ public class DataManager {
     }
 
     /**
+     * Call this method for saving status to firebase database
+     *
+     * @param status User's status
+     */
+    public void saveUserStatus(String status) {
+        getCurrentUsersRef().child(IFirebaseConfig.STATUS).setValue(status)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            mStatusCallback.onSuccess();
+                        } else {
+                            mStatusCallback.onError("Error while saving changes!");
+                        }
+                    }
+                });
+    }
+
+    /**
      * SignIn Callbacks when user signs in
      */
     public interface SignInCallback {
@@ -354,5 +384,14 @@ public class DataManager {
         void signUpSuccess();
 
         void signUpError(String message);
+    }
+
+    /**
+     * Status callback for success and failure
+     */
+    public interface StatusCallback {
+        void onSuccess();
+
+        void onError(String error);
     }
 }
