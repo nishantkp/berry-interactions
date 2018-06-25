@@ -26,21 +26,13 @@
 package com.example.nishant.berry.ui.dashboard;
 
 import com.example.nishant.berry.base.BasePresenter;
-import com.example.nishant.berry.config.IFirebaseConfig;
 import com.example.nishant.berry.data.DataManager;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.ServerValue;
 
 public class DashboardPresenter
         extends BasePresenter<DashboardContract.View>
         implements DashboardContract.Presenter {
 
-    private FirebaseAuth mAuth;
-
     DashboardPresenter() {
-        mAuth = FirebaseAuth.getInstance();
     }
 
     @Override
@@ -55,8 +47,8 @@ public class DashboardPresenter
 
     @Override
     public void checkCurrentUser() {
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        if (currentUser == null) {
+        // If current user is not available set call back for no active user
+        if (!DataManager.isCurrentUserAvailable()) {
             getView().noActiveUser();
         }
     }
@@ -66,10 +58,6 @@ public class DashboardPresenter
      */
     @Override
     public void signOutUser() {
-        // Update user's status offline and last_seen to firebase's timestamp before signing out
-        DatabaseReference usersDatabaseReference = DataManager.getCurrentUsersRef();
-        usersDatabaseReference.child(IFirebaseConfig.ONLINE).setValue(false);
-        usersDatabaseReference.child(IFirebaseConfig.LAST_SEEN).setValue(ServerValue.TIMESTAMP);
-        mAuth.signOut();
+        DataManager.signOutUser();
     }
 }

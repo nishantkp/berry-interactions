@@ -35,6 +35,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ServerValue;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.storage.StorageReference;
 
@@ -211,6 +212,25 @@ public class DataManager {
      */
     public static StorageReference getAvatarThumbStorageRef() {
         return sFirebaseUtils.getAvatarThumbnailStorageRef();
+    }
+
+    /**
+     * Use this method to sign out current user and
+     * Update user's status offline and last_seen to firebase's timestamp before signing out
+     */
+    public static void signOutUser() {
+        getCurrentUsersRef().child(IFirebaseConfig.ONLINE).setValue(false);
+        getCurrentUsersRef().child(IFirebaseConfig.LAST_SEEN).setValue(ServerValue.TIMESTAMP);
+        sFirebaseUtils.signOut();
+    }
+
+    /**
+     * Call this method to check whether current user is available or not
+     *
+     * @return true if the current user is available/ false if it's not resent
+     */
+    public static boolean isCurrentUserAvailable() {
+        return sFirebaseUtils.isCurrentUserAvailable();
     }
 
     /**

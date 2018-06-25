@@ -26,7 +26,6 @@
 package com.example.nishant.berry.data;
 
 import com.example.nishant.berry.config.IFirebaseConfig;
-import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -136,5 +135,21 @@ class FirebaseUtils {
                 .child(IFirebaseConfig.AVATAR_STORAGE_DIR)
                 .child(IFirebaseConfig.THUMBNAIL_STORAGE_DIR)
                 .child(getCurrentUserId() + ".jpg");
+    }
+
+    /**
+     * Call this method to sign out current user
+     */
+    void signOut() {
+        getFirebaseAuth().signOut();
+    }
+
+    /**
+     * Call this method to check whether current user is available or not
+     *
+     * @return true or false depending upon current user availability
+     */
+    boolean isCurrentUserAvailable() {
+        return getFirebaseAuth().getCurrentUser() != null;
     }
 }
