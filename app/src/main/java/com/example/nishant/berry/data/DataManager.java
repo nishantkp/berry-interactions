@@ -261,7 +261,7 @@ public class DataManager {
      * @param email    email of user
      * @param password password provided by user
      */
-    public void loginUser(String email, String password) {
+    public void loginUser(@NonNull String email, @NonNull String password) {
         sFirebaseUtils.getFirebaseAuth()
                 .signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
@@ -301,7 +301,9 @@ public class DataManager {
      * @param email       email
      * @param password    password
      */
-    public void signUpUser(final String displayName, String email, String password) {
+    public void signUpUser(@NonNull final String displayName,
+                           @NonNull String email,
+                           @NonNull String password) {
         // Register user with email, password and cancel progress dialog
         sFirebaseUtils.getFirebaseAuth().createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
@@ -323,7 +325,7 @@ public class DataManager {
      *
      * @param displayName display name
      */
-    private void storeDataToFirebaseDatabase(String displayName) {
+    private void storeDataToFirebaseDatabase(@NonNull String displayName) {
         String deviceToken = FirebaseInstanceId.getInstance().getToken();
 
         // Value Map for Firebase database
@@ -354,7 +356,7 @@ public class DataManager {
      *
      * @param status User's status
      */
-    public void saveUserStatus(String status) {
+    public void saveUserStatus(@NonNull String status) {
         getCurrentUsersRef().child(IFirebaseConfig.STATUS).setValue(status)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
