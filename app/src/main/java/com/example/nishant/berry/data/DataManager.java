@@ -107,15 +107,6 @@ public class DataManager {
     }
 
     /**
-     * Call this method to get database reference of user from Users object in root ref
-     *
-     * @return database reference for current user in users object
-     */
-    public static DatabaseReference getSecondUsersRef(String userId) {
-        return null;
-    }
-
-    /**
      * Call this method to get reference to Friend Requests object on root database
      *
      * @return firebase database reference to Friend Requests object
