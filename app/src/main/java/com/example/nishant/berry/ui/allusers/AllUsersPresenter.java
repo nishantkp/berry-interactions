@@ -25,34 +25,28 @@
 
 package com.example.nishant.berry.ui.allusers;
 
-import android.support.annotation.NonNull;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-
-import com.example.nishant.berry.R;
 import com.example.nishant.berry.base.BasePresenter;
-import com.example.nishant.berry.config.IFirebaseConfig;
 import com.example.nishant.berry.data.DataManager;
-import com.example.nishant.berry.databinding.AllUsersListItemBinding;
-import com.example.nishant.berry.ui.adapter.AllUsersViewHolder;
-import com.example.nishant.berry.ui.model.AllUsers;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
-import com.firebase.ui.database.FirebaseRecyclerOptions;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 
+/**
+ * Presenter to display all users in database
+ */
 public class AllUsersPresenter
         extends BasePresenter<AllUsersContract.View>
-        implements AllUsersContract.Presenter {
+        implements AllUsersContract.Presenter, DataManager.AllUsersCallback {
 
     private Query mQuery;
+    private DataManager mDataManager;
 
     AllUsersPresenter() {
         // Create a query for Database reference pointing to "users"
         mQuery = DataManager.getUsersRef();
         // Adds offline functionality
         mQuery.keepSynced(true);
+        mDataManager = new DataManager();
+        mDataManager.setAllUsersCallback(this);
     }
 
     @Override
@@ -70,37 +64,29 @@ public class AllUsersPresenter
 
     @Override
     public void setupFirebaseRecyclerAdapter(Query query) {
-        FirebaseRecyclerOptions<AllUsers> options =
-                new FirebaseRecyclerOptions.Builder<AllUsers>().setQuery(query, AllUsers.class)
-                        .build();
+        mDataManager.getAllUsersFromDatabase(query);
+    }
 
-        FirebaseRecyclerAdapter<AllUsers, AllUsersViewHolder> adapter
-                = new FirebaseRecyclerAdapter<AllUsers, AllUsersViewHolder>(options) {
-            @Override
-            protected void onBindViewHolder(@NonNull final AllUsersViewHolder holder,
-                                            int position,
-                                            @NonNull final AllUsers model) {
-                holder.bind(model);
+    /**
+     * DataManager callback for list item click
+     *
+     * @param listUserId Id of a user on which click action is performed
+     */
+    @Override
+    public void onListItemUserClick(String listUserId) {
+        getView().onListItemClick(listUserId);
+    }
 
-                // Set onclick listener on ViewHolder
-                holder.itemView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        // set call back with user id parameter
-                        getView().onListItemClick(getRef(holder.getAdapterPosition()).getKey());
-                    }
-                });
-            }
-
-            @NonNull
-            @Override
-            public AllUsersViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-                // get the View
-                View view = LayoutInflater.from(parent.getContext())
-                        .inflate(R.layout.all_users_list_item, parent, false);
-                return new AllUsersViewHolder(AllUsersListItemBinding.bind(view.getRootView()));
-            }
-        };
+    /**
+     * DataManager callback for firebase adapter
+     *
+     * @param adapter FirebaseRecyclerAdapter which we can use in {@link AllUsersActivity} for
+     *                setting up on RecyclerView
+     *                Also we have to call startListening() and stopListening() method form
+     *                activity to actually get the data
+     */
+    @Override
+    public void getFirebaseAdapter(FirebaseRecyclerAdapter adapter) {
         getView().getFirebaseRecyclerAdapter(adapter);
     }
 }

@@ -28,13 +28,23 @@ package com.example.nishant.berry.data;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
+import com.example.nishant.berry.R;
 import com.example.nishant.berry.config.IFirebaseConfig;
+import com.example.nishant.berry.databinding.AllUsersListItemBinding;
+import com.example.nishant.berry.ui.adapter.AllUsersViewHolder;
+import com.example.nishant.berry.ui.model.AllUsers;
+import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ServerValue;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.storage.StorageReference;
@@ -51,6 +61,7 @@ public class DataManager {
     private SignInCallback mSignInCallback;
     private SignUpCallback mSignUpCallback;
     private StatusCallback mStatusCallback;
+    private AllUsersCallback mAllUsersCallback;
 
     // Singleton
     public static DataManager getInstance(Context context) {
@@ -256,6 +267,16 @@ public class DataManager {
     }
 
     /**
+     * Set all users callback for interface
+     *
+     * @param callback AllUsersCallback must be initialized with the class which implements
+     *                 call backs
+     */
+    public void setAllUsersCallback(AllUsersCallback callback) {
+        mAllUsersCallback = callback;
+    }
+
+    /**
      * Call this method to login user to it's account
      *
      * @param email    email of user
@@ -371,6 +392,47 @@ public class DataManager {
     }
 
     /**
+     * Call this method to get all the users from database
+     * This method sets callback for list item click and setting up firebase adapter
+     *
+     * @param query Firebase query
+     */
+    public void getAllUsersFromDatabase(Query query) {
+        FirebaseRecyclerOptions<AllUsers> options =
+                new FirebaseRecyclerOptions.Builder<AllUsers>().setQuery(query, AllUsers.class)
+                        .build();
+
+        FirebaseRecyclerAdapter<AllUsers, AllUsersViewHolder> adapter
+                = new FirebaseRecyclerAdapter<AllUsers, AllUsersViewHolder>(options) {
+            @Override
+            protected void onBindViewHolder(@NonNull final AllUsersViewHolder holder,
+                                            int position,
+                                            @NonNull final AllUsers model) {
+                holder.bind(model);
+
+                // Set onclick listener on ViewHolder
+                holder.itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        // set call back with user id parameter
+                        mAllUsersCallback.onListItemUserClick(getRef(holder.getAdapterPosition()).getKey());
+                    }
+                });
+            }
+
+            @NonNull
+            @Override
+            public AllUsersViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+                // get the View
+                View view = LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.all_users_list_item, parent, false);
+                return new AllUsersViewHolder(AllUsersListItemBinding.bind(view.getRootView()));
+            }
+        };
+        mAllUsersCallback.getFirebaseAdapter(adapter);
+    }
+
+    /**
      * SignIn Callbacks when user signs in
      */
     public interface SignInCallback {
@@ -395,5 +457,14 @@ public class DataManager {
         void onSuccess();
 
         void onError(String error);
+    }
+
+    /**
+     * All users list callback for list item click and firebase adapter
+     */
+    public interface AllUsersCallback {
+        void onListItemUserClick(String listUserId);
+
+        void getFirebaseAdapter(FirebaseRecyclerAdapter adapter);
     }
 }
