@@ -29,10 +29,16 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 
 import com.example.nishant.berry.config.IFirebaseConfig;
+import com.example.nishant.berry.ui.settings.SettingsActivity;
+import com.example.nishant.berry.ui.settings.SettingsPresenter;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.storage.UploadTask;
 
+/**
+ * Utility class that deals with storing user avatar and thumbnail to FirebaseStorage
+ * i.e usually required for {@link SettingsActivity}, {@link SettingsPresenter}
+ */
 class SettingsUtils {
     private static SettingsUtils sSettingUtils;
     private AvatarStorageCallback mAvatarStorageCallback;
