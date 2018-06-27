@@ -26,6 +26,7 @@
 package com.example.nishant.berry.data;
 
 import android.content.Context;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -55,13 +56,16 @@ import java.util.Map;
 /**
  * Data Manager class, that deals with business logic
  */
-public class DataManager {
+public class DataManager
+        implements FirebaseUtils.UsersObjectCallback, SettingsUtils.AvatarStorageCallback {
     private static DataManager sDataManager;
     private static FirebaseUtils sFirebaseUtils;
     private SignInCallback mSignInCallback;
     private SignUpCallback mSignUpCallback;
     private StatusCallback mStatusCallback;
     private AllUsersCallback mAllUsersCallback;
+    private UserObjectCallback mUserObjectCallback;
+    private AvatarStorageCallback mAvatarStoreCallback;
 
     // Singleton
     public static DataManager getInstance(Context context) {
@@ -237,43 +241,63 @@ public class DataManager {
     }
 
     /**
-     * Set sign in callback for interface
+     * Set sign in callback
      *
      * @param callback SignInCallBack must be initialized with the class which implements
-     *                 call backs
+     *                 callback
      */
     public void setSignInCallback(SignInCallback callback) {
         mSignInCallback = callback;
     }
 
     /**
-     * Set sign up callback for interface
+     * Set sign up callback
      *
      * @param callback SignUpCallBack must be initialized with the class which implements
-     *                 call backs
+     *                 callback
      */
     public void setSignUpCallback(SignUpCallback callback) {
         mSignUpCallback = callback;
     }
 
     /**
-     * Set status callback for interface
+     * Set status callback
      *
      * @param callback StatusCallback must be initialized with the class which implements
-     *                 call backs
+     *                 callback
      */
     public void setStatusCallback(StatusCallback callback) {
         mStatusCallback = callback;
     }
 
     /**
-     * Set all users callback for interface
+     * Set all users callback
      *
      * @param callback AllUsersCallback must be initialized with the class which implements
-     *                 call backs
+     *                 callback
      */
     public void setAllUsersCallback(AllUsersCallback callback) {
         mAllUsersCallback = callback;
+    }
+
+    /**
+     * Set user object callback
+     *
+     * @param callbacks UserObjectCallback must be initialized with the class which implements
+     *                  callback
+     */
+    public void setUserObjectCallbacks(UserObjectCallback callbacks) {
+        mUserObjectCallback = callbacks;
+    }
+
+    /**
+     * Set avatar store callback
+     *
+     * @param callbacks AvatarStoreCallback must be initialized with the class which implements
+     *                  callback
+     */
+    public void setAvatarStoreCallbacks(AvatarStorageCallback callbacks) {
+        mAvatarStoreCallback = callbacks;
     }
 
     /**
@@ -433,6 +457,85 @@ public class DataManager {
     }
 
     /**
+     * Call this method to get detail information about current user like name, status, avatar etc..
+     * User must implement UserObjectCallback before using this particular method to get the results
+     */
+    public void getCurrentUserInfo() {
+        // Safety to avoid NullPointerException
+        if (mUserObjectCallback == null) return;
+
+        FirebaseUtils utils = new FirebaseUtils();
+        utils.setFirebaseUsersObjectCallbacks(this);
+        utils.getUsersObject(getCurrentUserId());
+    }
+
+    /**
+     * Call this method to store user avatar and thumbnail to firebase storage
+     *
+     * @param avatarUri     uri of user avatar
+     * @param thumbnailByte user avatar thumbnail in form of byte array
+     */
+    public void storeAvatar(Uri avatarUri, final byte[] thumbnailByte) {
+        // Safety to avoid NullPointerException
+        if (mAvatarStoreCallback == null) return;
+
+        SettingsUtils utils = new SettingsUtils();
+        utils.setAvatarStorageCallback(this);
+        utils.storeAvatarToFirebaseDatabase(avatarUri, thumbnailByte);
+    }
+
+    /**
+     * Implement this {@link FirebaseUtils} callback method for detailed user object
+     *
+     * @param model AllUsers object
+     */
+    @Override
+    public void onFirebaseUsersObject(AllUsers model) {
+        mUserObjectCallback.onData(model);
+    }
+
+    /**
+     * Implement this {@link FirebaseUtils} callback method for handling error when retrieving
+     * user details from firebase database
+     *
+     * @param error error message
+     */
+    @Override
+    public void onFirebaseUsersObjectError(String error) {
+        mUserObjectCallback.onError(error);
+    }
+
+    /**
+     * Implement this {@link SettingsUtils} callback method for what to do when we successfully
+     * store user avatar and thumbnail to firebase storage
+     */
+    @Override
+    public void onAvatarStoreSuccess() {
+        mAvatarStoreCallback.onAvatarStoreSuccess();
+    }
+
+    /**
+     * Implement this {@link SettingsUtils} callback method for handling error when storing
+     * user avatar and thumbnail to firebase storage
+     *
+     * @param error error message
+     */
+    @Override
+    public void onAvatarStoreError(String error) {
+        mAvatarStoreCallback.onAvatarStoreError(error);
+    }
+
+    /**
+     * UserObject callbacks when DataManager is inquired about detail information
+     * on particular user
+     */
+    public interface UserObjectCallback {
+        void onData(AllUsers model);
+
+        void onError(String error);
+    }
+
+    /**
      * SignIn Callbacks when user signs in
      */
     public interface SignInCallback {
@@ -466,5 +569,14 @@ public class DataManager {
         void onListItemUserClick(String listUserId);
 
         void getFirebaseAdapter(FirebaseRecyclerAdapter adapter);
+    }
+
+    /**
+     * User Avatar storage callback for success and failure
+     */
+    public interface AvatarStorageCallback {
+        void onAvatarStoreSuccess();
+
+        void onAvatarStoreError(String error);
     }
 }

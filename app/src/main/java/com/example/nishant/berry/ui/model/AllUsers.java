@@ -44,16 +44,18 @@ public class AllUsers {
     private boolean online;
     private boolean messageSeen;
     private int onlineStatus;
+    private long last_seen;
 
     public AllUsers() {
     }
 
-    public AllUsers(String name, String image, String status, String thumbnail, boolean online) {
+    public AllUsers(String name, String image, String status, String thumbnail, boolean online, long last_seen) {
         this.name = name;
         this.image = image;
         this.status = status;
         this.thumbnail = thumbnail;
         this.online = online;
+        this.last_seen = last_seen;
     }
 
     public String getName() {
@@ -145,5 +147,13 @@ public class AllUsers {
 
     public void setAcceptButtonVisibility(int acceptButtonVisibility) {
         this.acceptButtonVisibility = acceptButtonVisibility;
+    }
+
+    public long getLast_seen() {
+        return last_seen;
+    }
+
+    public void setLast_seen(long last_seen) {
+        this.last_seen = last_seen;
     }
 }

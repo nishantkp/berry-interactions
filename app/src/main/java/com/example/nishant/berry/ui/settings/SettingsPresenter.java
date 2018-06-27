@@ -27,19 +27,10 @@ package com.example.nishant.berry.ui.settings;
 
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.support.annotation.NonNull;
 
 import com.example.nishant.berry.base.BasePresenter;
-import com.example.nishant.berry.config.IFirebaseConfig;
 import com.example.nishant.berry.data.DataManager;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
+import com.example.nishant.berry.ui.model.AllUsers;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -49,22 +40,15 @@ import id.zelory.compressor.Compressor;
 
 public class SettingsPresenter
         extends BasePresenter<SettingsContract.View>
-        implements SettingsContract.Presenter {
+        implements SettingsContract.Presenter, DataManager.UserObjectCallback, DataManager.AvatarStorageCallback {
 
-    private DatabaseReference mDatabaseReference;
-    private StorageReference mAvatarStorageReference;
-    private StorageReference mThumbnailStorageReference;
+    // DataManager
+    private DataManager mDataManager;
 
     SettingsPresenter() {
-        // Firebase database reference for current user in Users object
-        mDatabaseReference = DataManager.getCurrentUsersRef();
-
-        // Storage reference to store user avatar -> file name will be userId.jpg
-        mAvatarStorageReference = DataManager.getAvatarStorageRef();
-
-        // Storage reference to store user avatar thumbnail -> file name will be userId.jpg
-        mThumbnailStorageReference = DataManager.getAvatarThumbStorageRef();
-
+        mDataManager = new DataManager();
+        mDataManager.setUserObjectCallbacks(this);
+        mDataManager.setAvatarStoreCallbacks(this);
         retrieveDataFromFirebaseDatabase();
     }
 
@@ -83,34 +67,7 @@ public class SettingsPresenter
      */
     @Override
     public void retrieveDataFromFirebaseDatabase() {
-        // Enable offline functionality
-        mDatabaseReference.keepSynced(true);
-        mDatabaseReference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                // Get data from data snapshot
-                String name = dataSnapshot.child(IFirebaseConfig.NAME).getValue().toString();
-                String status = dataSnapshot.child(IFirebaseConfig.STATUS).getValue().toString();
-                String image = dataSnapshot.child(IFirebaseConfig.IMAGE).getValue().toString();
-
-                // Setup callbacks
-                getView().setName(name);
-                getView().setStatus(status);
-
-                // If image has default value stored in it, pass null in callback, so that we don't
-                // need to set image i.e use default
-                if (image.equals(IFirebaseConfig.DEFAULT_VALUE)) {
-                    getView().setImage(null);
-                } else {
-                    getView().setImage(image);
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                getView().onError(databaseError.getMessage());
-            }
-        });
+        mDataManager.getCurrentUserInfo();
     }
 
     /**
@@ -143,104 +100,46 @@ public class SettingsPresenter
         }
 
         final byte[] finalThumb_byte = thumb_byte;
-
-        // Upload original avatar to database storage pointing to "profile_images"
-        mAvatarStorageReference.putFile(avatarUri)
-                .addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-                        if (task.isComplete() && task.isSuccessful()) {
-
-                            // As soon as we are done uploading original avatar to database,
-                            // upload thumbnail avatar to database
-                            uploadAvatarThumbnail(finalThumb_byte);
-                        } else {
-                            getView().cancelProgressDialog();
-                            getView().onError("Error uploading avatar!");
-                        }
-                    }
-                });
+        mDataManager.storeAvatar(avatarUri, finalThumb_byte);
     }
 
     /**
-     * Call this method to upload avatar thumbnail to database storage
-     * path: /profile_images/thumb_images
+     * {@link DataManager} callback when we successfully retrieve user data from firebase database
      *
-     * @param bytes thumb image in form of byte array
+     * @param model AllUsers model containing detail information about user
      */
     @Override
-    public void uploadAvatarThumbnail(byte[] bytes) {
-        UploadTask uploadTask = mThumbnailStorageReference.putBytes(bytes);
-        uploadTask.addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-                if (task.isSuccessful()) {
-                    // Get download url from storage reference to store into out database
-                    getDownloadUrlFromStorageRef();
-                } else {
-                    getView().cancelProgressDialog();
-                    getView().onError("Error uploading avatar!");
-                }
-            }
-        });
+    public void onData(AllUsers model) {
+        getView().setUserInfo(model);
+        getView().onStatus(model.getStatus());
     }
 
     /**
-     * Call this method to get download url of avatar from StorageReference
-     */
-    @Override
-    public void getDownloadUrlFromStorageRef() {
-        // Get the download url of original avatar
-        mAvatarStorageReference.getDownloadUrl()
-                .addOnCompleteListener(new OnCompleteListener<Uri>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Uri> task) {
-                        if (task.isSuccessful()) {
-                            String avatarUrl = task.getResult().toString();
-
-                            // Update database with url
-                            updateDatabaseWithAvatarUrl(avatarUrl, IFirebaseConfig.IMAGE);
-                        } else {
-                            getView().onError("Error uploading avatar!");
-                        }
-                    }
-                });
-
-        // Get the download url of avatar thumbnail
-        mThumbnailStorageReference.getDownloadUrl()
-                .addOnCompleteListener(new OnCompleteListener<Uri>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Uri> task) {
-                        if (task.isSuccessful()) {
-                            String thumbnailUrl = task.getResult().toString();
-
-                            // Update database with url
-                            updateDatabaseWithAvatarUrl(thumbnailUrl, IFirebaseConfig.THUMBNAIL);
-                        }
-                    }
-                });
-    }
-
-    /**
-     * Call this method to update database for particular user with avatar image url
-     * This method sets callback for progressbar and error
+     * {@link DataManager} callback there is error retrieving user data from firebase database
      *
-     * @param url   download url of avatar or thumbnail
-     * @param field database field i.e image or thumbnail
+     * @param error error message
      */
     @Override
-    public void updateDatabaseWithAvatarUrl(String url, String field) {
-        mDatabaseReference.child(field).setValue(url)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()) {
-                            getView().cancelProgressDialog();
-                        } else {
-                            getView().cancelProgressDialog();
-                            getView().onError("Error uploading avatar!");
-                        }
-                    }
-                });
+    public void onError(String error) {
+        getView().onError(error);
+    }
+
+    /**
+     * {@link DataManager} callback when user avatar is successfully stored into firebase storage
+     */
+    @Override
+    public void onAvatarStoreSuccess() {
+        getView().cancelProgressDialog();
+    }
+
+    /**
+     * {@link DataManager} callback there is error storing user avatar/thumbnail to firebase storage
+     *
+     * @param error error message
+     */
+    @Override
+    public void onAvatarStoreError(String error) {
+        getView().cancelProgressDialog();
+        getView().onError(error);
     }
 }

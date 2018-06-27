@@ -25,10 +25,16 @@
 
 package com.example.nishant.berry.data;
 
+import android.support.annotation.NonNull;
+
 import com.example.nishant.berry.config.IFirebaseConfig;
+import com.example.nishant.berry.ui.model.AllUsers;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -36,6 +42,7 @@ import java.util.Objects;
 
 class FirebaseUtils {
     private static FirebaseUtils sFirebaseUtils;
+    private UsersObjectCallback mUsersObjectCallback;
 
     // Singleton
     static FirebaseUtils getInstance() {
@@ -151,5 +158,80 @@ class FirebaseUtils {
      */
     boolean isCurrentUserAvailable() {
         return getFirebaseAuth().getCurrentUser() != null;
+    }
+
+    /**
+     * Set UserObjectCallback to get detailed information about particular user
+     *
+     * @param callbacks Must be initiated by class which implements the UsersObjectCallback
+     */
+    void setFirebaseUsersObjectCallbacks(UsersObjectCallback callbacks) {
+        mUsersObjectCallback = callbacks;
+    }
+
+    /**
+     * Call this method to get information about any User from users object
+     * Must use setFirebaseUsersObjectCallbacks() along side with the method in order to get the
+     * results
+     *
+     * @param userId ID of user, whose information we are interested in
+     */
+    void getUsersObject(@NonNull String userId) {
+        // Safety reasons :: If user forget to implement UserObjectCallback RETURN without executing
+        // the method, otherwise it will cause NullPointerException when trying to set callbacks
+        if (mUsersObjectCallback == null) return;
+
+        // Database reference for particular reference
+        DatabaseReference reference = getMainObjectRef(IFirebaseConfig.USERS_OBJECT).child(userId);
+        // Enable offline functionality
+        reference.keepSynced(true);
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                // Get data from data snapshot
+                String name = dataSnapshot.hasChild(IFirebaseConfig.NAME) ?
+                        Objects.requireNonNull(dataSnapshot.child(IFirebaseConfig.NAME).getValue()).toString() :
+                        "Berry!";
+
+                String status = dataSnapshot.hasChild(IFirebaseConfig.STATUS) ?
+                        Objects.requireNonNull(dataSnapshot.child(IFirebaseConfig.STATUS).getValue()).toString() :
+                        "Hi, it's berry!";
+
+                String image = dataSnapshot.hasChild(IFirebaseConfig.IMAGE) ?
+                        Objects.requireNonNull(dataSnapshot.child(IFirebaseConfig.IMAGE).getValue()).toString() :
+                        IFirebaseConfig.DEFAULT_VALUE;
+
+                String thumb = dataSnapshot.hasChild(IFirebaseConfig.THUMBNAIL) ?
+                        Objects.requireNonNull(dataSnapshot.child(IFirebaseConfig.THUMBNAIL).getValue()).toString() :
+                        IFirebaseConfig.DEFAULT_VALUE;
+
+                boolean online = dataSnapshot.hasChild(IFirebaseConfig.ONLINE) &&
+                        (boolean) dataSnapshot.child(IFirebaseConfig.ONLINE).getValue();
+
+                long lastSeen = dataSnapshot.hasChild(IFirebaseConfig.LAST_SEEN) ?
+                        (long) Objects.requireNonNull(dataSnapshot.child(IFirebaseConfig.LAST_SEEN).getValue()) : 0;
+
+                // Setup callbacks
+                mUsersObjectCallback.onFirebaseUsersObject(
+                        new AllUsers(name, image, status, thumb, online, lastSeen)
+                );
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                mUsersObjectCallback.onFirebaseUsersObjectError(databaseError.getMessage());
+            }
+        });
+
+    }
+
+    /**
+     * Implement this interface if you're interested in User details from User's object
+     * You must implement this callback when you use getUsersObject(userId) method
+     */
+    interface UsersObjectCallback {
+        void onFirebaseUsersObject(AllUsers model);
+
+        void onFirebaseUsersObjectError(String error);
     }
 }

@@ -41,6 +41,7 @@ import com.example.nishant.berry.R;
 import com.example.nishant.berry.base.BaseActivity;
 import com.example.nishant.berry.config.IConstants;
 import com.example.nishant.berry.databinding.ActivitySettingsBinding;
+import com.example.nishant.berry.ui.model.AllUsers;
 import com.example.nishant.berry.ui.status.StatusActivity;
 import com.example.nishant.berry.ui.utils.ImageLoad;
 import com.squareup.picasso.Callback;
@@ -86,20 +87,13 @@ public class SettingsActivity
     }
 
     @Override
-    public void setName(String name) {
-        mBinding.settingsDisplayName.setText(name);
+    public void setUserInfo(AllUsers model) {
+        mBinding.setUser(model);
     }
 
     @Override
-    public void setStatus(String status) {
-        mBinding.settingsStatus.setText(status);
+    public void onStatus(String status) {
         mStatus = status;
-    }
-
-    @Override
-    public void setImage(final String imageUri) {
-        if (imageUri == null) return;
-        ImageLoad.load(imageUri, mBinding.settingsAvatar);
     }
 
     @Override

@@ -28,18 +28,15 @@ package com.example.nishant.berry.ui.settings;
 import android.net.Uri;
 
 import com.example.nishant.berry.base.MvpView;
-
-import java.util.Map;
+import com.example.nishant.berry.ui.model.AllUsers;
 
 import id.zelory.compressor.Compressor;
 
 public interface SettingsContract {
     interface View extends MvpView {
-        void setName(String name);
+        void setUserInfo(AllUsers model);
 
-        void setStatus(String status);
-
-        void setImage(String imageUri);
+        void onStatus(String status);
 
         void onError(String error);
 
@@ -52,11 +49,5 @@ public interface SettingsContract {
         void retrieveDataFromFirebaseDatabase();
 
         void storeAvatarToFirebaseDatabase(Uri fileUri, Compressor compressor);
-
-        void updateDatabaseWithAvatarUrl(String url, String field);
-
-        void getDownloadUrlFromStorageRef();
-
-        void uploadAvatarThumbnail(byte[] bytes);
     }
 }
