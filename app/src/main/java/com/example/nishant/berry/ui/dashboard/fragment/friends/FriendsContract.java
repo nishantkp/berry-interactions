@@ -27,7 +27,6 @@ package com.example.nishant.berry.ui.dashboard.fragment.friends;
 
 import com.example.nishant.berry.base.MvpView;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
-import com.google.firebase.database.Query;
 
 public interface FriendsContract {
     interface View extends MvpView {
@@ -37,6 +36,6 @@ public interface FriendsContract {
     }
 
     interface Presenter {
-        void setupFirebaseRecyclerAdapter(Query query);
+        void setupFirebaseRecyclerAdapter();
     }
 }

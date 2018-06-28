@@ -28,6 +28,7 @@ package com.example.nishant.berry.data;
 import android.support.annotation.NonNull;
 
 import com.example.nishant.berry.config.IFirebaseConfig;
+import com.example.nishant.berry.ui.adapter.AllUsersViewHolder;
 import com.example.nishant.berry.ui.model.AllUsers;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -175,8 +176,17 @@ class FirebaseUtils {
      * results
      *
      * @param userId ID of user, whose information we are interested in
+     * @param holder AllUsersViewHolder object : especially used for retrieving friends list.
+     *               So when we use this method to get detail about user in FirebaseRecyclerAdapter
+     *               we need ViewHolder object in callback to bind the {@link AllUsers} model
+     *               to view
+     *               NOTE : We don't do anything with the ViewHolder object in this method, we just
+     *               need it set the callback
+     *               Pass null for this parameter when you don't need it.
+     *               i.e just retrieving a user info from User's object without FirebaseRecyclerAdapter
+     *               Refer {@link FriendsUtils} class
      */
-    void getUsersObject(@NonNull String userId) {
+    void getUsersObject(@NonNull final String userId, final AllUsersViewHolder holder) {
         // Safety reasons :: If user forget to implement UserObjectCallback RETURN without executing
         // the method, otherwise it will cause NullPointerException when trying to set callbacks
         if (mUsersObjectCallback == null) return;
@@ -213,7 +223,9 @@ class FirebaseUtils {
 
                 // Setup callbacks
                 mUsersObjectCallback.onFirebaseUsersObject(
-                        new AllUsers(name, image, status, thumb, online, lastSeen)
+                        new AllUsers(name, image, status, thumb, online, lastSeen),
+                        userId,
+                        holder
                 );
             }
 
@@ -230,7 +242,7 @@ class FirebaseUtils {
      * You must implement this callback when you use getUsersObject(userId) method
      */
     interface UsersObjectCallback {
-        void onFirebaseUsersObject(AllUsers model);
+        void onFirebaseUsersObject(AllUsers model, String userId, AllUsersViewHolder holder);
 
         void onFirebaseUsersObjectError(String error);
     }
