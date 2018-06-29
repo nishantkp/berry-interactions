@@ -58,7 +58,7 @@ import java.util.Map;
  */
 public class DataManager
         implements FirebaseUtils.UsersObjectCallback, SettingsUtils.AvatarStorageCallback,
-        FriendsUtils.FriendsListCallback {
+        FriendsUtils.FriendsListCallback, RequestsUtils.FriendRequestCallback {
     private static DataManager sDataManager;
     private static FirebaseUtils sFirebaseUtils;
     private SignInCallback mSignInCallback;
@@ -68,6 +68,7 @@ public class DataManager
     private UserObjectCallback mUserObjectCallback;
     private AvatarStorageCallback mAvatarStoreCallback;
     private FriendsListCallback mFriendsListCallback;
+    private FriendReqCallback mFriendReqCallback;
 
     // Singleton
     public static DataManager getInstance(Context context) {
@@ -313,6 +314,16 @@ public class DataManager
     }
 
     /**
+     * Set friend request callback
+     *
+     * @param callbacks FriendRequestCallback must be initialized with the class which implements
+     *                  callback
+     */
+    public void setFriendRequestCallbacks(FriendReqCallback callbacks) {
+        mFriendReqCallback = callbacks;
+    }
+
+    /**
      * Call this method to login user to it's account
      *
      * @param email    email of user
@@ -509,6 +520,19 @@ public class DataManager
     }
 
     /**
+     * Call this method to get current user's friend request
+     * received or sent
+     */
+    public void getCurrentUsersFriendReq() {
+        // Safety to avoid NullPointerException
+        if (mFriendReqCallback == null) return;
+
+        RequestsUtils requestsUtils = new RequestsUtils();
+        requestsUtils.setFriendRequestCallbacks(this);
+        requestsUtils.getCurrentUsersFriendRequests();
+    }
+
+    /**
      * Implement this {@link FirebaseUtils} callback method for detailed user object
      *
      * @param model  AllUsers object
@@ -577,13 +601,37 @@ public class DataManager
      * Implement this {@link FriendsUtils} callback method for FirebaseRecyclerAdapter for current
      * user's friend
      * Use this FirebaseAdapter in activity's onStart() and onPause() method to
-     * startListening()/stopListening() in oder to fetch data from firebase
+     * startListening()/stopListening() in order to fetch data from firebase
      *
      * @param adapter FirebaseRecyclerAdapter
      */
     @Override
     public void onFriendsFirebaseRecyclerAdapter(FirebaseRecyclerAdapter adapter) {
         mFriendsListCallback.onFriendsAdapter(adapter);
+    }
+
+    /**
+     * Implement this {@link RequestsUtils} callback method for handling error while getting
+     * user's detail information from User's object
+     *
+     * @param error error message
+     */
+    @Override
+    public void onFriendReqError(String error) {
+        mFriendReqCallback.onError(error);
+    }
+
+    /**
+     * Implement this {@link RequestsUtils} callback method FirebaseRecyclerAdapter for current
+     * user's friend requests
+     * Use this FirebaseAdapter in activity's onStart() and onPause() method to
+     * startListening()/stopListening() in order to fetch data from firebase
+     *
+     * @param adapter FirebaseRecyclerAdapter
+     */
+    @Override
+    public void onFriendReqFirebaseAdapter(FirebaseRecyclerAdapter adapter) {
+        mFriendReqCallback.onReqAdapter(adapter);
     }
 
     /**
@@ -650,5 +698,14 @@ public class DataManager
         void onFriendsAdapter(FirebaseRecyclerAdapter adapter);
 
         void onListItemClick(String userId, String displayName);
+    }
+
+    /**
+     * Current user's friend request callback fro error and firebase adapter
+     */
+    public interface FriendReqCallback {
+        void onError(String error);
+
+        void onReqAdapter(FirebaseRecyclerAdapter adapter);
     }
 }

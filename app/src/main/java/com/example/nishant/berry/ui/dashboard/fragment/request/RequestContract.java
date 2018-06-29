@@ -27,9 +27,8 @@ package com.example.nishant.berry.ui.dashboard.fragment.request;
 
 import com.example.nishant.berry.base.MvpView;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
-import com.google.firebase.database.Query;
 
-public class RequestContract {
+class RequestContract {
     interface View extends MvpView {
         void setFirebaseAdapterWithRecyclerView(FirebaseRecyclerAdapter adapter);
 
@@ -37,6 +36,6 @@ public class RequestContract {
     }
 
     interface Presenter {
-        void setupFirebaseRecyclerAdapter(Query query);
+        void setupFirebaseRecyclerAdapter();
     }
 }

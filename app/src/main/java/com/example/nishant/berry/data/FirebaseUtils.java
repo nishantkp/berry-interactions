@@ -29,6 +29,7 @@ import android.support.annotation.NonNull;
 
 import com.example.nishant.berry.config.IFirebaseConfig;
 import com.example.nishant.berry.ui.adapter.AllUsersViewHolder;
+import com.example.nishant.berry.ui.adapter.FriendRequestViewHolder;
 import com.example.nishant.berry.ui.model.AllUsers;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -41,9 +42,13 @@ import com.google.firebase.storage.StorageReference;
 
 import java.util.Objects;
 
+/**
+ * Firebase Utility class
+ */
 class FirebaseUtils {
     private static FirebaseUtils sFirebaseUtils;
     private UsersObjectCallback mUsersObjectCallback;
+    private FriendReqUsersObjectCallback mFriendReqUserObjectCallback;
 
     // Singleton
     static FirebaseUtils getInstance() {
@@ -171,6 +176,17 @@ class FirebaseUtils {
     }
 
     /**
+     * Set FriendReqUserObjectCallback to get detailed information about particular user
+     * Set this callback when dealing with user's friend requests
+     * Use this method along side with getUsersObject(userId, reqType, FriendsRequestViewHolder)
+     *
+     * @param callbacks Must be initiated by class which implements the UsersObjectCallback
+     */
+    void setFriendReqUserObjectCallbacks(FriendReqUsersObjectCallback callbacks) {
+        mFriendReqUserObjectCallback = callbacks;
+    }
+
+    /**
      * Call this method to get information about any User from users object
      * Must use setFirebaseUsersObjectCallbacks() along side with the method in order to get the
      * results
@@ -198,32 +214,9 @@ class FirebaseUtils {
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                // Get data from data snapshot
-                String name = dataSnapshot.hasChild(IFirebaseConfig.NAME) ?
-                        Objects.requireNonNull(dataSnapshot.child(IFirebaseConfig.NAME).getValue()).toString() :
-                        "Berry!";
-
-                String status = dataSnapshot.hasChild(IFirebaseConfig.STATUS) ?
-                        Objects.requireNonNull(dataSnapshot.child(IFirebaseConfig.STATUS).getValue()).toString() :
-                        "Hi, it's berry!";
-
-                String image = dataSnapshot.hasChild(IFirebaseConfig.IMAGE) ?
-                        Objects.requireNonNull(dataSnapshot.child(IFirebaseConfig.IMAGE).getValue()).toString() :
-                        IFirebaseConfig.DEFAULT_VALUE;
-
-                String thumb = dataSnapshot.hasChild(IFirebaseConfig.THUMBNAIL) ?
-                        Objects.requireNonNull(dataSnapshot.child(IFirebaseConfig.THUMBNAIL).getValue()).toString() :
-                        IFirebaseConfig.DEFAULT_VALUE;
-
-                boolean online = dataSnapshot.hasChild(IFirebaseConfig.ONLINE) &&
-                        (boolean) dataSnapshot.child(IFirebaseConfig.ONLINE).getValue();
-
-                long lastSeen = dataSnapshot.hasChild(IFirebaseConfig.LAST_SEEN) ?
-                        (long) Objects.requireNonNull(dataSnapshot.child(IFirebaseConfig.LAST_SEEN).getValue()) : 0;
-
                 // Setup callbacks
                 mUsersObjectCallback.onFirebaseUsersObject(
-                        new AllUsers(name, image, status, thumb, online, lastSeen),
+                        extractValues(dataSnapshot),
                         userId,
                         holder
                 );
@@ -238,11 +231,107 @@ class FirebaseUtils {
     }
 
     /**
+     * Call this method to get information about any User from users object
+     * Must use setFriendReqUserObjectCallbacks() along side with the method in order to get the
+     * results
+     * <p>
+     * Note: For just retrieving user info, give the userId and null for other parameters
+     *
+     * @param userId      ID of user, whose information we are interested in
+     * @param requestType request type, whether the user has sent or received the friend request
+     * @param holder      FriendRequestViewHolder object : especially used for retrieving friend requests.
+     *                    So when we use this method to get detail about user in FirebaseRecyclerAdapter
+     *                    we need ViewHolder object in callback to bind the {@link AllUsers} model
+     *                    to view
+     *                    NOTE : We don't do anything with the ViewHolder object in this method, we just
+     *                    need it set the
+     */
+    void getUsersObject(@NonNull final String userId, final String requestType, final FriendRequestViewHolder holder) {
+        // Safety reasons :: If user forget to implement FriendReqUserObjectCallbacks RETURN without
+        // executing the method, otherwise it will cause NullPointerException when trying to set callbacks
+        if (mFriendReqUserObjectCallback == null) return;
+
+        // Database reference for particular reference
+        DatabaseReference reference = getMainObjectRef(IFirebaseConfig.USERS_OBJECT).child(userId);
+        // Enable offline functionality
+        reference.keepSynced(true);
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                // Extract the values from DataSnapshot
+                AllUsers user = extractValues(dataSnapshot);
+                // Set the request type on model
+                user.setFriendRequestType(requestType);
+
+                // Setup callbacks
+                mFriendReqUserObjectCallback.onFirebaseUsersObject(
+                        user,
+                        userId,
+                        holder
+                );
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                mFriendReqUserObjectCallback.onFirebaseUsersObjectError(databaseError.getMessage());
+            }
+        });
+
+    }
+
+    /**
+     * Call this method to extract data from DataSnapshot
+     *
+     * @param dataSnapshot DataSnapshot object from firebase database containing detailed
+     *                     information about user
+     * @return {@link AllUsers} object
+     */
+    private AllUsers extractValues(@NonNull DataSnapshot dataSnapshot) {
+        // Get data from data snapshot
+        String name = dataSnapshot.hasChild(IFirebaseConfig.NAME) ?
+                Objects.requireNonNull(dataSnapshot.child(IFirebaseConfig.NAME).getValue()).toString() :
+                "Berry!";
+
+        String status = dataSnapshot.hasChild(IFirebaseConfig.STATUS) ?
+                Objects.requireNonNull(dataSnapshot.child(IFirebaseConfig.STATUS).getValue()).toString() :
+                "Hi, it's berry!";
+
+        String image = dataSnapshot.hasChild(IFirebaseConfig.IMAGE) ?
+                Objects.requireNonNull(dataSnapshot.child(IFirebaseConfig.IMAGE).getValue()).toString() :
+                IFirebaseConfig.DEFAULT_VALUE;
+
+        String thumb = dataSnapshot.hasChild(IFirebaseConfig.THUMBNAIL) ?
+                Objects.requireNonNull(dataSnapshot.child(IFirebaseConfig.THUMBNAIL).getValue()).toString() :
+                IFirebaseConfig.DEFAULT_VALUE;
+
+        boolean online = dataSnapshot.hasChild(IFirebaseConfig.ONLINE) &&
+                (boolean) dataSnapshot.child(IFirebaseConfig.ONLINE).getValue();
+
+        long lastSeen = dataSnapshot.hasChild(IFirebaseConfig.LAST_SEEN) ?
+                (long) Objects.requireNonNull(dataSnapshot.child(IFirebaseConfig.LAST_SEEN).getValue()) : 0;
+
+        return new AllUsers(name, image, status, thumb, online, lastSeen);
+    }
+
+    /**
      * Implement this interface if you're interested in User details from User's object
-     * You must implement this callback when you use getUsersObject(userId) method
+     * You must implement this callback when you use getUsersObject(userId, AllUsersViewHolder)
      */
     interface UsersObjectCallback {
         void onFirebaseUsersObject(AllUsers model, String userId, AllUsersViewHolder holder);
+
+        void onFirebaseUsersObjectError(String error);
+    }
+
+    /**
+     * Implement this interface if you're interested in user details form User's object
+     * When dealing with FriendRequests object
+     * Must implement this callback when you use getUsersObject(userId,reqType,FriendRequestViewHolder)
+     * <p>
+     * i.e refer {@link RequestsUtils} class
+     */
+    interface FriendReqUsersObjectCallback {
+        void onFirebaseUsersObject(AllUsers model, String userId, FriendRequestViewHolder holder);
 
         void onFirebaseUsersObjectError(String error);
     }
