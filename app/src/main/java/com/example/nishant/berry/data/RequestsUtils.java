@@ -115,15 +115,14 @@ class RequestsUtils
      * {@link FriendRequestViewHolder} callback when user clicks on accept friend request button
      * from list
      *
-     * @param currentUserId current user's id
-     * @param listUserId    Id of a user who has sent current user a request or to whom current user
-     *                      has sent a request
+     * @param listUserId Id of a user who has sent current user a request or to whom current user
+     *                   has sent a request
      */
     @Override
-    public void onPositiveClick(String currentUserId, String listUserId) {
+    public void onPositiveClick(String listUserId) {
+        String currentUserId = DataManager.getCurrentUserId();
         // Get the current date and time
         final String currentDateTime = DateFormat.getDateTimeInstance().format(new Date());
-
         // HashMap for updating friends object and friend requests object
         Map<String, Object> friendsMap = new HashMap<>();
         friendsMap.put(IFirebaseConfig.FRIENDS_OBJECT + "/" + currentUserId + "/" + listUserId + "/" + IFirebaseConfig.FRIEND_SINCE, currentDateTime);
@@ -146,12 +145,12 @@ class RequestsUtils
      * {@link FriendRequestViewHolder} callback when user clicks on cancel/decline friend request
      * button from list
      *
-     * @param currentUserId current user's id
-     * @param listUserId    Id of a user who has sent current user a request or to whom current user
-     *                      has sent a request
+     * @param listUserId Id of a user who has sent current user a request or to whom current user
+     *                   has sent a request
      */
     @Override
-    public void onNegativeClick(String currentUserId, String listUserId) {
+    public void onNegativeClick(String listUserId) {
+        String currentUserId = DataManager.getCurrentUserId();
         // HashMap to delete friend requests from friend requests table
         Map<String, Object> cancelMap = new HashMap<>();
         cancelMap.put(IFirebaseConfig.FRIEND_REQUEST_OBJECT + "/" + currentUserId + "/" + listUserId, null);
@@ -176,7 +175,7 @@ class RequestsUtils
      */
     @Override
     public void onFirebaseUsersObject(AllUsers model, String userId, FriendRequestViewHolder holder) {
-        holder.bind(model, DataManager.getCurrentUserId(), userId);
+        holder.bind(model, userId);
     }
 
     /**

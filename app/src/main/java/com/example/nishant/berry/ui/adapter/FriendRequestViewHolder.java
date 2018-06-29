@@ -37,7 +37,6 @@ import com.example.nishant.berry.ui.model.AllUsers;
  */
 public class FriendRequestViewHolder extends RecyclerView.ViewHolder {
 
-    private String mCurrentUserId;
     private String mListUserId;
     private onButtonClick mClick;
     private FriendRequestListItemBinding mBinding;
@@ -49,9 +48,9 @@ public class FriendRequestViewHolder extends RecyclerView.ViewHolder {
      * onNegativeClick() -> when user clicks on "decline" or "cancel request" button
      */
     public interface onButtonClick {
-        void onPositiveClick(String currentUserId, String listUserId);
+        void onPositiveClick(String listUserId);
 
-        void onNegativeClick(String currentUserId, String listUserId);
+        void onNegativeClick(String listUserId);
     }
 
     public FriendRequestViewHolder(FriendRequestListItemBinding binding, final onButtonClick click) {
@@ -63,12 +62,13 @@ public class FriendRequestViewHolder extends RecyclerView.ViewHolder {
     /**
      * Bind AllUsers object to friend_request_list_item layout
      *
-     * @param allUsers AllUsers object
+     * @param allUsers   AllUsers object
+     * @param listUserId Id of user who has sent current user a request/ to whom current user has
+     *                   sent a request
      */
-    public void bind(AllUsers allUsers, String currentUserId, String listUserId) {
+    public void bind(AllUsers allUsers, String listUserId) {
         mBinding.setUser(allUsers);
         mBinding.setViewHolder(this);
-        mCurrentUserId = currentUserId;
         mListUserId = listUserId;
     }
 
@@ -77,7 +77,7 @@ public class FriendRequestViewHolder extends RecyclerView.ViewHolder {
      * Id of user on which click action is performed
      */
     public void onPositiveButtonClick() {
-        mClick.onPositiveClick(mCurrentUserId, mListUserId);
+        mClick.onPositiveClick(mListUserId);
     }
 
     /**
@@ -85,6 +85,6 @@ public class FriendRequestViewHolder extends RecyclerView.ViewHolder {
      * with current userId and Id of user on which click action is performed
      */
     public void onNegativeButtonClick() {
-        mClick.onNegativeClick(mCurrentUserId, mListUserId);
+        mClick.onNegativeClick(mListUserId);
     }
 }
