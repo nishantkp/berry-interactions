@@ -27,8 +27,13 @@ package com.example.nishant.berry.ui.dashboard.fragment.friends;
 
 import com.example.nishant.berry.base.BasePresenter;
 import com.example.nishant.berry.data.DataManager;
+import com.example.nishant.berry.ui.dashboard.DashboardActivity;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 
+/**
+ * Presenter that responsible for displaying friends list in Friends tab in
+ * {@link DashboardActivity}
+ */
 public class FriendsPresenter
         extends BasePresenter<FriendsContract.View>
         implements FriendsContract.Presenter, DataManager.FriendsListCallback {
@@ -59,15 +64,34 @@ public class FriendsPresenter
         mDataManager.getCurrentUserFriendList();
     }
 
+    /**
+     * Implement this {@link DataManager} callback for error handling while getting data
+     * from Firebase database
+     *
+     * @param error error message
+     */
     @Override
     public void onError(String error) {
     }
 
+    /**
+     * Implement this {@link DataManager} callback for getting data from firebase
+     * by calling startListening()/ stopListening() methods on FirebaseRecyclerAdapter
+     * And ultimately set the adapter on RecyclerView to actually see the list
+     *
+     * @param adapter FirebaseRecyclerAdapter instance
+     */
     @Override
     public void onFriendsAdapter(FirebaseRecyclerAdapter adapter) {
         getView().getFirebaseRecyclerAdapter(adapter);
     }
 
+    /**
+     * Implement this {@link DataManager} callback for click event on friends list
+     *
+     * @param userId      Id of a friend on which click action is performed
+     * @param displayName Name of a friend
+     */
     @Override
     public void onListItemClick(String userId, String displayName) {
         getView().onListItemClick(userId, displayName);
