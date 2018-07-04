@@ -78,7 +78,7 @@ public class SignUpPresenter
 
         // Show progress dialog
         getView().showProgressDialog();
-        mDataManager.signUpUser(displayName, email, password, new DataCallback.SignUp() {
+        mDataManager.signUpUser(displayName, email, password, new DataCallback.OnTaskCompletion() {
             @Override
             public void onSuccess() {
                 getView().cancelProgressDialog();

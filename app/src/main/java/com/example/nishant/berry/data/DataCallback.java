@@ -26,15 +26,8 @@
 package com.example.nishant.berry.data;
 
 public interface DataCallback {
-    // SignIn callbacks
-    interface SignIn {
-        void onSuccess();
-
-        void onError(String error);
-    }
-
-    // SignUp callbacks
-    interface SignUp {
+    // Success and failure callbacks
+    interface OnTaskCompletion {
         void onSuccess();
 
         void onError(String error);

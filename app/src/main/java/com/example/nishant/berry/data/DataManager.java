@@ -321,7 +321,7 @@ public class DataManager
      */
     public void loginUser(@NonNull String email,
                           @NonNull String password,
-                          @NonNull final DataCallback.SignIn callback) {
+                          @NonNull final DataCallback.OnTaskCompletion callback) {
         FirebaseUtils.getInstance().getFirebaseAuth()
                 .signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
@@ -367,7 +367,7 @@ public class DataManager
     public void signUpUser(@NonNull final String displayName,
                            @NonNull String email,
                            @NonNull String password,
-                           @NonNull final DataCallback.SignUp callback) {
+                           @NonNull final DataCallback.OnTaskCompletion callback) {
         // Register user with email, password and cancel progress dialog
         sFirebaseUtils.getFirebaseAuth().createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
@@ -390,7 +390,7 @@ public class DataManager
      * @param callback    callbacks for success and failure
      */
     private void storeDataToFirebaseDatabase(@NonNull String displayName,
-                                             @NonNull final DataCallback.SignUp callback) {
+                                             @NonNull final DataCallback.OnTaskCompletion callback) {
         String deviceToken = FirebaseInstanceId.getInstance().getToken();
 
         // Value Map for Firebase database
