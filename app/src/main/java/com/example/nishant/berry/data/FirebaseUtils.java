@@ -41,8 +41,6 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
-import java.util.Objects;
-
 /**
  * Firebase Utility class
  */
@@ -289,30 +287,7 @@ class FirebaseUtils {
      * @return {@link AllUsers} object
      */
     static AllUsers extractValues(@NonNull DataSnapshot dataSnapshot) {
-        // Get data from data snapshot
-        String name = dataSnapshot.hasChild(IFirebaseConfig.NAME) ?
-                Objects.requireNonNull(dataSnapshot.child(IFirebaseConfig.NAME).getValue()).toString() :
-                "Berry!";
-
-        String status = dataSnapshot.hasChild(IFirebaseConfig.STATUS) ?
-                Objects.requireNonNull(dataSnapshot.child(IFirebaseConfig.STATUS).getValue()).toString() :
-                "Hi, it's berry!";
-
-        String image = dataSnapshot.hasChild(IFirebaseConfig.IMAGE) ?
-                Objects.requireNonNull(dataSnapshot.child(IFirebaseConfig.IMAGE).getValue()).toString() :
-                IFirebaseConfig.DEFAULT_VALUE;
-
-        String thumb = dataSnapshot.hasChild(IFirebaseConfig.THUMBNAIL) ?
-                Objects.requireNonNull(dataSnapshot.child(IFirebaseConfig.THUMBNAIL).getValue()).toString() :
-                IFirebaseConfig.DEFAULT_VALUE;
-
-        boolean online = dataSnapshot.hasChild(IFirebaseConfig.ONLINE) &&
-                (boolean) dataSnapshot.child(IFirebaseConfig.ONLINE).getValue();
-
-        long lastSeen = dataSnapshot.hasChild(IFirebaseConfig.LAST_SEEN) ?
-                (long) Objects.requireNonNull(dataSnapshot.child(IFirebaseConfig.LAST_SEEN).getValue()) : 0;
-
-        return new AllUsers(name, image, status, thumb, online, lastSeen);
+        return dataSnapshot.getValue(AllUsers.class);
     }
 
     /**
