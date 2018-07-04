@@ -60,7 +60,6 @@ public class DataManager
         FriendsUtils.FriendsListCallback, RequestsUtils.FriendRequestCallback,
         ChatUtils.ChatCallback {
     private static FirebaseUtils sFirebaseUtils;
-    private SignUpCallback mSignUpCallback;
     private StatusCallback mStatusCallback;
     private AllUsersCallback mAllUsersCallback;
     private UserObjectCallback mUserObjectCallback;
@@ -243,17 +242,6 @@ public class DataManager
         return sFirebaseUtils.isCurrentUserAvailable();
     }
 
-
-    /**
-     * Set sign up callback
-     *
-     * @param callback SignUpCallBack must be initialized with the class which implements
-     *                 callback
-     */
-    public void setSignUpCallback(SignUpCallback callback) {
-        mSignUpCallback = callback;
-    }
-
     /**
      * Set status callback
      *
@@ -356,7 +344,6 @@ public class DataManager
                                                                @NonNull DatabaseReference databaseReference) {
                                             if (databaseError != null) {
                                                 callback.onError("Sign in error!");
-                                                // mSignInCallback.signInError("Sign in error!");
                                             } else {
                                                 callback.onSuccess();
                                             }
@@ -375,21 +362,22 @@ public class DataManager
      * @param displayName display name of user
      * @param email       email
      * @param password    password
+     * @param callback    callbacks for success and failure
      */
     public void signUpUser(@NonNull final String displayName,
                            @NonNull String email,
-                           @NonNull String password) {
+                           @NonNull String password,
+                           @NonNull final DataCallback.SignUp callback) {
         // Register user with email, password and cancel progress dialog
         sFirebaseUtils.getFirebaseAuth().createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isComplete() && task.isSuccessful()) {
-
                             //Store data
-                            storeDataToFirebaseDatabase(displayName);
+                            storeDataToFirebaseDatabase(displayName, callback);
                         } else {
-                            mSignUpCallback.signUpError("Error creating account!");
+                            callback.onError("Error creating account!");
                         }
                     }
                 });
@@ -399,8 +387,10 @@ public class DataManager
      * Store user data to database and sets callbacks for success and error
      *
      * @param displayName display name
+     * @param callback    callbacks for success and failure
      */
-    private void storeDataToFirebaseDatabase(@NonNull String displayName) {
+    private void storeDataToFirebaseDatabase(@NonNull String displayName,
+                                             @NonNull final DataCallback.SignUp callback) {
         String deviceToken = FirebaseInstanceId.getInstance().getToken();
 
         // Value Map for Firebase database
@@ -418,9 +408,9 @@ public class DataManager
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isComplete() && task.isSuccessful()) {
-                            mSignUpCallback.signUpSuccess();
+                            callback.onSuccess();
                         } else {
-                            mSignUpCallback.signUpError("Error creating account!");
+                            callback.onError("Error creating account!");
                         }
                     }
                 });
@@ -680,15 +670,6 @@ public class DataManager
         void onData(AllUsers model);
 
         void onError(String error);
-    }
-
-    /**
-     * SignUp Callbacks when user signs up
-     */
-    public interface SignUpCallback {
-        void signUpSuccess();
-
-        void signUpError(String message);
     }
 
     /**

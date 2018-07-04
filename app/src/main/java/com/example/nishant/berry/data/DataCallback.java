@@ -32,4 +32,11 @@ public interface DataCallback {
 
         void onError(String error);
     }
+
+    // SignUp callbacks
+    interface SignUp {
+        void onSuccess();
+
+        void onError(String error);
+    }
 }
