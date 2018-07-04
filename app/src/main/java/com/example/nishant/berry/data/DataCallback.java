@@ -25,11 +25,20 @@
 
 package com.example.nishant.berry.data;
 
+import com.firebase.ui.database.FirebaseRecyclerAdapter;
+
 public interface DataCallback {
     // Success and failure callbacks
     interface OnTaskCompletion {
         void onSuccess();
 
         void onError(String error);
+    }
+
+    // All users list callback for list-item click and firebase adapter
+    interface OnAllUsersList {
+        void onListItemClick(String listUserId);
+
+        void onFirebaseAdapter(FirebaseRecyclerAdapter adapter);
     }
 }

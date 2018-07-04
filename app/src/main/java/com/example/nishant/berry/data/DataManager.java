@@ -60,7 +60,6 @@ public class DataManager
         FriendsUtils.FriendsListCallback, RequestsUtils.FriendRequestCallback,
         ChatUtils.ChatCallback {
     private static FirebaseUtils sFirebaseUtils;
-    private AllUsersCallback mAllUsersCallback;
     private UserObjectCallback mUserObjectCallback;
     private AvatarStorageCallback mAvatarStoreCallback;
     private FriendsListCallback mFriendsListCallback;
@@ -242,16 +241,6 @@ public class DataManager
     }
 
     /**
-     * Set all users callback
-     *
-     * @param callback AllUsersCallback must be initialized with the class which implements
-     *                 callback
-     */
-    public void setAllUsersCallback(AllUsersCallback callback) {
-        mAllUsersCallback = callback;
-    }
-
-    /**
      * Set user object callback
      *
      * @param callbacks UserObjectCallback must be initialized with the class which implements
@@ -430,9 +419,15 @@ public class DataManager
      * Call this method to get all the users from database
      * This method sets callback for list item click and setting up firebase adapter
      *
-     * @param query Firebase query
+     * @param query    Firebase query
+     * @param callback callback for list item click and firebase recycler adapter
+     *                 FirebaseRecyclerAdapter which we can use in Activity/Fragment for
+     *                 setting up on RecyclerView
+     *                 Also we have to call startListening() and stopListening() method form
+     *                 Activity/Fragment to actually get the data
      */
-    public void getAllUsersFromDatabase(Query query) {
+    public void getAllUsersFromDatabase(Query query,
+                                        @NonNull final DataCallback.OnAllUsersList callback) {
         FirebaseRecyclerOptions<AllUsers> options =
                 new FirebaseRecyclerOptions.Builder<AllUsers>().setQuery(query, AllUsers.class)
                         .build();
@@ -450,7 +445,7 @@ public class DataManager
                     @Override
                     public void onClick(View v) {
                         // set call back with user id parameter
-                        mAllUsersCallback.onListItemUserClick(getRef(holder.getAdapterPosition()).getKey());
+                        callback.onListItemClick(getRef(holder.getAdapterPosition()).getKey());
                     }
                 });
             }
@@ -464,7 +459,7 @@ public class DataManager
                 return new AllUsersViewHolder(AllUsersListItemBinding.bind(view.getRootView()));
             }
         };
-        mAllUsersCallback.getFirebaseAdapter(adapter);
+        callback.onFirebaseAdapter(adapter);
     }
 
     /**
@@ -661,15 +656,6 @@ public class DataManager
         void onData(AllUsers model);
 
         void onError(String error);
-    }
-
-    /**
-     * All users list callback for list item click and firebase adapter
-     */
-    public interface AllUsersCallback {
-        void onListItemUserClick(String listUserId);
-
-        void getFirebaseAdapter(FirebaseRecyclerAdapter adapter);
     }
 
     /**

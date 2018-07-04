@@ -26,6 +26,7 @@
 package com.example.nishant.berry.ui.allusers;
 
 import com.example.nishant.berry.base.BasePresenter;
+import com.example.nishant.berry.data.DataCallback;
 import com.example.nishant.berry.data.DataManager;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.database.Query;
@@ -35,7 +36,7 @@ import com.google.firebase.database.Query;
  */
 public class AllUsersPresenter
         extends BasePresenter<AllUsersContract.View>
-        implements AllUsersContract.Presenter, DataManager.AllUsersCallback {
+        implements AllUsersContract.Presenter {
 
     private Query mQuery;
     private DataManager mDataManager;
@@ -45,8 +46,7 @@ public class AllUsersPresenter
         mQuery = DataManager.getUsersRef();
         // Adds offline functionality
         mQuery.keepSynced(true);
-        mDataManager = new DataManager();
-        mDataManager.setAllUsersCallback(this);
+        mDataManager = DataManager.getInstance();
     }
 
     @Override
@@ -64,29 +64,21 @@ public class AllUsersPresenter
 
     @Override
     public void setupFirebaseRecyclerAdapter(Query query) {
-        mDataManager.getAllUsersFromDatabase(query);
-    }
+        // Get all user's from firebase database
+        mDataManager.getAllUsersFromDatabase(query, new DataCallback.OnAllUsersList() {
+            @Override
+            public void onListItemClick(String listUserId) {
+                getView().onListItemClick(listUserId);
+            }
 
-    /**
-     * DataManager callback for list item click
-     *
-     * @param listUserId Id of a user on which click action is performed
-     */
-    @Override
-    public void onListItemUserClick(String listUserId) {
-        getView().onListItemClick(listUserId);
-    }
-
-    /**
-     * DataManager callback for firebase adapter
-     *
-     * @param adapter FirebaseRecyclerAdapter which we can use in {@link AllUsersActivity} for
-     *                setting up on RecyclerView
-     *                Also we have to call startListening() and stopListening() method form
-     *                activity to actually get the data
-     */
-    @Override
-    public void getFirebaseAdapter(FirebaseRecyclerAdapter adapter) {
-        getView().getFirebaseRecyclerAdapter(adapter);
+            @Override
+            public void onFirebaseAdapter(FirebaseRecyclerAdapter adapter) {
+                // FirebaseRecyclerAdapter which we can use in {@link AllUsersActivity} for
+                // setting up on RecyclerView
+                // Also we have to call startListening() and stopListening() method form
+                // activity to actually get the data
+                getView().getFirebaseRecyclerAdapter(adapter);
+            }
+        });
     }
 }
