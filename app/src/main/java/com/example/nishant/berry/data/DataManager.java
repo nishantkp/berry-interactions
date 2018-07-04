@@ -60,7 +60,6 @@ public class DataManager
         implements FirebaseUtils.UsersObjectCallback, SettingsUtils.AvatarStorageCallback,
         FriendsUtils.FriendsListCallback, RequestsUtils.FriendRequestCallback,
         ChatUtils.ChatCallback {
-    private static DataManager sDataManager;
     private static FirebaseUtils sFirebaseUtils;
     private SignInCallback mSignInCallback;
     private SignUpCallback mSignUpCallback;
@@ -72,13 +71,14 @@ public class DataManager
     private FriendReqCallback mFriendReqCallback;
     private ChatListCallback mChatListCallback;
 
-    // Singleton
-    public static DataManager getInstance(Context context) {
-        if (sDataManager == null) {
-            sDataManager = new DataManager();
-            sFirebaseUtils = FirebaseUtils.getInstance();
-        }
-        return sDataManager;
+    // Lazy Initialization pattern
+    private static class StaticHolder {
+        static final DataManager INSTANCE = new DataManager();
+    }
+
+    public static DataManager getInstance() {
+        sFirebaseUtils = FirebaseUtils.getInstance();
+        return StaticHolder.INSTANCE;
     }
 
     /**

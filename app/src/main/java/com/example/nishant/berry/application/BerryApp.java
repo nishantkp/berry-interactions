@@ -56,7 +56,7 @@ public class BerryApp extends Application {
         FirebaseDatabase.getInstance().setPersistenceEnabled(true);
 
         // Data manager instance
-        DataManager.getInstance(this);
+        DataManager.getInstance();
 
         // Picasso with OkHttp3 to download user avatar
         Picasso.Builder builder = new Picasso.Builder(this);

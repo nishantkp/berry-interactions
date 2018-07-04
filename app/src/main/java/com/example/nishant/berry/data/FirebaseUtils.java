@@ -45,16 +45,16 @@ import com.google.firebase.storage.StorageReference;
  * Firebase Utility class
  */
 class FirebaseUtils {
-    private static FirebaseUtils sFirebaseUtils;
     private UsersObjectCallback mUsersObjectCallback;
     private FriendReqUsersObjectCallback mFriendReqUserObjectCallback;
 
-    // Singleton
+    // Lazy Initialization pattern
+    private static class StaticHolder {
+        static final FirebaseUtils INSTANCE = new FirebaseUtils();
+    }
+
     static FirebaseUtils getInstance() {
-        if (sFirebaseUtils == null) {
-            sFirebaseUtils = new FirebaseUtils();
-        }
-        return sFirebaseUtils;
+        return StaticHolder.INSTANCE;
     }
 
     /**
