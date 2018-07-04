@@ -28,6 +28,7 @@ package com.example.nishant.berry.ui.status;
 import android.text.TextUtils;
 
 import com.example.nishant.berry.base.BasePresenter;
+import com.example.nishant.berry.data.DataCallback;
 import com.example.nishant.berry.data.DataManager;
 import com.example.nishant.berry.ui.settings.SettingsActivity;
 
@@ -36,13 +37,12 @@ import com.example.nishant.berry.ui.settings.SettingsActivity;
  */
 public class StatusPresenter
         extends BasePresenter<StatusContract.View>
-        implements StatusContract.Presenter, DataManager.StatusCallback {
+        implements StatusContract.Presenter {
 
     private DataManager mDataManager;
 
     StatusPresenter() {
-        mDataManager = new DataManager();
-        mDataManager.setStatusCallback(this);
+        mDataManager = DataManager.getInstance();
     }
 
     @Override
@@ -67,25 +67,19 @@ public class StatusPresenter
         if (TextUtils.isEmpty(status)) {
             status = "Welcome to berry!";
         }
-        mDataManager.saveUserStatus(status);
-    }
 
-    /**
-     * DataManager callback for successful task execution
-     */
-    @Override
-    public void onSuccess() {
-        getView().cancelProgressDialog();
-    }
+        // Save user's status
+        mDataManager.saveUserStatus(status, new DataCallback.OnTaskCompletion() {
+            @Override
+            public void onSuccess() {
+                getView().cancelProgressDialog();
+            }
 
-    /**
-     * DataManager callback for error in task execution
-     *
-     * @param error message
-     */
-    @Override
-    public void onError(String error) {
-        getView().cancelProgressDialog();
-        getView().onError(error);
+            @Override
+            public void onError(String error) {
+                getView().cancelProgressDialog();
+                getView().onError(error);
+            }
+        });
     }
 }

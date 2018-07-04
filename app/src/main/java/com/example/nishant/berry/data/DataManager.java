@@ -60,7 +60,6 @@ public class DataManager
         FriendsUtils.FriendsListCallback, RequestsUtils.FriendRequestCallback,
         ChatUtils.ChatCallback {
     private static FirebaseUtils sFirebaseUtils;
-    private StatusCallback mStatusCallback;
     private AllUsersCallback mAllUsersCallback;
     private UserObjectCallback mUserObjectCallback;
     private AvatarStorageCallback mAvatarStoreCallback;
@@ -243,16 +242,6 @@ public class DataManager
     }
 
     /**
-     * Set status callback
-     *
-     * @param callback StatusCallback must be initialized with the class which implements
-     *                 callback
-     */
-    public void setStatusCallback(StatusCallback callback) {
-        mStatusCallback = callback;
-    }
-
-    /**
      * Set all users callback
      *
      * @param callback AllUsersCallback must be initialized with the class which implements
@@ -419,17 +408,19 @@ public class DataManager
     /**
      * Call this method for saving status to firebase database
      *
-     * @param status User's status
+     * @param status   User's status
+     * @param callback callbacks for success and failure
      */
-    public void saveUserStatus(@NonNull String status) {
+    public void saveUserStatus(@NonNull String status,
+                               @NonNull final DataCallback.OnTaskCompletion callback) {
         getCurrentUsersRef().child(IFirebaseConfig.STATUS).setValue(status)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()) {
-                            mStatusCallback.onSuccess();
+                            callback.onSuccess();
                         } else {
-                            mStatusCallback.onError("Error while saving changes!");
+                            callback.onError("Error while saving changes!");
                         }
                     }
                 });
@@ -668,15 +659,6 @@ public class DataManager
      */
     public interface UserObjectCallback {
         void onData(AllUsers model);
-
-        void onError(String error);
-    }
-
-    /**
-     * Status callback for success and failure
-     */
-    public interface StatusCallback {
-        void onSuccess();
 
         void onError(String error);
     }
