@@ -25,7 +25,6 @@
 
 package com.example.nishant.berry.data;
 
-import android.content.Context;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -61,7 +60,6 @@ public class DataManager
         FriendsUtils.FriendsListCallback, RequestsUtils.FriendRequestCallback,
         ChatUtils.ChatCallback {
     private static FirebaseUtils sFirebaseUtils;
-    private SignInCallback mSignInCallback;
     private SignUpCallback mSignUpCallback;
     private StatusCallback mStatusCallback;
     private AllUsersCallback mAllUsersCallback;
@@ -245,15 +243,6 @@ public class DataManager
         return sFirebaseUtils.isCurrentUserAvailable();
     }
 
-    /**
-     * Set sign in callback
-     *
-     * @param callback SignInCallBack must be initialized with the class which implements
-     *                 callback
-     */
-    public void setSignInCallback(SignInCallback callback) {
-        mSignInCallback = callback;
-    }
 
     /**
      * Set sign up callback
@@ -340,9 +329,12 @@ public class DataManager
      *
      * @param email    email of user
      * @param password password provided by user
+     * @param callback callback for success and errors
      */
-    public void loginUser(@NonNull String email, @NonNull String password) {
-        sFirebaseUtils.getFirebaseAuth()
+    public void loginUser(@NonNull String email,
+                          @NonNull String password,
+                          @NonNull final DataCallback.SignIn callback) {
+        FirebaseUtils.getInstance().getFirebaseAuth()
                 .signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
@@ -357,18 +349,21 @@ public class DataManager
                             singInMap.put(IFirebaseConfig.ONLINE, true);
 
                             // Store token Id to users database
-                            getUsersRef().child(userId).updateChildren(singInMap, new DatabaseReference.CompletionListener() {
-                                @Override
-                                public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
-                                    if (databaseError != null) {
-                                        mSignInCallback.signInError("Sign in error!");
-                                    } else {
-                                        mSignInCallback.signInSuccess();
-                                    }
-                                }
-                            });
+                            getUsersRef().child(userId).updateChildren(singInMap,
+                                    new DatabaseReference.CompletionListener() {
+                                        @Override
+                                        public void onComplete(@Nullable DatabaseError databaseError,
+                                                               @NonNull DatabaseReference databaseReference) {
+                                            if (databaseError != null) {
+                                                callback.onError("Sign in error!");
+                                                // mSignInCallback.signInError("Sign in error!");
+                                            } else {
+                                                callback.onSuccess();
+                                            }
+                                        }
+                                    });
                         } else {
-                            mSignInCallback.signInError("Sign in error!");
+                            callback.onError("Sign in error!");
                         }
                     }
                 });
@@ -685,15 +680,6 @@ public class DataManager
         void onData(AllUsers model);
 
         void onError(String error);
-    }
-
-    /**
-     * SignIn Callbacks when user signs in
-     */
-    public interface SignInCallback {
-        void signInSuccess();
-
-        void signInError(String message);
     }
 
     /**

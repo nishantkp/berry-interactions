@@ -26,19 +26,19 @@
 package com.example.nishant.berry.ui.signin;
 
 import com.example.nishant.berry.base.BasePresenter;
+import com.example.nishant.berry.data.DataCallback;
 import com.example.nishant.berry.data.DataManager;
 import com.example.nishant.berry.ui.model.User;
 
 public class SignInPresenter
         extends BasePresenter<SignInContract.View>
-        implements SignInContract.Presenter, DataManager.SignInCallback {
+        implements SignInContract.Presenter {
 
     // Data Manager
     private DataManager mDataManager;
 
     SignInPresenter() {
-        mDataManager = new DataManager();
-        mDataManager.setSignInCallback(this);
+        mDataManager = DataManager.getInstance();
     }
 
     @Override
@@ -66,18 +66,18 @@ public class SignInPresenter
 
         // Show progress dialog
         getView().showProgressDialog();
-        mDataManager.loginUser(email, password);
-    }
+        mDataManager.loginUser(email, password, new DataCallback.SignIn() {
+            @Override
+            public void onSuccess() {
+                getView().cancelProgressDialog();
+                getView().signInSuccess();
+            }
 
-    @Override
-    public void signInSuccess() {
-        getView().cancelProgressDialog();
-        getView().signInSuccess();
-    }
-
-    @Override
-    public void signInError(String message) {
-        getView().cancelProgressDialog();
-        getView().signInError(message);
+            @Override
+            public void onError(String error) {
+                getView().cancelProgressDialog();
+                getView().signInError(error);
+            }
+        });
     }
 }
