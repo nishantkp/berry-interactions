@@ -50,7 +50,8 @@
             android:src="@drawable/user_default_avatar"
             app:layout_constraintBottom_toTopOf="@+id/all_users_list_item_guideline"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/all_users_list_item_guideline" />
+            app:layout_constraintTop_toTopOf="@+id/all_users_list_item_guideline"
+            app:loadImageFromUrl="@{user.thumbnail}" />
 
         <TextView
             android:id="@+id/chat_list_item_display_name"

@@ -286,7 +286,7 @@ class FirebaseUtils {
      *                     information about user
      * @return {@link AllUsers} object
      */
-    private AllUsers extractValues(@NonNull DataSnapshot dataSnapshot) {
+    static AllUsers extractValues(@NonNull DataSnapshot dataSnapshot) {
         // Get data from data snapshot
         String name = dataSnapshot.hasChild(IFirebaseConfig.NAME) ?
                 Objects.requireNonNull(dataSnapshot.child(IFirebaseConfig.NAME).getValue()).toString() :

@@ -48,7 +48,6 @@ public class FriendsInteractionViewHolder extends RecyclerView.ViewHolder {
         Context context = mBinding.getRoot().getContext();
 
         mBinding.setUser(allUsers);
-        ImageLoad.load(allUsers.getThumbnail(), mBinding.chatListItemAvatar);
 
         if (!allUsers.isMessageSeen()) {
             mBinding.chatListItemMessage.setTextColor(context.getResources().getColor(R.color.colorSecondary));
