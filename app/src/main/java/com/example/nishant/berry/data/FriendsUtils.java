@@ -44,7 +44,7 @@ import com.google.firebase.database.Query;
  * FriendsUtility class to get the friends list of current user in {@link FriendsFragment}
  * with the help of FirebaseRecyclerAdapter
  */
-class FriendsUtils implements FirebaseUtils.UsersObjectCallback {
+class FriendsUtils {
     private FirebaseUtils mFirebaseUtils;
     private FriendsListCallback mFriendsListCallback;
 
@@ -61,8 +61,7 @@ class FriendsUtils implements FirebaseUtils.UsersObjectCallback {
         mFriendsListCallback = callback;
 
         // FirebaseUtils object
-        mFirebaseUtils = new FirebaseUtils();
-        mFirebaseUtils.setFirebaseUsersObjectCallbacks(this);
+        mFirebaseUtils = FirebaseUtils.getInstance();
     }
 
     /**
@@ -88,7 +87,24 @@ class FriendsUtils implements FirebaseUtils.UsersObjectCallback {
                 // Get the user id
                 String listUserId = getRef(position).getKey();
                 assert listUserId != null;
-                mFirebaseUtils.getUsersObject(listUserId, holder);
+                mFirebaseUtils.getUsersObject(listUserId, holder, new DataCallback.OnUsersData() {
+                    @Override
+                    public void onData(final AllUsers model, final String userId, AllUsersViewHolder holder) {
+                        holder.bind(model);
+                        // Set item click callback
+                        holder.itemView.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                mFriendsListCallback.onFriendsListItemClick(userId, model.getName());
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onError(String error) {
+                        mFriendsListCallback.onFriendsListError(error);
+                    }
+                });
             }
 
             @NonNull
@@ -101,36 +117,6 @@ class FriendsUtils implements FirebaseUtils.UsersObjectCallback {
             }
         };
         mFriendsListCallback.onFriendsFirebaseRecyclerAdapter(adapter);
-    }
-
-    /**
-     * {@link FirebaseUtils}'s callback for user's detailed info
-     *
-     * @param model  AllUsers object
-     * @param userId UserId of user
-     * @param holder AllUserViewHolder to bind {@link AllUsers} model to view, and set onItemClick
-     *               callback for that user
-     */
-    @Override
-    public void onFirebaseUsersObject(final AllUsers model, final String userId, AllUsersViewHolder holder) {
-        holder.bind(model);
-        // Set item click callback
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mFriendsListCallback.onFriendsListItemClick(userId, model.getName());
-            }
-        });
-    }
-
-    /**
-     * {@link FirebaseUtils}'s callback for error occurred while getting user's info from database
-     *
-     * @param error error message
-     */
-    @Override
-    public void onFirebaseUsersObjectError(String error) {
-        mFriendsListCallback.onFriendsListError(error);
     }
 
     /**

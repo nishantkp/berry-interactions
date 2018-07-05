@@ -56,11 +56,9 @@ import java.util.Map;
  * Data Manager class, that deals with business logic
  */
 public class DataManager
-        implements FirebaseUtils.UsersObjectCallback,
-        FriendsUtils.FriendsListCallback, RequestsUtils.FriendRequestCallback,
+        implements FriendsUtils.FriendsListCallback, RequestsUtils.FriendRequestCallback,
         ChatUtils.ChatCallback {
     private static FirebaseUtils sFirebaseUtils;
-    private UserObjectCallback mUserObjectCallback;
     private FriendsListCallback mFriendsListCallback;
     private FriendReqCallback mFriendReqCallback;
     private ChatListCallback mChatListCallback;
@@ -237,16 +235,6 @@ public class DataManager
      */
     public static boolean isCurrentUserAvailable() {
         return sFirebaseUtils.isCurrentUserAvailable();
-    }
-
-    /**
-     * Set user object callback
-     *
-     * @param callbacks UserObjectCallback must be initialized with the class which implements
-     *                  callback
-     */
-    public void setUserObjectCallbacks(UserObjectCallback callbacks) {
-        mUserObjectCallback = callbacks;
     }
 
     /**
@@ -453,15 +441,23 @@ public class DataManager
 
     /**
      * Call this method to get detail information about current user like name, status, avatar etc..
-     * User must implement UserObjectCallback before using this particular method to get the results
+     * User must implement UserObjectCallback before using this particular method to get the
+     *
+     * @param callback Callback for detail user info and error
      */
-    public void getCurrentUserInfo() {
-        // Safety to avoid NullPointerException
-        if (mUserObjectCallback == null) return;
+    public void getCurrentUserInfo(@NonNull final DataCallback.OnCurrentUserInfo callback) {
+        FirebaseUtils utils = FirebaseUtils.getInstance();
+        utils.getUsersObject(getCurrentUserId(), null, new DataCallback.OnUsersData() {
+            @Override
+            public void onData(AllUsers model, String userId, AllUsersViewHolder holder) {
+                callback.onData(model);
+            }
 
-        FirebaseUtils utils = new FirebaseUtils();
-        utils.setFirebaseUsersObjectCallbacks(this);
-        utils.getUsersObject(getCurrentUserId(), null);
+            @Override
+            public void onError(String error) {
+                callback.onError(error);
+            }
+        });
     }
 
     /**
@@ -519,28 +515,6 @@ public class DataManager
         ChatUtils chatUtils = new ChatUtils();
         chatUtils.setChatCallbacks(this);
         chatUtils.getChatList();
-    }
-
-    /**
-     * Implement this {@link FirebaseUtils} callback method for detailed user object
-     *
-     * @param model  AllUsers object
-     * @param userID UserId of a user
-     */
-    @Override
-    public void onFirebaseUsersObject(AllUsers model, String userID, AllUsersViewHolder holder) {
-        mUserObjectCallback.onData(model);
-    }
-
-    /**
-     * Implement this {@link FirebaseUtils} callback method for handling error when retrieving
-     * user details from firebase database
-     *
-     * @param error error message
-     */
-    @Override
-    public void onFirebaseUsersObjectError(String error) {
-        mUserObjectCallback.onError(error);
     }
 
     /**
@@ -623,16 +597,6 @@ public class DataManager
     @Override
     public void onChatListItemClick(String userId, String name) {
         mChatListCallback.onListItemClick(userId, name);
-    }
-
-    /**
-     * UserObject callbacks when DataManager is inquired about detail information
-     * on particular user
-     */
-    public interface UserObjectCallback {
-        void onData(AllUsers model);
-
-        void onError(String error);
     }
 
     /**

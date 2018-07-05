@@ -41,15 +41,13 @@ import id.zelory.compressor.Compressor;
 
 public class SettingsPresenter
         extends BasePresenter<SettingsContract.View>
-        implements SettingsContract.Presenter, DataManager.UserObjectCallback {
+        implements SettingsContract.Presenter {
 
     // DataManager
     private DataManager mDataManager;
 
     SettingsPresenter() {
         mDataManager = DataManager.getInstance();
-        mDataManager.setUserObjectCallbacks(this);
-        retrieveDataFromFirebaseDatabase();
     }
 
     @Override
@@ -60,6 +58,7 @@ public class SettingsPresenter
     @Override
     public void attachView(SettingsContract.View view) {
         super.attachView(view);
+        retrieveDataFromFirebaseDatabase();
     }
 
     /**
@@ -67,7 +66,19 @@ public class SettingsPresenter
      */
     @Override
     public void retrieveDataFromFirebaseDatabase() {
-        mDataManager.getCurrentUserInfo();
+        // Current user's detail
+        mDataManager.getCurrentUserInfo(new DataCallback.OnCurrentUserInfo() {
+            @Override
+            public void onData(AllUsers model) {
+                getView().setUserInfo(model);
+                getView().onStatus(model.getStatus());
+            }
+
+            @Override
+            public void onError(String error) {
+                getView().onError(error);
+            }
+        });
     }
 
     /**
@@ -100,6 +111,7 @@ public class SettingsPresenter
         }
 
         final byte[] finalThumb_byte = thumb_byte;
+
         // Store avatar and thumbnail to firebase database
         mDataManager.storeAvatar(avatarUri, finalThumb_byte, new DataCallback.OnTaskCompletion() {
             @Override
@@ -113,26 +125,5 @@ public class SettingsPresenter
                 getView().onError(error);
             }
         });
-    }
-
-    /**
-     * {@link DataManager} callback when we successfully retrieve user data from firebase database
-     *
-     * @param model AllUsers model containing detail information about user
-     */
-    @Override
-    public void onData(AllUsers model) {
-        getView().setUserInfo(model);
-        getView().onStatus(model.getStatus());
-    }
-
-    /**
-     * {@link DataManager} callback there is error retrieving user data from firebase database
-     *
-     * @param error error message
-     */
-    @Override
-    public void onError(String error) {
-        getView().onError(error);
     }
 }

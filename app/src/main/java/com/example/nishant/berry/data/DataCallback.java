@@ -25,6 +25,8 @@
 
 package com.example.nishant.berry.data;
 
+import com.example.nishant.berry.ui.adapter.AllUsersViewHolder;
+import com.example.nishant.berry.ui.model.AllUsers;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 
 public interface DataCallback {
@@ -40,5 +42,20 @@ public interface DataCallback {
         void onListItemClick(String listUserId);
 
         void onFirebaseAdapter(FirebaseRecyclerAdapter adapter);
+    }
+
+    // Users data callback when dealing with user's object from firebase
+    interface OnUsersData {
+        void onData(AllUsers model, String userId, AllUsersViewHolder holder);
+
+        void onError(String error);
+    }
+
+    // Current users info callback for error and AllUsers model containing name, image, thumbnail,
+    // online status, last seen etc.
+    interface OnCurrentUserInfo {
+        void onData(AllUsers model);
+
+        void onError(String error);
     }
 }

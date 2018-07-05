@@ -49,6 +49,9 @@ final class SettingsUtils {
         return StaticHolder.INSTANCE;
     }
 
+    private SettingsUtils() {
+    }
+
     /**
      * Call this method to store user's avatar and thumbnail to FirebaseStorage
      *
