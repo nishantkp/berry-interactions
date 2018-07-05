@@ -39,28 +39,14 @@ import com.google.firebase.storage.UploadTask;
  * Utility class that deals with storing user avatar and thumbnail to FirebaseStorage
  * i.e usually required for {@link SettingsActivity}, {@link SettingsPresenter}
  */
-class SettingsUtils {
-    private static SettingsUtils sSettingUtils;
-    private AvatarStorageCallback mAvatarStorageCallback;
-
-    // Singleton
-    static SettingsUtils getInstance() {
-        if (sSettingUtils == null) {
-            sSettingUtils = new SettingsUtils();
-        }
-        return sSettingUtils;
+final class SettingsUtils {
+    // Lazy singleton pattern
+    private static class StaticHolder {
+        static final SettingsUtils INSTANCE = new SettingsUtils();
     }
 
-    /**
-     * Use this method to set storage callbacks
-     * Must set it before calling storeAvatarToFirebaseDatabase() method to store avatar to firebase
-     * storage
-     *
-     * @param callback Must be initiated by call which implements this callback
-     *                 i.e {@link DataManager} class
-     */
-    void setAvatarStorageCallback(AvatarStorageCallback callback) {
-        mAvatarStorageCallback = callback;
+    static SettingsUtils getInstance() {
+        return StaticHolder.INSTANCE;
     }
 
     /**
@@ -68,20 +54,19 @@ class SettingsUtils {
      *
      * @param avatarUri     Uri of user avatar
      * @param thumbnailByte thumb image inform of byte array
+     * @param callback      task completion callback for success and failure
      */
     void storeAvatarToFirebaseDatabase(Uri avatarUri,
-                                       final byte[] thumbnailByte) {
-        //Safety to avoid NullPointerException
-        if (mAvatarStorageCallback == null) return;
-
+                                       final byte[] thumbnailByte,
+                                       final @NonNull DataCallback.OnTaskCompletion callback) {
         DataManager.getAvatarStorageRef().putFile(avatarUri)
                 .addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
                         if (task.isSuccessful()) {
-                            uploadAvatarThumbnail(thumbnailByte);
+                            uploadAvatarThumbnail(thumbnailByte, callback);
                         } else {
-                            mAvatarStorageCallback.onAvatarStoreError("Error uploading avatar!");
+                            callback.onError("Error uploading avatar!");
                         }
                     }
                 });
@@ -92,17 +77,19 @@ class SettingsUtils {
      * path: /profile_images/thumb_images
      *
      * @param thumbnailBytes thumb image in form of byte array
+     * @param callback       task completion callback for success and failure
      */
-    private void uploadAvatarThumbnail(byte[] thumbnailBytes) {
+    private void uploadAvatarThumbnail(byte[] thumbnailBytes,
+                                       final @NonNull DataCallback.OnTaskCompletion callback) {
         UploadTask uploadTask = DataManager.getAvatarThumbStorageRef().putBytes(thumbnailBytes);
         uploadTask.addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
                 if (task.isSuccessful()) {
                     // Get download url from storage reference to store into out database
-                    getDownloadUrlFromStorageRef();
+                    getDownloadUrlFromStorageRef(callback);
                 } else {
-                    mAvatarStorageCallback.onAvatarStoreError("Error updating avatar!");
+                    callback.onError("Error updating avatar!");
                 }
             }
         });
@@ -111,8 +98,10 @@ class SettingsUtils {
     /**
      * Call this method to get download url of avatar from StorageReference
      * And update the Users object with avatar url and thumbnail url
+     *
+     * @param callback task completion callback for success and failure
      */
-    private void getDownloadUrlFromStorageRef() {
+    private void getDownloadUrlFromStorageRef(final @NonNull DataCallback.OnTaskCompletion callback) {
         // Get the download url of original avatar
         DataManager.getAvatarStorageRef().getDownloadUrl()
                 .addOnCompleteListener(new OnCompleteListener<Uri>() {
@@ -121,9 +110,9 @@ class SettingsUtils {
                         if (task.isSuccessful()) {
                             String avatarUrl = task.getResult().toString();
                             // Update user's object
-                            updateDatabaseWithAvatarUrl(avatarUrl, IFirebaseConfig.IMAGE);
+                            updateDatabaseWithAvatarUrl(avatarUrl, IFirebaseConfig.IMAGE, callback);
                         } else {
-                            mAvatarStorageCallback.onAvatarStoreError("Error updating avatar!");
+                            callback.onError("Error updating avatar!");
                         }
                     }
                 });
@@ -136,7 +125,7 @@ class SettingsUtils {
                         if (task.isSuccessful()) {
                             String thumbnailUrl = task.getResult().toString();
                             // Update user's object
-                            updateDatabaseWithAvatarUrl(thumbnailUrl, IFirebaseConfig.THUMBNAIL);
+                            updateDatabaseWithAvatarUrl(thumbnailUrl, IFirebaseConfig.THUMBNAIL, callback);
                         }
                     }
                 });
@@ -145,30 +134,25 @@ class SettingsUtils {
     /**
      * Call this method to update database for particular user with avatar image url
      * This method sets callback for progressbar and error
+     * mAvatarStorageCallback.onAvatarStoreError
      *
-     * @param url   download url of avatar or thumbnail
-     * @param field database field i.e image or thumbnail
+     * @param url      download url of avatar or thumbnail
+     * @param field    database field i.e image or thumbnail
+     * @param callback task completion callback for success and failure
      */
-    private void updateDatabaseWithAvatarUrl(String url, String field) {
+    private void updateDatabaseWithAvatarUrl(String url,
+                                             String field,
+                                             final @NonNull DataCallback.OnTaskCompletion callback) {
         DataManager.getCurrentUsersRef().child(field).setValue(url)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()) {
-                            mAvatarStorageCallback.onAvatarStoreSuccess();
+                            callback.onSuccess();
                         } else {
-                            mAvatarStorageCallback.onAvatarStoreError("Error uploading avatar!");
+                            callback.onError("Error uploading avatar!");
                         }
                     }
                 });
-    }
-
-    /**
-     * Callbacks for when user uploads avatar and thumbnail to firebase storage
-     */
-    interface AvatarStorageCallback {
-        void onAvatarStoreSuccess();
-
-        void onAvatarStoreError(String error);
     }
 }

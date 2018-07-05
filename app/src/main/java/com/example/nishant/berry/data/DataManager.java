@@ -56,12 +56,11 @@ import java.util.Map;
  * Data Manager class, that deals with business logic
  */
 public class DataManager
-        implements FirebaseUtils.UsersObjectCallback, SettingsUtils.AvatarStorageCallback,
+        implements FirebaseUtils.UsersObjectCallback,
         FriendsUtils.FriendsListCallback, RequestsUtils.FriendRequestCallback,
         ChatUtils.ChatCallback {
     private static FirebaseUtils sFirebaseUtils;
     private UserObjectCallback mUserObjectCallback;
-    private AvatarStorageCallback mAvatarStoreCallback;
     private FriendsListCallback mFriendsListCallback;
     private FriendReqCallback mFriendReqCallback;
     private ChatListCallback mChatListCallback;
@@ -248,16 +247,6 @@ public class DataManager
      */
     public void setUserObjectCallbacks(UserObjectCallback callbacks) {
         mUserObjectCallback = callbacks;
-    }
-
-    /**
-     * Set avatar store callback
-     *
-     * @param callbacks AvatarStoreCallback must be initialized with the class which implements
-     *                  callback
-     */
-    public void setAvatarStoreCallbacks(AvatarStorageCallback callbacks) {
-        mAvatarStoreCallback = callbacks;
     }
 
     /**
@@ -481,13 +470,21 @@ public class DataManager
      * @param avatarUri     uri of user avatar
      * @param thumbnailByte user avatar thumbnail in form of byte array
      */
-    public void storeAvatar(Uri avatarUri, final byte[] thumbnailByte) {
-        // Safety to avoid NullPointerException
-        if (mAvatarStoreCallback == null) return;
+    public void storeAvatar(Uri avatarUri,
+                            final byte[] thumbnailByte,
+                            final @NonNull DataCallback.OnTaskCompletion callback) {
+        SettingsUtils utils = SettingsUtils.getInstance();
+        utils.storeAvatarToFirebaseDatabase(avatarUri, thumbnailByte, new DataCallback.OnTaskCompletion() {
+            @Override
+            public void onSuccess() {
+                callback.onSuccess();
+            }
 
-        SettingsUtils utils = new SettingsUtils();
-        utils.setAvatarStorageCallback(this);
-        utils.storeAvatarToFirebaseDatabase(avatarUri, thumbnailByte);
+            @Override
+            public void onError(String error) {
+                callback.onError(error);
+            }
+        });
     }
 
     /**
@@ -544,26 +541,6 @@ public class DataManager
     @Override
     public void onFirebaseUsersObjectError(String error) {
         mUserObjectCallback.onError(error);
-    }
-
-    /**
-     * Implement this {@link SettingsUtils} callback method for what to do when we successfully
-     * store user avatar and thumbnail to firebase storage
-     */
-    @Override
-    public void onAvatarStoreSuccess() {
-        mAvatarStoreCallback.onAvatarStoreSuccess();
-    }
-
-    /**
-     * Implement this {@link SettingsUtils} callback method for handling error when storing
-     * user avatar and thumbnail to firebase storage
-     *
-     * @param error error message
-     */
-    @Override
-    public void onAvatarStoreError(String error) {
-        mAvatarStoreCallback.onAvatarStoreError(error);
     }
 
     /**
@@ -656,15 +633,6 @@ public class DataManager
         void onData(AllUsers model);
 
         void onError(String error);
-    }
-
-    /**
-     * User Avatar storage callback for success and failure
-     */
-    public interface AvatarStorageCallback {
-        void onAvatarStoreSuccess();
-
-        void onAvatarStoreError(String error);
     }
 
     /**

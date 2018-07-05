@@ -29,6 +29,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 
 import com.example.nishant.berry.base.BasePresenter;
+import com.example.nishant.berry.data.DataCallback;
 import com.example.nishant.berry.data.DataManager;
 import com.example.nishant.berry.ui.model.AllUsers;
 
@@ -40,15 +41,14 @@ import id.zelory.compressor.Compressor;
 
 public class SettingsPresenter
         extends BasePresenter<SettingsContract.View>
-        implements SettingsContract.Presenter, DataManager.UserObjectCallback, DataManager.AvatarStorageCallback {
+        implements SettingsContract.Presenter, DataManager.UserObjectCallback {
 
     // DataManager
     private DataManager mDataManager;
 
     SettingsPresenter() {
-        mDataManager = new DataManager();
+        mDataManager = DataManager.getInstance();
         mDataManager.setUserObjectCallbacks(this);
-        mDataManager.setAvatarStoreCallbacks(this);
         retrieveDataFromFirebaseDatabase();
     }
 
@@ -100,7 +100,19 @@ public class SettingsPresenter
         }
 
         final byte[] finalThumb_byte = thumb_byte;
-        mDataManager.storeAvatar(avatarUri, finalThumb_byte);
+        // Store avatar and thumbnail to firebase database
+        mDataManager.storeAvatar(avatarUri, finalThumb_byte, new DataCallback.OnTaskCompletion() {
+            @Override
+            public void onSuccess() {
+                getView().cancelProgressDialog();
+            }
+
+            @Override
+            public void onError(String error) {
+                getView().cancelProgressDialog();
+                getView().onError(error);
+            }
+        });
     }
 
     /**
@@ -121,25 +133,6 @@ public class SettingsPresenter
      */
     @Override
     public void onError(String error) {
-        getView().onError(error);
-    }
-
-    /**
-     * {@link DataManager} callback when user avatar is successfully stored into firebase storage
-     */
-    @Override
-    public void onAvatarStoreSuccess() {
-        getView().cancelProgressDialog();
-    }
-
-    /**
-     * {@link DataManager} callback there is error storing user avatar/thumbnail to firebase storage
-     *
-     * @param error error message
-     */
-    @Override
-    public void onAvatarStoreError(String error) {
-        getView().cancelProgressDialog();
         getView().onError(error);
     }
 }
