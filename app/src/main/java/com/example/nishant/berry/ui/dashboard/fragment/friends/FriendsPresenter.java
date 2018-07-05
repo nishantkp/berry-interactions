@@ -26,6 +26,7 @@
 package com.example.nishant.berry.ui.dashboard.fragment.friends;
 
 import com.example.nishant.berry.base.BasePresenter;
+import com.example.nishant.berry.data.DataCallback;
 import com.example.nishant.berry.data.DataManager;
 import com.example.nishant.berry.ui.dashboard.DashboardActivity;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
@@ -36,14 +37,13 @@ import com.firebase.ui.database.FirebaseRecyclerAdapter;
  */
 public class FriendsPresenter
         extends BasePresenter<FriendsContract.View>
-        implements FriendsContract.Presenter, DataManager.FriendsListCallback {
+        implements FriendsContract.Presenter {
 
     // DataManager
     private DataManager mDataManager;
 
     FriendsPresenter() {
-        mDataManager = new DataManager();
-        mDataManager.setFriendsListCallbacks(this);
+        mDataManager = DataManager.getInstance();
     }
 
     @Override
@@ -61,39 +61,25 @@ public class FriendsPresenter
 
     @Override
     public void setupFirebaseRecyclerAdapter() {
-        mDataManager.getCurrentUserFriendList();
-    }
+        mDataManager.getCurrentUserFriendList(new DataCallback.OnFriendsList() {
+            @Override
+            public void onError(String error) {
+                // error handling while getting data from Firebase database
+            }
 
-    /**
-     * Implement this {@link DataManager} callback for error handling while getting data
-     * from Firebase database
-     *
-     * @param error error message
-     */
-    @Override
-    public void onError(String error) {
-    }
+            @Override
+            public void onItemClick(String userId, String displayName) {
+                // click event on friends list
+                getView().onListItemClick(userId, displayName);
+            }
 
-    /**
-     * Implement this {@link DataManager} callback for getting data from firebase
-     * by calling startListening()/ stopListening() methods on FirebaseRecyclerAdapter
-     * And ultimately set the adapter on RecyclerView to actually see the list
-     *
-     * @param adapter FirebaseRecyclerAdapter instance
-     */
-    @Override
-    public void onFriendsAdapter(FirebaseRecyclerAdapter adapter) {
-        getView().getFirebaseRecyclerAdapter(adapter);
-    }
-
-    /**
-     * Implement this {@link DataManager} callback for click event on friends list
-     *
-     * @param userId      Id of a friend on which click action is performed
-     * @param displayName Name of a friend
-     */
-    @Override
-    public void onListItemClick(String userId, String displayName) {
-        getView().onListItemClick(userId, displayName);
+            @Override
+            public void onAdapter(FirebaseRecyclerAdapter adapter) {
+                // get data from firebase by calling startListening()/ stopListening() methods on
+                // FirebaseRecyclerAdapter and ultimately set the adapter on RecyclerView to
+                // actually see the list
+                getView().getFirebaseRecyclerAdapter(adapter);
+            }
+        });
     }
 }

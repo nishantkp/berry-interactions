@@ -44,34 +44,27 @@ import com.google.firebase.database.Query;
  * FriendsUtility class to get the friends list of current user in {@link FriendsFragment}
  * with the help of FirebaseRecyclerAdapter
  */
-class FriendsUtils {
-    private FirebaseUtils mFirebaseUtils;
-    private FriendsListCallback mFriendsListCallback;
+final class FriendsUtils {
 
-    FriendsUtils() {
+    // Lazy singleton pattern
+    private static class StaticHolder {
+        static final FriendsUtils INSTANCE = new FriendsUtils();
     }
 
-    /**
-     * Use this method set the callback for result when inquiring firebase database for friend list
-     * of current user
-     *
-     * @param callback Must be initialized by class which implements the callback
-     */
-    void setFriendsListCallback(FriendsListCallback callback) {
-        mFriendsListCallback = callback;
+    static FriendsUtils getInstance() {
+        return StaticHolder.INSTANCE;
+    }
 
-        // FirebaseUtils object
-        mFirebaseUtils = FirebaseUtils.getInstance();
+    private FriendsUtils() {
     }
 
     /**
      * Call this method to get the friends of current user
-     * This method sets callback for FirebaseRecyclerAdapter
+     * This method sets callback for FirebaseRecyclerAdapter, error and click-event
+     *
+     * @param callback DataCallback for firebase adapter, item-click and error
      */
-    void getCurrentUserFriends() {
-        // Safety for NullPointerException
-        if (mFriendsListCallback == null) return;
-
+    void getCurrentUserFriends(@NonNull final DataCallback.OnFriendsList callback) {
         // Current user database query from Friends object
         Query query = DataManager.getCurrentUserFriendsRef();
         FirebaseRecyclerOptions<Friends> options =
@@ -87,7 +80,8 @@ class FriendsUtils {
                 // Get the user id
                 String listUserId = getRef(position).getKey();
                 assert listUserId != null;
-                mFirebaseUtils.getUsersObject(listUserId, holder, new DataCallback.OnUsersData() {
+                // Get users detail with FirebaseUtils helper method
+                FirebaseUtils.getInstance().getUsersObject(listUserId, holder, new DataCallback.OnUsersData() {
                     @Override
                     public void onData(final AllUsers model, final String userId, AllUsersViewHolder holder) {
                         holder.bind(model);
@@ -95,14 +89,14 @@ class FriendsUtils {
                         holder.itemView.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                mFriendsListCallback.onFriendsListItemClick(userId, model.getName());
+                                callback.onItemClick(userId, model.getName());
                             }
                         });
                     }
 
                     @Override
                     public void onError(String error) {
-                        mFriendsListCallback.onFriendsListError(error);
+                        callback.onError(error);
                     }
                 });
             }
@@ -116,17 +110,6 @@ class FriendsUtils {
                 return new AllUsersViewHolder(AllUsersListItemBinding.bind(view.getRootView()));
             }
         };
-        mFriendsListCallback.onFriendsFirebaseRecyclerAdapter(adapter);
-    }
-
-    /**
-     * Callback interface for current user's friends
-     */
-    interface FriendsListCallback {
-        void onFriendsListError(String error);
-
-        void onFriendsListItemClick(String userId, String displayName);
-
-        void onFriendsFirebaseRecyclerAdapter(FirebaseRecyclerAdapter adapter);
+        callback.onAdapter(adapter);
     }
 }

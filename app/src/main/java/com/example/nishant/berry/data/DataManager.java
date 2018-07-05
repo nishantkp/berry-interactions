@@ -56,10 +56,9 @@ import java.util.Map;
  * Data Manager class, that deals with business logic
  */
 public class DataManager
-        implements FriendsUtils.FriendsListCallback, RequestsUtils.FriendRequestCallback,
+        implements RequestsUtils.FriendRequestCallback,
         ChatUtils.ChatCallback {
     private static FirebaseUtils sFirebaseUtils;
-    private FriendsListCallback mFriendsListCallback;
     private FriendReqCallback mFriendReqCallback;
     private ChatListCallback mChatListCallback;
 
@@ -235,16 +234,6 @@ public class DataManager
      */
     public static boolean isCurrentUserAvailable() {
         return sFirebaseUtils.isCurrentUserAvailable();
-    }
-
-    /**
-     * Set friends list callback
-     *
-     * @param callbacks FriendsListCallback must be initialized with the class which implements
-     *                  callback
-     */
-    public void setFriendsListCallbacks(FriendsListCallback callbacks) {
-        mFriendsListCallback = callbacks;
     }
 
     /**
@@ -485,14 +474,27 @@ public class DataManager
 
     /**
      * Call this method to get current user's friends
+     *
+     * @param callback DataCallback for error, firebase adapter and list-item click
      */
-    public void getCurrentUserFriendList() {
-        // Safety to avoid NullPointerException
-        if (mFriendsListCallback == null) return;
+    public void getCurrentUserFriendList(@NonNull final DataCallback.OnFriendsList callback) {
+        // Get current user's friend list
+        FriendsUtils.getInstance().getCurrentUserFriends(new DataCallback.OnFriendsList() {
+            @Override
+            public void onError(String error) {
+                callback.onError(error);
+            }
 
-        FriendsUtils friendsUtils = new FriendsUtils();
-        friendsUtils.setFriendsListCallback(this);
-        friendsUtils.getCurrentUserFriends();
+            @Override
+            public void onItemClick(String userId, String displayName) {
+                callback.onItemClick(userId, displayName);
+            }
+
+            @Override
+            public void onAdapter(FirebaseRecyclerAdapter adapter) {
+                callback.onAdapter(adapter);
+            }
+        });
     }
 
     /**
@@ -515,42 +517,6 @@ public class DataManager
         ChatUtils chatUtils = new ChatUtils();
         chatUtils.setChatCallbacks(this);
         chatUtils.getChatList();
-    }
-
-    /**
-     * Implement this {@link FriendsUtils} callback method for handling error when retrieving detail
-     * information about user's friend
-     *
-     * @param error error message
-     */
-    @Override
-    public void onFriendsListError(String error) {
-        mFriendsListCallback.onError(error);
-    }
-
-    /**
-     * Implement this {@link FriendsUtils} callback method to handle onClick event for user's friend
-     * being displayed on RecyclerView
-     *
-     * @param userId      userId of user on which click action is performed
-     * @param displayName name of user
-     */
-    @Override
-    public void onFriendsListItemClick(String userId, String displayName) {
-        mFriendsListCallback.onListItemClick(userId, displayName);
-    }
-
-    /**
-     * Implement this {@link FriendsUtils} callback method for FirebaseRecyclerAdapter for current
-     * user's friend
-     * Use this FirebaseAdapter in activity's onStart() and onPause() method to
-     * startListening()/stopListening() in order to fetch data from firebase
-     *
-     * @param adapter FirebaseRecyclerAdapter
-     */
-    @Override
-    public void onFriendsFirebaseRecyclerAdapter(FirebaseRecyclerAdapter adapter) {
-        mFriendsListCallback.onFriendsAdapter(adapter);
     }
 
     /**
@@ -597,17 +563,6 @@ public class DataManager
     @Override
     public void onChatListItemClick(String userId, String name) {
         mChatListCallback.onListItemClick(userId, name);
-    }
-
-    /**
-     * Current user's friends list callback for error, listItemClick and adapter
-     */
-    public interface FriendsListCallback {
-        void onError(String error);
-
-        void onFriendsAdapter(FirebaseRecyclerAdapter adapter);
-
-        void onListItemClick(String userId, String displayName);
     }
 
     /**

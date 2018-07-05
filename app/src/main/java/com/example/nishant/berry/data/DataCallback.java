@@ -58,4 +58,13 @@ public interface DataCallback {
 
         void onError(String error);
     }
+
+    // Current user's friends detail callbacks for item-click, firebase adapter and error
+    interface OnFriendsList {
+        void onItemClick(String userId, String displayName);
+
+        void onAdapter(FirebaseRecyclerAdapter adapter);
+
+        void onError(String error);
+    }
 }
