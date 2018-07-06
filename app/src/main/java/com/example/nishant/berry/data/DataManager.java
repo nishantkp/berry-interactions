@@ -68,6 +68,9 @@ public class DataManager {
         return StaticHolder.INSTANCE;
     }
 
+    private DataManager() {
+    }
+
     /**
      * Call this method to get current user's ID
      *

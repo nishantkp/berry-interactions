@@ -55,6 +55,9 @@ final class FirebaseUtils {
         return StaticHolder.INSTANCE;
     }
 
+    private FirebaseUtils() {
+    }
+
     /**
      * Call this method to get firebase Auth instance
      *
