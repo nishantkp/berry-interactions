@@ -55,10 +55,8 @@ import java.util.Map;
 /**
  * Data Manager class, that deals with business logic
  */
-public class DataManager
-        implements ChatUtils.ChatCallback {
+public class DataManager {
     private static FirebaseUtils sFirebaseUtils;
-    private ChatListCallback mChatListCallback;
 
     // Lazy Initialization pattern
     private static class StaticHolder {
@@ -232,16 +230,6 @@ public class DataManager
      */
     public static boolean isCurrentUserAvailable() {
         return sFirebaseUtils.isCurrentUserAvailable();
-    }
-
-    /**
-     * Set current user's chat list callback
-     *
-     * @param callbacks ChatListCallback must be initialized with the class which implements
-     *                  callback
-     */
-    public void setChatListCallbacks(ChatListCallback callbacks) {
-        mChatListCallback = callbacks;
     }
 
     /**
@@ -504,45 +492,27 @@ public class DataManager
         });
     }
 
-    public void getChatList() {
-        // Safety to avoid NullPointerException
-        if (mChatListCallback == null) return;
-
-        ChatUtils chatUtils = new ChatUtils();
-        chatUtils.setChatCallbacks(this);
-        chatUtils.getChatList();
-    }
-
     /**
-     * Implement this {@link ChatUtils} callback method for current user's chat list
-     * Use this FirebaseAdapter in activity's onStart() and onPause() method to
-     * startListening()/stopListening() in order to fetch data from firebase
+     * Call this method to get the chat list of current user
      *
-     * @param adapter FirebaseRecyclerAdapter
+     * @param callback DataCallback for item-click, firebase adapter and error
      */
-    @Override
-    public void onChatAdapter(FirebaseRecyclerAdapter adapter) {
-        mChatListCallback.onChatAdapter(adapter);
-    }
+    public void userChatList(@NonNull final DataCallback.OnFriendsList callback) {
+        ChatUtils.getInstance().getChatList(new DataCallback.OnFriendsList() {
+            @Override
+            public void onItemClick(String userId, String displayName) {
+                callback.onItemClick(userId, displayName);
+            }
 
-    /**
-     * Implement this {@link ChatUtils} callback method for list item click
-     *
-     * @param userId Id of user on which click is performed
-     * @param name   name of user
-     */
-    @Override
-    public void onChatListItemClick(String userId, String name) {
-        mChatListCallback.onListItemClick(userId, name);
-    }
+            @Override
+            public void onAdapter(FirebaseRecyclerAdapter adapter) {
+                callback.onAdapter(adapter);
+            }
 
-    /**
-     * Current user's chat callback for firebase adapter and list item click
-     * Implement this callback to get the list of chats
-     */
-    public interface ChatListCallback {
-        void onChatAdapter(FirebaseRecyclerAdapter adapter);
-
-        void onListItemClick(String userId, String displayName);
+            @Override
+            public void onError(String error) {
+                callback.onError(error);
+            }
+        });
     }
 }

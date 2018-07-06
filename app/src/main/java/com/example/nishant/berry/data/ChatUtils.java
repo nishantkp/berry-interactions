@@ -50,31 +50,25 @@ import java.util.Objects;
 /**
  * ChatUtility class to display chat list
  */
-class ChatUtils {
+final class ChatUtils {
 
-    private ChatCallback mChatCallback;
-
-    ChatUtils() {
+    // Lazy singleTon pattern
+    private static class StaticHolder {
+        static final ChatUtils INSTANCE = new ChatUtils();
     }
 
-    /**
-     * Use this method to set chat callbacks
-     * Must set it before calling getChatList() method to get firebase adapter
-     *
-     * @param callbacks Must be initiated by class which implements this callback
-     *                  i.e {@link DataManager} class
-     */
-    void setChatCallbacks(@NonNull ChatCallback callbacks) {
-        mChatCallback = callbacks;
+    static ChatUtils getInstance() {
+        return StaticHolder.INSTANCE;
+    }
+
+    private ChatUtils() {
     }
 
     /**
      * Call this method to get the user's chat list
      * This method sets callback for firebase adapter and list item click
      */
-    void getChatList() {
-        // Safety for null pointer exception
-        if (mChatCallback == null) return;
+    void getChatList(@NonNull final DataCallback.OnFriendsList callback) {
 
         // Query for Interactions database
         Query query = DataManager.getCurrentUserInteractionRef()
@@ -94,7 +88,7 @@ class ChatUtils {
                                                     @NonNull FriendsInteraction model) {
 
                         final AllUsers[] users = {new AllUsers()};
-                        // UserId of user with whom we are chatting
+                        // Id of user with whom we are chatting
                         final String listUserId = getRef(position).getKey();
                         assert listUserId != null;
 
@@ -106,19 +100,21 @@ class ChatUtils {
                                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                         // Extract the data from FirebaseUtils helper
                                         users[0] = FirebaseUtils.extractValues(dataSnapshot);
+                                        users[0].setStatus("");
                                         holder.bind(users[0]);
 
                                         // Set list item onCLickListener to open InteractionActivity
                                         holder.itemView.setOnClickListener(new View.OnClickListener() {
                                             @Override
                                             public void onClick(View v) {
-                                                mChatCallback.onChatListItemClick(listUserId, users[0].getName());
+                                                callback.onItemClick(listUserId, users[0].getName());
                                             }
                                         });
                                     }
 
                                     @Override
                                     public void onCancelled(@NonNull DatabaseError databaseError) {
+                                        callback.onError(databaseError.getMessage());
                                     }
                                 });
 
@@ -173,15 +169,6 @@ class ChatUtils {
         // So that we can set adapter on RecyclerView in fragment/ activity
         // This will also help in start and stop the listening the adapter in onStart() and onStop()
         // methods
-        mChatCallback.onChatAdapter(adapter);
-    }
-
-    /**
-     * Interface for firebase adapter and list item click
-     */
-    interface ChatCallback {
-        void onChatAdapter(FirebaseRecyclerAdapter adapter);
-
-        void onChatListItemClick(String userId, String name);
+        callback.onAdapter(adapter);
     }
 }

@@ -26,6 +26,7 @@
 package com.example.nishant.berry.ui.dashboard.fragment.chat;
 
 import com.example.nishant.berry.base.BasePresenter;
+import com.example.nishant.berry.data.DataCallback;
 import com.example.nishant.berry.data.DataManager;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 
@@ -35,13 +36,9 @@ import com.firebase.ui.database.FirebaseRecyclerAdapter;
  */
 public class ChatPresenter
         extends BasePresenter<ChatContract.View>
-        implements ChatContract.Presenter, DataManager.ChatListCallback {
-
-    private DataManager dataManager;
+        implements ChatContract.Presenter {
 
     ChatPresenter() {
-        dataManager = new DataManager();
-        dataManager.setChatListCallbacks(this);
     }
 
     @Override
@@ -60,29 +57,21 @@ public class ChatPresenter
      */
     @Override
     public void getCurrentUsersChatList() {
-        dataManager.getChatList();
-    }
+        DataManager.getInstance().userChatList(new DataCallback.OnFriendsList() {
+            @Override
+            public void onItemClick(String userId, String displayName) {
+                getView().onListItemClick(userId, displayName);
+            }
 
-    /**
-     * Implement this {@link DataManager} callback for getting chat list from firebase
-     * by calling startListening()/ stopListening() methods on FirebaseRecyclerAdapter
-     * And ultimately set the adapter on RecyclerView to actually see the list
-     *
-     * @param adapter FirebaseRecyclerAdapter instance
-     */
-    @Override
-    public void onChatAdapter(FirebaseRecyclerAdapter adapter) {
-        getView().getFirebaseRecyclerAdapter(adapter);
-    }
+            @Override
+            public void onAdapter(FirebaseRecyclerAdapter adapter) {
+                getView().getFirebaseRecyclerAdapter(adapter);
+            }
 
-    /**
-     * Implement this {@link DataManager} callback for list item click in chat list
-     *
-     * @param userId      Id of user on which click is performed
-     * @param displayName Name of user
-     */
-    @Override
-    public void onListItemClick(String userId, String displayName) {
-        getView().onListItemClick(userId, displayName);
+            @Override
+            public void onError(String error) {
+                // Error handling
+            }
+        });
     }
 }

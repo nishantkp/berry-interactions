@@ -61,6 +61,7 @@ public interface DataCallback {
     }
 
     // Current user's friends detail callbacks for item-click, firebase adapter and error
+    // Current user's shat list callbacks
     interface OnFriendsList {
         void onItemClick(String userId, String displayName);
 
