@@ -26,6 +26,7 @@
 package com.example.nishant.berry.ui.dashboard.fragment.request;
 
 import com.example.nishant.berry.base.BasePresenter;
+import com.example.nishant.berry.data.DataCallback;
 import com.example.nishant.berry.data.DataManager;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 
@@ -34,14 +35,9 @@ import com.firebase.ui.database.FirebaseRecyclerAdapter;
  */
 public class RequestPresenter
         extends BasePresenter<RequestContract.View>
-        implements RequestContract.Presenter, DataManager.FriendReqCallback {
-
-    // DataManager
-    private DataManager mDataManager;
+        implements RequestContract.Presenter {
 
     RequestPresenter() {
-        mDataManager = new DataManager();
-        mDataManager.setFriendRequestCallbacks(this);
     }
 
     @Override
@@ -62,29 +58,20 @@ public class RequestPresenter
      */
     @Override
     public void setupFirebaseRecyclerAdapter() {
-        mDataManager.getCurrentUsersFriendReq();
-    }
+        DataManager.getInstance().currentUsersFriendReq(new DataCallback.OnFriendRequest() {
+            @Override
+            public void onAdapter(FirebaseRecyclerAdapter adapter) {
+                // callback for FirebaseRecyclerAdapter, so that we can use set this adapter
+                // on RecyclerView for list of friend requests
+                // Also we have to call startListening()/ stopListening() methods in onStart()/onPause() to
+                // actually get the data from firebase
+                getView().setFirebaseAdapterWithRecyclerView(adapter);
+            }
 
-    /**
-     * {@link DataManager} callback for error while getting data from firebase database
-     *
-     * @param error message
-     */
-    @Override
-    public void onError(String error) {
-        getView().onError(error);
-    }
-
-    /**
-     * {@link DataManager} callback for FirebaseRecyclerAdapter, so that we can use set this adapter
-     * on RecyclerView for list of friend requests
-     * Also we have to call startListening()/ stopListening() methods in onStart()/onPause() to
-     * actually get the data from firebase
-     *
-     * @param adapter FirebaseRecyclerAdapter instance
-     */
-    @Override
-    public void onReqAdapter(FirebaseRecyclerAdapter adapter) {
-        getView().setFirebaseAdapterWithRecyclerView(adapter);
+            @Override
+            public void onError(String error) {
+                getView().onError(error);
+            }
+        });
     }
 }

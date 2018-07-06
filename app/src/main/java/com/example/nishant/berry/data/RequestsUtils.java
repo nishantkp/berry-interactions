@@ -27,6 +27,7 @@ package com.example.nishant.berry.data;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -52,25 +53,32 @@ import java.util.Map;
  * Utility class which deals with displaying friend request and performing action when
  * accept/cancel/decline button is pressed
  */
-class RequestsUtils
-        implements FriendRequestViewHolder.onButtonClick, FirebaseUtils.FriendReqUsersObjectCallback {
+final class RequestsUtils
+        implements FriendRequestViewHolder.onButtonClick {
 
-    private FriendRequestCallback mFriendReqCallback;
-    private FirebaseUtils mFirebaseUtils;
+    // Log tag
+    private static final String LOG_TAG = RequestsUtils.class.getSimpleName();
 
-    void setFriendRequestCallbacks(FriendRequestCallback callbacks) {
-        mFriendReqCallback = callbacks;
-        mFirebaseUtils = new FirebaseUtils();
-        mFirebaseUtils.setFriendReqUserObjectCallbacks(this);
+    // Lazy singleTon pattern
+    private static class StaticHolder {
+        static final RequestsUtils INSTANCE = new RequestsUtils();
+    }
+
+    static RequestsUtils getInstance() {
+        return StaticHolder.INSTANCE;
+    }
+
+    private RequestsUtils() {
     }
 
     /**
      * Call this method to get the friend requests of current user
      * All the request, whether user has sent or received it
+     *
+     * @param callback DataCallback for error and firebase adapter to display list of friend
+     *                 requests whether sent or received
      */
-    void getCurrentUsersFriendRequests() {
-        // Safety to avoid NullPointerException
-        if (mFriendReqCallback == null) return;
+    void getCurrentUsersFriendRequests(@NonNull final DataCallback.OnFriendRequest callback) {
 
         // Firebase query for Friend request object
         Query reqQuery = DataManager.getCurrentUserFriendsReqRef();
@@ -89,7 +97,19 @@ class RequestsUtils
                         final String listUserId = getRef(position).getKey();
                         final String requestType = model.getRequest_type();
                         if (listUserId == null) return;
-                        mFirebaseUtils.getUsersObject(listUserId, requestType, holder);
+                        FirebaseUtils.getInstance().getUsersObject(listUserId, requestType, holder,
+                                new DataCallback.OnFriendRequestUserData() {
+                                    @Override
+                                    public void onData(AllUsers model, String userId, FriendRequestViewHolder holder) {
+                                        // bind the {@link AllUsers} model to view
+                                        holder.bind(model, userId);
+                                    }
+
+                                    @Override
+                                    public void onError(String error) {
+                                        callback.onError(error);
+                                    }
+                                });
                     }
 
                     @NonNull
@@ -108,7 +128,7 @@ class RequestsUtils
         // Set call back for firebase recycler adapter, so that in fragment/activity we can start
         // and stop listing to adapter in onStart() and onPause() methods respectively
         // By doing so we can get data from Firebase Database
-        mFriendReqCallback.onFriendReqFirebaseAdapter(adapter);
+        callback.onAdapter(adapter);
     }
 
     /**
@@ -135,7 +155,7 @@ class RequestsUtils
             public void onComplete(@Nullable DatabaseError databaseError,
                                    @NonNull DatabaseReference databaseReference) {
                 if (databaseError != null) {
-                    mFriendReqCallback.onFriendReqError("Unable to accept request!");
+                    Log.d(LOG_TAG, "Unable to accept request!");
                 }
             }
         });
@@ -160,41 +180,9 @@ class RequestsUtils
             @Override
             public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
                 if (databaseError != null) {
-                    mFriendReqCallback.onFriendReqError("Unable to cancel request!");
+                    Log.d(LOG_TAG, "Unable to cancel request!");
                 }
             }
         });
-    }
-
-    /**
-     * {@link FirebaseUtils} callback to bind the {@link AllUsers} model to view
-     *
-     * @param model  {@link AllUsers} model containing details about user
-     * @param userId id of user which is being displayed
-     * @param holder FriendsRequestViewHolder instance to bind model to view
-     */
-    @Override
-    public void onFirebaseUsersObject(AllUsers model, String userId, FriendRequestViewHolder holder) {
-        holder.bind(model, userId);
-    }
-
-    /**
-     * {@link FirebaseUtils} callback for error occurred while getting data from firebase database
-     *
-     * @param error error message
-     */
-    @Override
-    public void onFirebaseUsersObjectError(String error) {
-        mFriendReqCallback.onFriendReqError(error);
-    }
-
-    /**
-     * FriendRequest callbacks which deals with error while retrieving data from firebase database
-     * and provides FirebaseRecyclerAdapter to set it on RecyclerView to display list of requests
-     */
-    interface FriendRequestCallback {
-        void onFriendReqError(String error);
-
-        void onFriendReqFirebaseAdapter(FirebaseRecyclerAdapter adapter);
     }
 }

@@ -45,7 +45,6 @@ import com.google.firebase.storage.StorageReference;
  * Firebase Utility class
  */
 class FirebaseUtils {
-    private FriendReqUsersObjectCallback mFriendReqUserObjectCallback;
 
     // Lazy Initialization pattern
     private static class StaticHolder {
@@ -166,17 +165,6 @@ class FirebaseUtils {
     }
 
     /**
-     * Set FriendReqUserObjectCallback to get detailed information about particular user
-     * Set this callback when dealing with user's friend requests
-     * Use this method along side with getUsersObject(userId, reqType, FriendsRequestViewHolder)
-     *
-     * @param callbacks Must be initiated by class which implements the UsersObjectCallback
-     */
-    void setFriendReqUserObjectCallbacks(FriendReqUsersObjectCallback callbacks) {
-        mFriendReqUserObjectCallback = callbacks;
-    }
-
-    /**
      * Call this method to get information about any User from users object
      * Must use setFirebaseUsersObjectCallbacks() along side with the method in order to get the
      * results
@@ -231,11 +219,12 @@ class FirebaseUtils {
      *                    to view
      *                    NOTE : We don't do anything with the ViewHolder object in this method, we just
      *                    need it set the
+     * @param callback    callback for detail user info and error
      */
-    void getUsersObject(@NonNull final String userId, final String requestType, final FriendRequestViewHolder holder) {
-        // Safety reasons :: If user forget to implement FriendReqUserObjectCallbacks RETURN without
-        // executing the method, otherwise it will cause NullPointerException when trying to set callbacks
-        if (mFriendReqUserObjectCallback == null) return;
+    void getUsersObject(@NonNull final String userId,
+                        final String requestType,
+                        final FriendRequestViewHolder holder,
+                        @NonNull final DataCallback.OnFriendRequestUserData callback) {
 
         // Database reference for particular reference
         DatabaseReference reference = getMainObjectRef(IFirebaseConfig.USERS_OBJECT).child(userId);
@@ -250,16 +239,12 @@ class FirebaseUtils {
                 user.setFriendRequestType(requestType);
 
                 // Setup callbacks
-                mFriendReqUserObjectCallback.onFirebaseUsersObject(
-                        user,
-                        userId,
-                        holder
-                );
+                callback.onData(user, userId, holder);
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                mFriendReqUserObjectCallback.onFirebaseUsersObjectError(databaseError.getMessage());
+                callback.onError(databaseError.getMessage());
             }
         });
 
@@ -274,18 +259,5 @@ class FirebaseUtils {
      */
     static AllUsers extractValues(@NonNull DataSnapshot dataSnapshot) {
         return dataSnapshot.getValue(AllUsers.class);
-    }
-
-    /**
-     * Implement this interface if you're interested in user details form User's object
-     * When dealing with FriendRequests object
-     * Must implement this callback when you use getUsersObject(userId,reqType,FriendRequestViewHolder)
-     * <p>
-     * i.e refer {@link RequestsUtils} class
-     */
-    interface FriendReqUsersObjectCallback {
-        void onFirebaseUsersObject(AllUsers model, String userId, FriendRequestViewHolder holder);
-
-        void onFirebaseUsersObjectError(String error);
     }
 }

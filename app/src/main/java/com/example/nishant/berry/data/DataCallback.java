@@ -26,6 +26,7 @@
 package com.example.nishant.berry.data;
 
 import com.example.nishant.berry.ui.adapter.AllUsersViewHolder;
+import com.example.nishant.berry.ui.adapter.FriendRequestViewHolder;
 import com.example.nishant.berry.ui.model.AllUsers;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 
@@ -64,6 +65,21 @@ public interface DataCallback {
         void onItemClick(String userId, String displayName);
 
         void onAdapter(FirebaseRecyclerAdapter adapter);
+
+        void onError(String error);
+    }
+
+    // Callbacks for displaying all friend requests whether user has sent or received
+    // FirebaseRecyclerAdapter to set it on RecyclerView to display list of requests
+    interface OnFriendRequest {
+        void onAdapter(FirebaseRecyclerAdapter adapter);
+
+        void onError(String error);
+    }
+
+    // User's data callback when dealing with FriendRequests object
+    interface OnFriendRequestUserData {
+        void onData(AllUsers model, String userId, FriendRequestViewHolder holder);
 
         void onError(String error);
     }

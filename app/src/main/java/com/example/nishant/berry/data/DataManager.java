@@ -56,10 +56,8 @@ import java.util.Map;
  * Data Manager class, that deals with business logic
  */
 public class DataManager
-        implements RequestsUtils.FriendRequestCallback,
-        ChatUtils.ChatCallback {
+        implements ChatUtils.ChatCallback {
     private static FirebaseUtils sFirebaseUtils;
-    private FriendReqCallback mFriendReqCallback;
     private ChatListCallback mChatListCallback;
 
     // Lazy Initialization pattern
@@ -234,16 +232,6 @@ public class DataManager
      */
     public static boolean isCurrentUserAvailable() {
         return sFirebaseUtils.isCurrentUserAvailable();
-    }
-
-    /**
-     * Set friend request callback
-     *
-     * @param callbacks FriendRequestCallback must be initialized with the class which implements
-     *                  callback
-     */
-    public void setFriendRequestCallbacks(FriendReqCallback callbacks) {
-        mFriendReqCallback = callbacks;
     }
 
     /**
@@ -501,13 +489,19 @@ public class DataManager
      * Call this method to get current user's friend request
      * received or sent
      */
-    public void getCurrentUsersFriendReq() {
-        // Safety to avoid NullPointerException
-        if (mFriendReqCallback == null) return;
+    public void currentUsersFriendReq(@NonNull final DataCallback.OnFriendRequest callback) {
+        // Get current user's friend requests
+        RequestsUtils.getInstance().getCurrentUsersFriendRequests(new DataCallback.OnFriendRequest() {
+            @Override
+            public void onAdapter(FirebaseRecyclerAdapter adapter) {
+                callback.onAdapter(adapter);
+            }
 
-        RequestsUtils requestsUtils = new RequestsUtils();
-        requestsUtils.setFriendRequestCallbacks(this);
-        requestsUtils.getCurrentUsersFriendRequests();
+            @Override
+            public void onError(String error) {
+                callback.onError(error);
+            }
+        });
     }
 
     public void getChatList() {
@@ -517,29 +511,6 @@ public class DataManager
         ChatUtils chatUtils = new ChatUtils();
         chatUtils.setChatCallbacks(this);
         chatUtils.getChatList();
-    }
-
-    /**
-     * Implement this {@link RequestsUtils} callback method for handling error while getting
-     * user's detail information from User's object
-     *
-     * @param error error message
-     */
-    @Override
-    public void onFriendReqError(String error) {
-        mFriendReqCallback.onError(error);
-    }
-
-    /**
-     * Implement this {@link RequestsUtils} callback method for current user's friend requests
-     * Use this FirebaseAdapter in activity's onStart() and onPause() method to
-     * startListening()/stopListening() in order to fetch data from firebase
-     *
-     * @param adapter FirebaseRecyclerAdapter
-     */
-    @Override
-    public void onFriendReqFirebaseAdapter(FirebaseRecyclerAdapter adapter) {
-        mFriendReqCallback.onReqAdapter(adapter);
     }
 
     /**
@@ -563,15 +534,6 @@ public class DataManager
     @Override
     public void onChatListItemClick(String userId, String name) {
         mChatListCallback.onListItemClick(userId, name);
-    }
-
-    /**
-     * Current user's friend request callback for error and firebase adapter
-     */
-    public interface FriendReqCallback {
-        void onError(String error);
-
-        void onReqAdapter(FirebaseRecyclerAdapter adapter);
     }
 
     /**
