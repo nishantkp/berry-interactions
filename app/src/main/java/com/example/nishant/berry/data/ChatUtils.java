@@ -27,30 +27,26 @@ package com.example.nishant.berry.data;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
-import com.example.nishant.berry.R;
 import com.example.nishant.berry.config.IFirebaseConfig;
-import com.example.nishant.berry.databinding.FriendsMessageListItemBinding;
-import com.example.nishant.berry.ui.adapter.FriendsInteractionViewHolder;
+import com.example.nishant.berry.ui.adapter.AllUsersViewHolder;
 import com.example.nishant.berry.ui.model.AllUsers;
-import com.example.nishant.berry.ui.model.FriendsInteraction;
-import com.firebase.ui.database.FirebaseRecyclerAdapter;
-import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.Objects;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * ChatUtility class to display chat list
  */
 final class ChatUtils {
+
+    // TODO: Use stack instead linkedList to store interaction data : <<<FUTURE UPDATE>>>
+    private static List<AllUsers> mData = new LinkedList<>();
 
     // Lazy singleTon pattern
     private static class StaticHolder {
@@ -65,110 +61,107 @@ final class ChatUtils {
     }
 
     /**
-     * Call this method to get the user's chat list
-     * This method sets callback for firebase adapter and list item click
+     * Call this method to get the all users interactions, i.e list of all the users
+     * with whom current has had interaction with
+     *
+     * @param callback DataCallback for error handling and list of all interactions
      */
-    void getChatList(@NonNull final DataCallback.OnFriendsList callback) {
-
+    void getUsersInteraction(@NonNull final DataCallback.OnUsersChat callback) {
         // Query for Interactions database
         Query query = DataManager.getCurrentUserInteractionRef()
                 .orderByChild(IFirebaseConfig.TIMESTAMP);
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                // Get all Ids from interaction database
+                for (DataSnapshot data : dataSnapshot.getChildren()) {
+                    getUsersInfo(data.getKey(), callback);
+                }
+            }
 
-        FirebaseRecyclerOptions<FriendsInteraction> options =
-                new FirebaseRecyclerOptions.Builder<FriendsInteraction>()
-                        .setQuery(query, FriendsInteraction.class)
-                        .build();
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                callback.onError(databaseError.getMessage());
+            }
+        });
+    }
 
-        // Firebase recycler adapter
-        FirebaseRecyclerAdapter<FriendsInteraction, FriendsInteractionViewHolder> adapter =
-                new FirebaseRecyclerAdapter<FriendsInteraction, FriendsInteractionViewHolder>(options) {
-                    @Override
-                    protected void onBindViewHolder(@NonNull final FriendsInteractionViewHolder holder,
-                                                    int position,
-                                                    @NonNull FriendsInteraction model) {
+    /**
+     * Call this method to get information about particular user
+     *
+     * @param id       id of user with whom current user had interaction with
+     * @param callback DataCallback for Error message
+     *                 Error we get while querying users database
+     */
+    private void getUsersInfo(final String id,
+                              @NonNull final DataCallback.OnUsersChat callback) {
+        // Use FirebaseUtils method to get information about particular user
+        FirebaseUtils.getInstance().getUsersObject(id, null, new DataCallback.OnUsersData() {
+            @Override
+            public void onData(AllUsers model, String userId, AllUsersViewHolder holder) {
+                model.setId(id);
+                getLastMessage(model, callback);
+            }
 
-                        final AllUsers[] users = {new AllUsers()};
-                        // Id of user with whom we are chatting
-                        final String listUserId = getRef(position).getKey();
-                        assert listUserId != null;
+            @Override
+            public void onError(String error) {
+                callback.onError(error);
+            }
+        });
+    }
 
-                        // Get basic information like name, avatar of user and update the
-                        // list item view
-                        DataManager.getUsersRef().child(listUserId)
-                                .addValueEventListener(new ValueEventListener() {
-                                    @Override
-                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                        // Extract the data from FirebaseUtils helper
-                                        users[0] = FirebaseUtils.extractValues(dataSnapshot);
-                                        users[0].setStatus("");
-                                        holder.bind(users[0]);
+    /**
+     * Call this method to get the last message sent/ received by user and update index of user
+     * in the list accordingly
+     *
+     * @param users    User object containing UserId, name and thumbnail url of user avatar
+     * @param callback DataCallback for error and list of data
+     *                 Error we get while querying message reference for last massage send/ receive
+     *                 by user
+     */
+    private void getLastMessage(final AllUsers users,
+                                @NonNull final DataCallback.OnUsersChat callback) {
+        // Query for Message object to get the last message for particular user
+        final Query lastMessageQuery = DataManager.getCurrentUserMessageRef()
+                .child(users.getId())
+                .limitToLast(1);
 
-                                        // Set list item onCLickListener to open InteractionActivity
-                                        holder.itemView.setOnClickListener(new View.OnClickListener() {
-                                            @Override
-                                            public void onClick(View v) {
-                                                callback.onItemClick(listUserId, users[0].getName());
-                                            }
-                                        });
-                                    }
+        lastMessageQuery.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                // Get the last message and message seen from DataSnapshot
+                String lastMessage = (String) dataSnapshot.child(IFirebaseConfig.MESSAGE_DATA).getValue();
+                boolean messageSeen = (boolean) dataSnapshot.child(IFirebaseConfig.MESSAGE_SEEN).getValue();
+                users.setStatus(lastMessage);
+                users.setMessageSeen(messageSeen);
 
-                                    @Override
-                                    public void onCancelled(@NonNull DatabaseError databaseError) {
-                                        callback.onError(databaseError.getMessage());
-                                    }
-                                });
+                // If user doesn't exists in the list, the add the user first
+                if (!mData.contains(users)) {
+                    mData.add(users);
+                } else {
+                    int index = mData.indexOf(users);
+                    mData.remove(index);
+                    mData.add(mData.size(), users);
+                }
+                callback.onFriendsChat(mData);
+            }
 
-                        // Database query to get the very last message sent or received by user
-                        Query lastMessageQuery = DataManager.getCurrentUserMessageRef()
-                                .child(listUserId)
-                                .limitToLast(1);
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+            }
 
-                        // Get the last message and update the list item view
-                        lastMessageQuery.addChildEventListener(new ChildEventListener() {
-                            @Override
-                            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                                String lastMessage = Objects.requireNonNull(dataSnapshot
-                                        .child(IFirebaseConfig.MESSAGE_DATA)
-                                        .getValue()).toString();
-                                boolean messageSeen = (boolean) dataSnapshot.child(IFirebaseConfig.MESSAGE_SEEN).getValue();
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+            }
 
-                                users[0].setStatus(lastMessage);
-                                users[0].setMessageSeen(messageSeen);
-                                holder.bind(users[0]);
-                            }
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+            }
 
-                            @Override
-                            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                            }
-
-                            @Override
-                            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-                            }
-
-                            @Override
-                            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                            }
-
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError databaseError) {
-                            }
-                        });
-                    }
-
-                    @NonNull
-                    @Override
-                    public FriendsInteractionViewHolder onCreateViewHolder(@NonNull ViewGroup parent,
-                                                                           int viewType) {
-                        View view = LayoutInflater.from(parent.getContext())
-                                .inflate(R.layout.friends_message_list_item, parent, false);
-                        return new FriendsInteractionViewHolder(FriendsMessageListItemBinding.bind(view));
-                    }
-                };
-
-        // Set call back for firebase recycler adapter
-        // So that we can set adapter on RecyclerView in fragment/ activity
-        // This will also help in start and stop the listening the adapter in onStart() and onStop()
-        // methods
-        callback.onAdapter(adapter);
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                callback.onError(databaseError.getMessage());
+            }
+        });
     }
 }

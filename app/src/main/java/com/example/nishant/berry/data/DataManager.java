@@ -50,6 +50,7 @@ import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.storage.StorageReference;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -496,20 +497,17 @@ public class DataManager {
     }
 
     /**
-     * Call this method to get the chat list of current user
+     * Call this method to get the list of users with whom current user has interactions with
+     * This method with give List<AllUsers> in callback
+     * {@link AllUsers} object consists of user name, last message sent/received, thumbnail avatar url
      *
-     * @param callback DataCallback for item-click, firebase adapter and error
+     * @param callback DataCallback for list of interactions and error
      */
-    public void userChatList(@NonNull final DataCallback.OnFriendsList callback) {
-        ChatUtils.getInstance().getChatList(new DataCallback.OnFriendsList() {
+    public void getChatList(@NonNull final DataCallback.OnUsersChat callback) {
+        ChatUtils.getInstance().getUsersInteraction(new DataCallback.OnUsersChat() {
             @Override
-            public void onItemClick(String userId, String displayName) {
-                callback.onItemClick(userId, displayName);
-            }
-
-            @Override
-            public void onAdapter(FirebaseRecyclerAdapter adapter) {
-                callback.onAdapter(adapter);
+            public void onFriendsChat(List<AllUsers> data) {
+                callback.onFriendsChat(data);
             }
 
             @Override

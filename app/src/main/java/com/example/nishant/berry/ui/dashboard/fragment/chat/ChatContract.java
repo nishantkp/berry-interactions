@@ -26,13 +26,15 @@
 package com.example.nishant.berry.ui.dashboard.fragment.chat;
 
 import com.example.nishant.berry.base.MvpView;
-import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.example.nishant.berry.ui.model.AllUsers;
+
+import java.util.List;
 
 public interface ChatContract {
     interface View extends MvpView {
-        void getFirebaseRecyclerAdapter(FirebaseRecyclerAdapter adapter);
+        void onInteractionData(List<AllUsers> data);
 
-        void onListItemClick(String userId, String displayName);
+        void onError(String error);
     }
 
     interface Presenter {

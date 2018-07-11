@@ -78,6 +78,10 @@ dependencies {
 
     // Image compression
     implementation 'id.zelory:compressor:2.1.0'
+
+    // Rx
+    implementation 'io.reactivex.rxjava2:rxandroid:2.0.2'
+    implementation "io.reactivex.rxjava2:rxjava:2.1.16"
 }
 
 apply plugin: 'com.google.gms.google-services'

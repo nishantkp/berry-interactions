@@ -30,6 +30,8 @@ import com.example.nishant.berry.ui.adapter.FriendRequestViewHolder;
 import com.example.nishant.berry.ui.model.AllUsers;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 
+import java.util.List;
+
 public interface DataCallback {
     // Success and failure callbacks
     interface OnTaskCompletion {
@@ -61,7 +63,6 @@ public interface DataCallback {
     }
 
     // Current user's friends detail callbacks for item-click, firebase adapter and error
-    // Current user's shat list callbacks
     interface OnFriendsList {
         void onItemClick(String userId, String displayName);
 
@@ -81,6 +82,13 @@ public interface DataCallback {
     // User's data callback when dealing with FriendRequests object
     interface OnFriendRequestUserData {
         void onData(AllUsers model, String userId, FriendRequestViewHolder holder);
+
+        void onError(String error);
+    }
+
+    // Current user's chat list callbacks
+    interface OnUsersChat {
+        void onFriendsChat(List<AllUsers> data);
 
         void onError(String error);
     }

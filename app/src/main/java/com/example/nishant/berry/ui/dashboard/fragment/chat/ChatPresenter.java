@@ -28,7 +28,10 @@ package com.example.nishant.berry.ui.dashboard.fragment.chat;
 import com.example.nishant.berry.base.BasePresenter;
 import com.example.nishant.berry.data.DataCallback;
 import com.example.nishant.berry.data.DataManager;
+import com.example.nishant.berry.ui.model.AllUsers;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
+
+import java.util.List;
 
 /**
  * Presenter that deals with setting up the FirebaseRecyclerAdapter and querying the Firebase
@@ -57,20 +60,15 @@ public class ChatPresenter
      */
     @Override
     public void getCurrentUsersChatList() {
-        DataManager.getInstance().userChatList(new DataCallback.OnFriendsList() {
+        DataManager.getInstance().getChatList(new DataCallback.OnUsersChat() {
             @Override
-            public void onItemClick(String userId, String displayName) {
-                getView().onListItemClick(userId, displayName);
-            }
-
-            @Override
-            public void onAdapter(FirebaseRecyclerAdapter adapter) {
-                getView().getFirebaseRecyclerAdapter(adapter);
+            public void onFriendsChat(List<AllUsers> data) {
+                getView().onInteractionData(data);
             }
 
             @Override
             public void onError(String error) {
-                // Error handling
+                getView().onError(error);
             }
         });
     }

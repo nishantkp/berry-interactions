@@ -29,11 +29,14 @@ import android.view.View;
 
 import com.example.nishant.berry.config.IFirebaseConfig;
 
+import java.util.Objects;
+
 /**
  * Users object for FirebaseRecyclerAdapter
  * This object should contain variable names exactly the same as Firebase Database
  */
 public class AllUsers {
+    private String id;
     private String name;
     private String image;
     private String status;
@@ -155,5 +158,19 @@ public class AllUsers {
 
     public void setLast_seen(long last_seen) {
         this.last_seen = last_seen;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof AllUsers) return Objects.equals(((AllUsers) obj).id, this.id);
+        return super.equals(obj);
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }
