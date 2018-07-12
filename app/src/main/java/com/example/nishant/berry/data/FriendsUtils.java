@@ -54,7 +54,6 @@ import io.reactivex.schedulers.Schedulers;
  * with the help of FirebaseRecyclerAdapter
  */
 final class FriendsUtils {
-    private static List<AllUsers> friendList = new LinkedList<>();
 
     // Lazy singleton pattern
     private static class StaticHolder {
@@ -189,8 +188,9 @@ final class FriendsUtils {
         query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                List<AllUsers> list = new LinkedList<>();
                 for (DataSnapshot data : dataSnapshot.getChildren()) {
-                    getInfoFromId(data.getKey(), callback);
+                    getInfoFromId(data.getKey(), list, callback);
                 }
             }
 
@@ -205,22 +205,23 @@ final class FriendsUtils {
      * Use this method to get the detail info about user from it's Id from firebase database
      *
      * @param userId   userId
+     * @param list     empty list of friends
      * @param callback DataCallback for list of friends and error
      */
-    private void getInfoFromId(final String userId, @NonNull final DataCallback.OnFriendsList callback) {
+    private void getInfoFromId(final String userId, final List<AllUsers> list, @NonNull final DataCallback.OnFriendsList callback) {
         FirebaseUtils.getInstance().getUsersObject(userId, null, new DataCallback.OnUsersData() {
             @Override
             public void onData(AllUsers model, String userId, AllUsersViewHolder holder) {
                 model.setId(userId);
                 // If user doesn't exists in the list, add it
-                if (!friendList.contains(model)) {
-                    friendList.add(model);
+                if (!list.contains(model)) {
+                    list.add(model);
                 } else {
                     // otherwise update the values at user's current index
-                    int index = friendList.indexOf(model);
-                    friendList.set(index, model);
+                    int index = list.indexOf(model);
+                    list.set(index, model);
                 }
-                callback.onData(friendList);
+                callback.onData(list);
             }
 
             @Override
