@@ -46,16 +46,7 @@ import com.google.firebase.storage.StorageReference;
  */
 final class FirebaseUtils {
 
-    // Lazy Initialization pattern
-    private static class StaticHolder {
-        static final FirebaseUtils INSTANCE = new FirebaseUtils();
-    }
-
-    static FirebaseUtils getInstance() {
-        return StaticHolder.INSTANCE;
-    }
-
-    private FirebaseUtils() {
+    FirebaseUtils() {
     }
 
     /**

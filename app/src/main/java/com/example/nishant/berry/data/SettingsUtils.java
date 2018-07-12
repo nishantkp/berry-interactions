@@ -40,16 +40,8 @@ import com.google.firebase.storage.UploadTask;
  * i.e usually required for {@link SettingsActivity}, {@link SettingsPresenter}
  */
 final class SettingsUtils {
-    // Lazy singleton pattern
-    private static class StaticHolder {
-        static final SettingsUtils INSTANCE = new SettingsUtils();
-    }
 
-    static SettingsUtils getInstance() {
-        return StaticHolder.INSTANCE;
-    }
-
-    private SettingsUtils() {
+    SettingsUtils() {
     }
 
     /**

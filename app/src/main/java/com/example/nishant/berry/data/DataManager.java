@@ -36,7 +36,9 @@ import com.example.nishant.berry.R;
 import com.example.nishant.berry.config.IFirebaseConfig;
 import com.example.nishant.berry.databinding.AllUsersListItemBinding;
 import com.example.nishant.berry.ui.adapter.AllUsersViewHolder;
+import com.example.nishant.berry.ui.dashboard.fragment.chat.ChatFragment;
 import com.example.nishant.berry.ui.model.AllUsers;
+import com.example.nishant.berry.ui.model.Friends;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -58,6 +60,10 @@ import java.util.Map;
  */
 public class DataManager {
     private static FirebaseUtils sFirebaseUtils;
+    private static FriendsUtils sFriendsUtils;
+    private static RequestsUtils sRequestsUtils;
+    private static SettingsUtils sSettingsUtils;
+    private static ChatUtils sChatUtils;
 
     // Lazy Initialization pattern
     private static class StaticHolder {
@@ -65,11 +71,18 @@ public class DataManager {
     }
 
     public static DataManager getInstance() {
-        sFirebaseUtils = FirebaseUtils.getInstance();
         return StaticHolder.INSTANCE;
     }
 
+    /**
+     * Private constructor so no one can make object of a data manager
+     */
     private DataManager() {
+        sFirebaseUtils = new FirebaseUtils();
+        sFriendsUtils = new FriendsUtils();
+        sRequestsUtils = new RequestsUtils();
+        sSettingsUtils = new SettingsUtils();
+        sChatUtils = new ChatUtils();
     }
 
     /**
@@ -246,7 +259,7 @@ public class DataManager {
     public void loginUser(@NonNull String email,
                           @NonNull String password,
                           @NonNull final DataCallback.OnTaskCompletion callback) {
-        FirebaseUtils.getInstance().getFirebaseAuth()
+        sFirebaseUtils.getFirebaseAuth()
                 .signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
@@ -415,8 +428,7 @@ public class DataManager {
      * @param callback Callback for detail user info and error
      */
     public void getCurrentUserInfo(@NonNull final DataCallback.OnCurrentUserInfo callback) {
-        FirebaseUtils utils = FirebaseUtils.getInstance();
-        utils.getUsersObject(getCurrentUserId(), null, new DataCallback.OnUsersData() {
+        sFirebaseUtils.getUsersObject(getCurrentUserId(), null, new DataCallback.OnUsersData() {
             @Override
             public void onData(AllUsers model, String userId, AllUsersViewHolder holder) {
                 callback.onData(model);
@@ -438,7 +450,7 @@ public class DataManager {
     public void storeAvatar(Uri avatarUri,
                             final byte[] thumbnailByte,
                             final @NonNull DataCallback.OnTaskCompletion callback) {
-        SettingsUtils.getInstance().storeAvatarToFirebaseDatabase(avatarUri, thumbnailByte, callback);
+        sSettingsUtils.storeAvatarToFirebaseDatabase(avatarUri, thumbnailByte, callback);
     }
 
     /**
@@ -446,8 +458,7 @@ public class DataManager {
      * received or sent
      */
     public void currentUsersFriendReq(@NonNull final DataCallback.OnFriendRequest callback) {
-        // Get current user's friend requests
-        RequestsUtils.getInstance().getCurrentUsersFriendRequests(callback);
+        sRequestsUtils.getCurrentUsersFriendRequests(callback);
     }
 
     /**
@@ -458,7 +469,7 @@ public class DataManager {
      * @param callback DataCallback for list of interactions and error
      */
     public void getChatList(@NonNull final DataCallback.OnUsersChat callback) {
-        ChatUtils.getInstance().getUsersInteraction(callback);
+        sChatUtils.getUsersInteraction(callback);
     }
 
     /**
@@ -467,6 +478,6 @@ public class DataManager {
      * @param callback DataCallback for list of friends and error
      */
     public void fetchFriends(@NonNull final DataCallback.OnFriendsList callback) {
-        FriendsUtils.getInstance().getAllFriends(callback);
+        sFriendsUtils.getAllFriends(callback);
     }
 }

@@ -47,17 +47,10 @@ final class ChatUtils {
 
     // TODO: Use stack instead linkedList to store interaction data : <<<FUTURE UPDATE>>>
     private static List<AllUsers> mData = new LinkedList<>();
+    private static FirebaseUtils sFirebaseUtils;
 
-    // Lazy singleTon pattern
-    private static class StaticHolder {
-        static final ChatUtils INSTANCE = new ChatUtils();
-    }
-
-    static ChatUtils getInstance() {
-        return StaticHolder.INSTANCE;
-    }
-
-    private ChatUtils() {
+    ChatUtils() {
+        sFirebaseUtils = new FirebaseUtils();
     }
 
     /**
@@ -96,7 +89,7 @@ final class ChatUtils {
     private void getUsersInfo(final String id,
                               @NonNull final DataCallback.OnUsersChat callback) {
         // Use FirebaseUtils method to get information about particular user
-        FirebaseUtils.getInstance().getUsersObject(id, null, new DataCallback.OnUsersData() {
+        sFirebaseUtils.getUsersObject(id, null, new DataCallback.OnUsersData() {
             @Override
             public void onData(AllUsers model, String userId, AllUsersViewHolder holder) {
                 model.setId(id);

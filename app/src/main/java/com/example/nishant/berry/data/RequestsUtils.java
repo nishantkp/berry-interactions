@@ -58,17 +58,10 @@ final class RequestsUtils
 
     // Log tag
     private static final String LOG_TAG = RequestsUtils.class.getSimpleName();
+    private static FirebaseUtils sFirebaseUtils;
 
-    // Lazy singleTon pattern
-    private static class StaticHolder {
-        static final RequestsUtils INSTANCE = new RequestsUtils();
-    }
-
-    static RequestsUtils getInstance() {
-        return StaticHolder.INSTANCE;
-    }
-
-    private RequestsUtils() {
+    RequestsUtils() {
+        sFirebaseUtils = new FirebaseUtils();
     }
 
     /**
@@ -97,7 +90,7 @@ final class RequestsUtils
                         final String listUserId = getRef(position).getKey();
                         final String requestType = model.getRequest_type();
                         if (listUserId == null) return;
-                        FirebaseUtils.getInstance().getUsersObject(listUserId, requestType, holder,
+                        sFirebaseUtils.getUsersObject(listUserId, requestType, holder,
                                 new DataCallback.OnFriendRequestUserData() {
                                     @Override
                                     public void onData(AllUsers model, String userId, FriendRequestViewHolder holder) {

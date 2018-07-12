@@ -54,17 +54,10 @@ import io.reactivex.schedulers.Schedulers;
  * with the help of FirebaseRecyclerAdapter
  */
 final class FriendsUtils {
+    private static FirebaseUtils sFirebaseUtils;
 
-    // Lazy singleton pattern
-    private static class StaticHolder {
-        static final FriendsUtils INSTANCE = new FriendsUtils();
-    }
-
-    static FriendsUtils getInstance() {
-        return StaticHolder.INSTANCE;
-    }
-
-    private FriendsUtils() {
+    FriendsUtils() {
+        sFirebaseUtils = new FirebaseUtils();
     }
 
     //--------------------------------------------------------------------------------------------//
@@ -156,7 +149,7 @@ final class FriendsUtils {
         return Observable.create(new ObservableOnSubscribe<AllUsers>() {
             @Override
             public void subscribe(final ObservableEmitter<AllUsers> emitter) throws Exception {
-                FirebaseUtils.getInstance().getUsersObject(id, null, new DataCallback.OnUsersData() {
+                sFirebaseUtils.getUsersObject(id, null, new DataCallback.OnUsersData() {
                     @Override
                     public void onData(AllUsers model, String userId, AllUsersViewHolder holder) {
                         // Getting all users here
@@ -209,7 +202,7 @@ final class FriendsUtils {
      * @param callback DataCallback for list of friends and error
      */
     private void getInfoFromId(final String userId, final List<AllUsers> list, @NonNull final DataCallback.OnFriendsList callback) {
-        FirebaseUtils.getInstance().getUsersObject(userId, null, new DataCallback.OnUsersData() {
+        sFirebaseUtils.getUsersObject(userId, null, new DataCallback.OnUsersData() {
             @Override
             public void onData(AllUsers model, String userId, AllUsersViewHolder holder) {
                 model.setId(userId);
