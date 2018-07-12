@@ -438,18 +438,7 @@ public class DataManager {
     public void storeAvatar(Uri avatarUri,
                             final byte[] thumbnailByte,
                             final @NonNull DataCallback.OnTaskCompletion callback) {
-        SettingsUtils utils = SettingsUtils.getInstance();
-        utils.storeAvatarToFirebaseDatabase(avatarUri, thumbnailByte, new DataCallback.OnTaskCompletion() {
-            @Override
-            public void onSuccess() {
-                callback.onSuccess();
-            }
-
-            @Override
-            public void onError(String error) {
-                callback.onError(error);
-            }
-        });
+        SettingsUtils.getInstance().storeAvatarToFirebaseDatabase(avatarUri, thumbnailByte, callback);
     }
 
     /**
@@ -458,17 +447,7 @@ public class DataManager {
      */
     public void currentUsersFriendReq(@NonNull final DataCallback.OnFriendRequest callback) {
         // Get current user's friend requests
-        RequestsUtils.getInstance().getCurrentUsersFriendRequests(new DataCallback.OnFriendRequest() {
-            @Override
-            public void onAdapter(FirebaseRecyclerAdapter adapter) {
-                callback.onAdapter(adapter);
-            }
-
-            @Override
-            public void onError(String error) {
-                callback.onError(error);
-            }
-        });
+        RequestsUtils.getInstance().getCurrentUsersFriendRequests(callback);
     }
 
     /**
@@ -479,17 +458,7 @@ public class DataManager {
      * @param callback DataCallback for list of interactions and error
      */
     public void getChatList(@NonNull final DataCallback.OnUsersChat callback) {
-        ChatUtils.getInstance().getUsersInteraction(new DataCallback.OnUsersChat() {
-            @Override
-            public void onFriendsChat(List<AllUsers> data) {
-                callback.onFriendsChat(data);
-            }
-
-            @Override
-            public void onError(String error) {
-                callback.onError(error);
-            }
-        });
+        ChatUtils.getInstance().getUsersInteraction(callback);
     }
 
     /**
@@ -498,16 +467,6 @@ public class DataManager {
      * @param callback DataCallback for list of friends and error
      */
     public void fetchFriends(@NonNull final DataCallback.OnFriendsList callback) {
-        FriendsUtils.getInstance().getAllFriends(new DataCallback.OnFriendsList() {
-            @Override
-            public void onData(List<AllUsers> data) {
-                callback.onData(data);
-            }
-
-            @Override
-            public void onError(String error) {
-                callback.onError(error);
-            }
-        });
+        FriendsUtils.getInstance().getAllFriends(callback);
     }
 }
