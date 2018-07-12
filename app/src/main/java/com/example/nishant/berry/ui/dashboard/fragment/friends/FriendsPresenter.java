@@ -29,7 +29,9 @@ import com.example.nishant.berry.base.BasePresenter;
 import com.example.nishant.berry.data.DataCallback;
 import com.example.nishant.berry.data.DataManager;
 import com.example.nishant.berry.ui.dashboard.DashboardActivity;
-import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.example.nishant.berry.ui.model.AllUsers;
+
+import java.util.List;
 
 /**
  * Presenter that responsible for displaying friends list in Friends tab in
@@ -39,11 +41,7 @@ public class FriendsPresenter
         extends BasePresenter<FriendsContract.View>
         implements FriendsContract.Presenter {
 
-    // DataManager
-    private DataManager mDataManager;
-
     FriendsPresenter() {
-        mDataManager = DataManager.getInstance();
     }
 
     @Override
@@ -55,30 +53,21 @@ public class FriendsPresenter
     public void attachView(FriendsContract.View view) {
         super.attachView(view);
 
-        // After attaching a view, setup firebase adapter
-        setupFirebaseRecyclerAdapter();
+        // After attaching a view, get all the current user's friends
+        getAllFriends();
     }
 
     @Override
-    public void setupFirebaseRecyclerAdapter() {
-        mDataManager.getCurrentUserFriendList(new DataCallback.OnFriendsList() {
+    public void getAllFriends() {
+        DataManager.getInstance().fetchFriends(new DataCallback.OnFriendsList() {
+            @Override
+            public void onData(List<AllUsers> data) {
+                getView().onFriendsList(data);
+            }
+
             @Override
             public void onError(String error) {
-                // error handling while getting data from Firebase database
-            }
-
-            @Override
-            public void onItemClick(String userId, String displayName) {
-                // click event on friends list
-                getView().onListItemClick(userId, displayName);
-            }
-
-            @Override
-            public void onAdapter(FirebaseRecyclerAdapter adapter) {
-                // get data from firebase by calling startListening()/ stopListening() methods on
-                // FirebaseRecyclerAdapter and ultimately set the adapter on RecyclerView to
-                // actually see the list
-                getView().getFirebaseRecyclerAdapter(adapter);
+                getView().onError(error);
             }
         });
     }

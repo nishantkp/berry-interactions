@@ -35,15 +35,21 @@ import java.util.List;
 
 /**
  * DiffUtils class to calculate difference between old batch and new batch of data
- * Class used with {@link InteractionAdapter}
+ * Class used with {@link InteractionAdapter}, {@link FriendsAdapter}
  */
 final class AllUsersDiffCallback extends DiffUtil.Callback {
+    /* Identifier for Last message send/received by user to update the last message only*/
+    private static int LAST_MESSAGE = 1;
+    /* Identifier for whether user is online or not to display green dot */
+    private static int ONLINE_STATUS = 2;
     private List<AllUsers> mOldList;
     private List<AllUsers> mNewList;
+    private int mIdentifier;
 
-    AllUsersDiffCallback(List<AllUsers> oldList, List<AllUsers> newList) {
+    AllUsersDiffCallback(List<AllUsers> oldList, List<AllUsers> newList, int identifier) {
         mOldList = oldList;
         mNewList = newList;
+        mIdentifier = identifier;
     }
 
     @Override
@@ -66,7 +72,9 @@ final class AllUsersDiffCallback extends DiffUtil.Callback {
     public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
         final AllUsers oldUser = mOldList.get(oldItemPosition);
         final AllUsers newUser = mNewList.get(newItemPosition);
-        return oldUser.getStatus().equals(newUser.getStatus());
+        if (mIdentifier == LAST_MESSAGE)
+            return oldUser.getStatus().equals(newUser.getStatus());
+        return mIdentifier != ONLINE_STATUS || oldUser.getOnlineStatus() == newUser.getOnlineStatus();
     }
 
     @Override
@@ -76,6 +84,9 @@ final class AllUsersDiffCallback extends DiffUtil.Callback {
         Bundle bundle = new Bundle();
         if (!oldUser.getStatus().equals(newUser.getStatus())) {
             bundle.putString(IConstants.KEY_LAST_MESSAGE, newUser.getStatus());
+        }
+        if (oldUser.getOnlineStatus() != newUser.getOnlineStatus()) {
+            bundle.putInt(IConstants.KEY_ONLINE_STATUS, newUser.getOnlineStatus());
         }
         if (bundle.size() == 0) return null;
         return bundle;

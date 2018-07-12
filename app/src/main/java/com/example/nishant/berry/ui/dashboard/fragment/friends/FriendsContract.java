@@ -26,16 +26,18 @@
 package com.example.nishant.berry.ui.dashboard.fragment.friends;
 
 import com.example.nishant.berry.base.MvpView;
-import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.example.nishant.berry.ui.model.AllUsers;
+
+import java.util.List;
 
 public interface FriendsContract {
     interface View extends MvpView {
-        void getFirebaseRecyclerAdapter(FirebaseRecyclerAdapter adapter);
+        void onFriendsList(List<AllUsers> friendsList);
 
-        void onListItemClick(String userId, String displayName);
+        void onError(String error);
     }
 
     interface Presenter {
-        void setupFirebaseRecyclerAdapter();
+        void getAllFriends();
     }
 }

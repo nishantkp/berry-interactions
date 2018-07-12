@@ -453,31 +453,6 @@ public class DataManager {
     }
 
     /**
-     * Call this method to get current user's friends
-     *
-     * @param callback DataCallback for error, firebase adapter and list-item click
-     */
-    public void getCurrentUserFriendList(@NonNull final DataCallback.OnFriendsList callback) {
-        // Get current user's friend list
-        FriendsUtils.getInstance().getCurrentUserFriends(new DataCallback.OnFriendsList() {
-            @Override
-            public void onError(String error) {
-                callback.onError(error);
-            }
-
-            @Override
-            public void onItemClick(String userId, String displayName) {
-                callback.onItemClick(userId, displayName);
-            }
-
-            @Override
-            public void onAdapter(FirebaseRecyclerAdapter adapter) {
-                callback.onAdapter(adapter);
-            }
-        });
-    }
-
-    /**
      * Call this method to get current user's friend request
      * received or sent
      */
@@ -508,6 +483,25 @@ public class DataManager {
             @Override
             public void onFriendsChat(List<AllUsers> data) {
                 callback.onFriendsChat(data);
+            }
+
+            @Override
+            public void onError(String error) {
+                callback.onError(error);
+            }
+        });
+    }
+
+    /**
+     * Call this method to get the list of current user's friends
+     *
+     * @param callback DataCallback for list of friends and error
+     */
+    public void fetchFriends(@NonNull final DataCallback.OnFriendsList callback) {
+        FriendsUtils.getInstance().getAllFriends(new DataCallback.OnFriendsList() {
+            @Override
+            public void onData(List<AllUsers> data) {
+                callback.onData(data);
             }
 
             @Override

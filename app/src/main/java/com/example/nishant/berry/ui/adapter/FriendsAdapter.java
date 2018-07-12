@@ -19,69 +19,65 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  *
- * File Created on 06/07/18 11:46 PM by nishant
- * Last Modified on 06/07/18 11:46 PM
+ * File Created on 11/07/18 8:22 PM by nishant
+ * Last Modified on 11/07/18 8:22 PM
  */
 
 package com.example.nishant.berry.ui.adapter;
 
-import android.content.Context;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.nishant.berry.R;
 import com.example.nishant.berry.config.IConstants;
-import com.example.nishant.berry.databinding.FriendsMessageListItemBinding;
+import com.example.nishant.berry.databinding.AllUsersListItemBinding;
 import com.example.nishant.berry.ui.dashboard.DashboardActivity;
-import com.example.nishant.berry.ui.dashboard.fragment.chat.ChatFragment;
+import com.example.nishant.berry.ui.dashboard.fragment.friends.FriendsFragment;
 import com.example.nishant.berry.ui.model.AllUsers;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Custom adapter that displays list of chats with different users
- * in {@link DashboardActivity}'s {@link ChatFragment}
+ * Custom RecyclerViewAdapter to display current user's friends
+ * in {@link DashboardActivity}'s {@link FriendsFragment}
  */
-public class InteractionAdapter
-        extends RecyclerView.Adapter<InteractionAdapter.InteractionViewHolder> {
-    private List<AllUsers> mData;
+public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.FriendsViewHolder> {
+
     private OnClick mCallback;
+    private List<AllUsers> mData = new ArrayList<>();
 
     /**
-     * Click callbacks when user clicks on recyclerView item
+     * Click callback when use clicks on recycler view item
      */
     public interface OnClick {
-        void onItemClick(String userId, String displayName);
+        void onItemClick(String id, String name);
     }
 
-    public InteractionAdapter(OnClick callback) {
-        mCallback = callback;
-        mData = new ArrayList<>();
+    public FriendsAdapter(OnClick onClickCallback) {
+        mCallback = onClickCallback;
     }
 
     @NonNull
     @Override
-    public InteractionViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public FriendsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.friends_message_list_item, parent, false);
-        return new InteractionViewHolder(FriendsMessageListItemBinding.bind(view));
+                .inflate(R.layout.all_users_list_item, parent, false);
+        return new FriendsViewHolder(AllUsersListItemBinding.bind(view.getRootView()));
     }
 
     @Override
-    public void onBindViewHolder(@NonNull InteractionViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull FriendsViewHolder holder, int position) {
         holder.bind(mData.get(position));
     }
 
     @Override
-    public void onBindViewHolder(@NonNull InteractionViewHolder holder, int position, @NonNull List<Object> payloads) {
+    public void onBindViewHolder(@NonNull FriendsViewHolder holder, int position, @NonNull List<Object> payloads) {
         if (payloads.isEmpty()) {
             // If the payload is empty that means, there is no change in data so
             // use adapter's default onBindView method
@@ -90,8 +86,14 @@ public class InteractionAdapter
             // Otherwise get the data from bundle and update particular view
             Bundle bundle = (Bundle) payloads.get(0);
             if (bundle != null) {
-                String message = bundle.getString(IConstants.KEY_LAST_MESSAGE);
-                holder.mBinding.chatListItemMessage.setText(message);
+                if (bundle.containsKey(IConstants.KEY_LAST_MESSAGE)) {
+                    String message = bundle.getString(IConstants.KEY_LAST_MESSAGE);
+                    holder.mBinding.allUsersListItemStatus.setText(message);
+                }
+                if (bundle.containsKey(IConstants.KEY_ONLINE_STATUS)) {
+                    int onlineStatus = bundle.getInt(IConstants.KEY_ONLINE_STATUS);
+                    holder.mBinding.allUsersOnlineStatus.setVisibility(onlineStatus);
+                }
             }
         }
     }
@@ -118,14 +120,14 @@ public class InteractionAdapter
         // So we can update only specific views rather that updating whole list with
         // notifyDataSetChanged()
         DiffUtil.DiffResult diffResult =
-                DiffUtil.calculateDiff(new AllUsersDiffCallback(mData, data, 1));
+                DiffUtil.calculateDiff(new AllUsersDiffCallback(mData, data, 2));
         mData.clear();
         mData.addAll(data);
         diffResult.dispatchUpdatesTo(this);
     }
 
     /**
-     * Call this method to clear recycler view data
+     * Call this method to clear the data from recycler view
      */
     public void clearData() {
         mData.clear();
@@ -135,11 +137,10 @@ public class InteractionAdapter
     /**
      * ViewHolder class
      */
-    class InteractionViewHolder extends RecyclerView.ViewHolder
-            implements View.OnClickListener {
-        private FriendsMessageListItemBinding mBinding;
+    class FriendsViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+        private AllUsersListItemBinding mBinding;
 
-        InteractionViewHolder(FriendsMessageListItemBinding binding) {
+        FriendsViewHolder(AllUsersListItemBinding binding) {
             super(binding.getRoot());
             mBinding = binding;
             mBinding.getRoot().setOnClickListener(this);
@@ -148,28 +149,16 @@ public class InteractionAdapter
         /**
          * Call this method to bind the data to view
          *
-         * @param allUsers AllUser object containing details about particular user
-         *                 like id, name, status, image thumb url etc.
+         * @param model AllUser object containing details about particular user
+         *              like id, name, status, image thumb url etc.
          */
-        public void bind(AllUsers allUsers) {
-            Context context = mBinding.getRoot().getContext();
-
-            mBinding.setUser(allUsers);
-            Log.i("actual status", "actual status : " + allUsers.getStatus());
-
-            // If user has not seen the message, change the status color and typeface
-            if (!allUsers.isMessageSeen()) {
-                mBinding.chatListItemMessage.setTextColor(context.getResources().getColor(R.color.colorSecondary));
-                mBinding.chatListItemMessage.setTypeface(null, Typeface.BOLD);
-            } else {
-                mBinding.chatListItemMessage.setTextAppearance(context, android.R.style.TextAppearance_Material_Body1);
-            }
+        void bind(AllUsers model) {
+            mBinding.setUsers(model);
         }
 
         @Override
         public void onClick(View v) {
             AllUsers user = mData.get(getAdapterPosition());
-            // Attach onCLick callback
             mCallback.onItemClick(user.getId(), user.getName());
         }
     }

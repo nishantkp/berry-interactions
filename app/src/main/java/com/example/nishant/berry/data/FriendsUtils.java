@@ -26,25 +26,35 @@
 package com.example.nishant.berry.data;
 
 import android.support.annotation.NonNull;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
-import com.example.nishant.berry.R;
-import com.example.nishant.berry.databinding.AllUsersListItemBinding;
 import com.example.nishant.berry.ui.adapter.AllUsersViewHolder;
 import com.example.nishant.berry.ui.dashboard.fragment.friends.FriendsFragment;
 import com.example.nishant.berry.ui.model.AllUsers;
-import com.example.nishant.berry.ui.model.Friends;
-import com.firebase.ui.database.FirebaseRecyclerAdapter;
-import com.firebase.ui.database.FirebaseRecyclerOptions;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.ObservableSource;
+import io.reactivex.SingleObserver;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Function;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * FriendsUtility class to get the friends list of current user in {@link FriendsFragment}
  * with the help of FirebaseRecyclerAdapter
  */
 final class FriendsUtils {
+    private static List<AllUsers> friendList = new LinkedList<>();
 
     // Lazy singleton pattern
     private static class StaticHolder {
@@ -58,40 +68,102 @@ final class FriendsUtils {
     private FriendsUtils() {
     }
 
-    /**
-     * Call this method to get the friends of current user
-     * This method sets callback for FirebaseRecyclerAdapter, error and click-event
-     *
-     * @param callback DataCallback for firebase adapter, item-click and error
-     */
-    void getCurrentUserFriends(@NonNull final DataCallback.OnFriendsList callback) {
-        // Current user database query from Friends object
-        Query query = DataManager.getCurrentUserFriendsRef();
-        FirebaseRecyclerOptions<Friends> options =
-                new FirebaseRecyclerOptions.Builder<Friends>().setQuery(query, Friends.class)
-                        .build();
+    //--------------------------------------------------------------------------------------------//
+    //-----------------------------------Firebase calls with Rx-----------------------------------//
+    //--------------------------------------------------------------------------------------------//
 
-        FirebaseRecyclerAdapter<Friends, AllUsersViewHolder> adapter
-                = new FirebaseRecyclerAdapter<Friends, AllUsersViewHolder>(options) {
-            @Override
-            protected void onBindViewHolder(@NonNull final AllUsersViewHolder holder,
-                                            final int position,
-                                            @NonNull final Friends model) {
-                // Get the user id
-                String listUserId = getRef(position).getKey();
-                assert listUserId != null;
-                // Get users detail with FirebaseUtils helper method
-                FirebaseUtils.getInstance().getUsersObject(listUserId, holder, new DataCallback.OnUsersData() {
+    /**
+     * Call this method to get the data from user id
+     * FlatMapIterable to loop though list of Ids, then makes parallel calls to fetch information
+     * about user and in the end converts the results of those parallel calls to list.
+     */
+    void getFriends(@NonNull final DataCallback.OnFriendsList callback) {
+        getFriendsIds(callback).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                .flatMapIterable(new Function<List<String>, Iterable<String>>() {
                     @Override
-                    public void onData(final AllUsers model, final String userId, AllUsersViewHolder holder) {
-                        holder.bind(model);
-                        // Set item click callback
-                        holder.itemView.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                callback.onItemClick(userId, model.getName());
-                            }
-                        });
+                    public Iterable<String> apply(List<String> strings) throws Exception {
+                        return strings;
+                    }
+                })
+                .flatMap(new Function<String, ObservableSource<AllUsers>>() {
+                    @Override
+                    public ObservableSource<AllUsers> apply(String s) throws Exception {
+                        return getUserInfo(s, callback);
+                    }
+                })
+                .toList()
+                .subscribe(new SingleObserver<List<AllUsers>>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                    }
+
+                    @Override
+                    public void onSuccess(List<AllUsers> allUsers) {
+                        callback.onData(allUsers);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        callback.onError(e.getMessage());
+                    }
+                });
+    }
+
+    /**
+     * Call this method to get the friends id list from firebase
+     * Must call Emitters onComplete() after sending results with onNext() to indicate the task
+     * is complete
+     *
+     * @return Observable object for getting the list of friend's id
+     */
+    private Observable<List<String>> getFriendsIds(final @NonNull DataCallback.OnFriendsList callback) {
+        return Observable.create(new ObservableOnSubscribe<List<String>>() {
+            @Override
+            public void subscribe(final ObservableEmitter<List<String>> emitter) {
+                Query query = DataManager.getCurrentUserFriendsRef();
+                query.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        List<String> friendIds = new ArrayList<>();
+                        for (DataSnapshot data : dataSnapshot.getChildren()) {
+                            friendIds.add(data.getKey());
+                        }
+                        // list of ids
+                        emitter.onNext(friendIds);
+                        emitter.onComplete();
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                        callback.onError(databaseError.getMessage());
+                    }
+                });
+            }
+        });
+    }
+
+    /**
+     * Call this method get information about user from user's id
+     * Observable must subscribe on Schedulers.io() so that when all the parallel calls are completed
+     * we can combine the results to make a list
+     * Must call Emitters onComplete() after sending results with onNext() to indicate the task
+     * is complete
+     *
+     * @param id UserId
+     * @return Observable for fetching data about specific user
+     */
+    private ObservableSource<AllUsers> getUserInfo(final @NonNull String id,
+                                                   final @NonNull DataCallback.OnFriendsList callback) {
+        return Observable.create(new ObservableOnSubscribe<AllUsers>() {
+            @Override
+            public void subscribe(final ObservableEmitter<AllUsers> emitter) throws Exception {
+                FirebaseUtils.getInstance().getUsersObject(id, null, new DataCallback.OnUsersData() {
+                    @Override
+                    public void onData(AllUsers model, String userId, AllUsersViewHolder holder) {
+                        // Getting all users here
+                        model.setId(id);
+                        emitter.onNext(model);
+                        emitter.onComplete();
                     }
 
                     @Override
@@ -100,16 +172,61 @@ final class FriendsUtils {
                     }
                 });
             }
+        }).subscribeOn(Schedulers.io());
+    }
 
-            @NonNull
+    //--------------------------------------------------------------------------------------------//
+    //-----------------------------------Regular Firebase calls-----------------------------------//
+    //--------------------------------------------------------------------------------------------//
+
+    /**
+     * Call this method to get all the friends
+     *
+     * @param callback DataCallback for list of friends and error
+     */
+    void getAllFriends(@NonNull final DataCallback.OnFriendsList callback) {
+        Query query = DataManager.getCurrentUserFriendsRef();
+        query.addValueEventListener(new ValueEventListener() {
             @Override
-            public AllUsersViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-                // get the View
-                View view = LayoutInflater.from(parent.getContext())
-                        .inflate(R.layout.all_users_list_item, parent, false);
-                return new AllUsersViewHolder(AllUsersListItemBinding.bind(view.getRootView()));
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot data : dataSnapshot.getChildren()) {
+                    getInfoFromId(data.getKey(), callback);
+                }
             }
-        };
-        callback.onAdapter(adapter);
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                callback.onError(databaseError.getMessage());
+            }
+        });
+    }
+
+    /**
+     * Use this method to get the detail info about user from it's Id from firebase database
+     *
+     * @param userId   userId
+     * @param callback DataCallback for list of friends and error
+     */
+    private void getInfoFromId(final String userId, @NonNull final DataCallback.OnFriendsList callback) {
+        FirebaseUtils.getInstance().getUsersObject(userId, null, new DataCallback.OnUsersData() {
+            @Override
+            public void onData(AllUsers model, String userId, AllUsersViewHolder holder) {
+                model.setId(userId);
+                // If user doesn't exists in the list, add it
+                if (!friendList.contains(model)) {
+                    friendList.add(model);
+                } else {
+                    // otherwise update the values at user's current index
+                    int index = friendList.indexOf(model);
+                    friendList.set(index, model);
+                }
+                callback.onData(friendList);
+            }
+
+            @Override
+            public void onError(String error) {
+                callback.onError(error);
+            }
+        });
     }
 }

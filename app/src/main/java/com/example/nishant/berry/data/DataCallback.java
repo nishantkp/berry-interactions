@@ -62,15 +62,6 @@ public interface DataCallback {
         void onError(String error);
     }
 
-    // Current user's friends detail callbacks for item-click, firebase adapter and error
-    interface OnFriendsList {
-        void onItemClick(String userId, String displayName);
-
-        void onAdapter(FirebaseRecyclerAdapter adapter);
-
-        void onError(String error);
-    }
-
     // Callbacks for displaying all friend requests whether user has sent or received
     // FirebaseRecyclerAdapter to set it on RecyclerView to display list of requests
     interface OnFriendRequest {
@@ -89,6 +80,13 @@ public interface DataCallback {
     // Current user's chat list callbacks
     interface OnUsersChat {
         void onFriendsChat(List<AllUsers> data);
+
+        void onError(String error);
+    }
+
+    // Current user's friends list
+    interface OnFriendsList {
+        void onData(List<AllUsers> data);
 
         void onError(String error);
     }

@@ -30,6 +30,7 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -41,10 +42,14 @@ import com.example.nishant.berry.R;
 import com.example.nishant.berry.config.IConstants;
 import com.example.nishant.berry.databinding.AlertDialogFriendsListBinding;
 import com.example.nishant.berry.databinding.FragmentFriendsBinding;
+import com.example.nishant.berry.ui.adapter.FriendsAdapter;
 import com.example.nishant.berry.ui.interaction.InteractionActivity;
+import com.example.nishant.berry.ui.model.AllUsers;
 import com.example.nishant.berry.ui.model.UserProfile;
 import com.example.nishant.berry.ui.profile.UserProfileActivity;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
+
+import java.util.List;
 
 import static android.support.v7.widget.LinearLayoutManager.VERTICAL;
 
@@ -53,23 +58,26 @@ import static android.support.v7.widget.LinearLayoutManager.VERTICAL;
  */
 public class FriendsFragment
         extends Fragment
-        implements FriendsContract.View {
+        implements FriendsContract.View, FriendsAdapter.OnClick {
 
-    private FirebaseRecyclerAdapter mAdater;
     private FriendsPresenter mPresenter;
     private FragmentFriendsBinding mBinding;
+    private FriendsAdapter mFriendsAdapter;
 
     public FriendsFragment() {
         // Required empty public constructor
     }
 
-
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_friends, container, false);
         mBinding = FragmentFriendsBinding.bind(view);
+
+        // Adapter
+        mFriendsAdapter = new FriendsAdapter(this);
+        mBinding.friendsRv.setAdapter(mFriendsAdapter);
 
         mPresenter = new FriendsPresenter();
         mPresenter.attachView(this);
@@ -87,31 +95,23 @@ public class FriendsFragment
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-        mAdater.startListening();
+    public void onFriendsList(List<AllUsers> friendsList) {
+        mFriendsAdapter.updateData(friendsList);
     }
 
     @Override
-    public void onStop() {
-        super.onStop();
-        mAdater.stopListening();
-    }
-
-    @Override
-    public void getFirebaseRecyclerAdapter(FirebaseRecyclerAdapter adapter) {
-        mAdater = adapter;
-        mBinding.friendsRv.setAdapter(mAdater);
+    public void onError(String error) {
+        // Error handling
     }
 
     /**
      * When user clicks on list item from friends list, this method will execute
      *
-     * @param userId      user id of a person, on which click action is performed
-     * @param displayName name of user
+     * @param id   user id of a person, on which click action is performed
+     * @param name name of user
      */
     @Override
-    public void onListItemClick(final String userId, final String displayName) {
+    public void onItemClick(final String id, final String name) {
         // Create a custom dialog from layout resource file
         View alertView = getLayoutInflater().inflate(R.layout.alert_dialog_friends_list, null);
         AlertDialogFriendsListBinding binding = AlertDialogFriendsListBinding.bind(alertView);
@@ -129,8 +129,8 @@ public class FriendsFragment
                 dialog.dismiss();
                 startActivity(
                         new Intent(getContext(), InteractionActivity.class)
-                                .putExtra(IConstants.KEY_USER_ID, userId)
-                                .putExtra(IConstants.KEY_USER_DISPLAY_NAME, displayName)
+                                .putExtra(IConstants.KEY_USER_ID, id)
+                                .putExtra(IConstants.KEY_USER_DISPLAY_NAME, name)
                 );
             }
         });
@@ -142,7 +142,7 @@ public class FriendsFragment
                 dialog.dismiss();
                 startActivity(
                         new Intent(getContext(), UserProfileActivity.class)
-                                .putExtra(IConstants.KEY_USER_ID, userId)
+                                .putExtra(IConstants.KEY_USER_ID, id)
                 );
             }
         });
