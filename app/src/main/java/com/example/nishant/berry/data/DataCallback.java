@@ -31,6 +31,7 @@ import android.support.annotation.NonNull;
 import com.example.nishant.berry.ui.adapter.AllUsersViewHolder;
 import com.example.nishant.berry.ui.adapter.FriendRequestViewHolder;
 import com.example.nishant.berry.ui.model.AllUsers;
+import com.example.nishant.berry.ui.model.User;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 
 import java.util.List;
@@ -64,51 +65,65 @@ public interface DataCallback {
 
     void fetchFriends(@NonNull OnFriendsList callback);
 
-    // Success and failure callbacks
+    /**
+     * Success and failure callbacks
+     */
     interface OnTaskCompletion {
         void onSuccess();
 
         void onError(String error);
     }
 
-    // Users data callback when dealing with user's object from firebase
+    /**
+     * Users data callback when dealing with user's object from firebase
+     */
     interface OnUsersData {
         void onData(AllUsers model, String userId, AllUsersViewHolder holder);
 
         void onError(String error);
     }
 
-    // Current users info callback for error and AllUsers model containing name, image, thumbnail,
-    // online status, last seen etc.
+    /**
+     * Current users info callback for error and AllUsers model containing name, image, thumbnail,
+     * online status, last seen etc.
+     */
     interface OnCurrentUserInfo {
         void onData(AllUsers model);
 
         void onError(String error);
     }
 
-    // Callbacks for displaying all friend requests whether user has sent or received
-    // FirebaseRecyclerAdapter to set it on RecyclerView to display list of requests
+    /**
+     * Callbacks for displaying all friend requests whether user has sent or received
+     * FirebaseRecyclerAdapter to set it on RecyclerView to display list of requests
+     */
     interface OnFriendRequest {
         void onAdapter(FirebaseRecyclerAdapter adapter);
 
         void onError(String error);
     }
 
-    // User's data callback when dealing with FriendRequests object
+    /**
+     * User's data callback when dealing with FriendRequests object
+     */
     interface OnFriendRequestUserData {
         void onData(AllUsers model, String userId, FriendRequestViewHolder holder);
 
         void onError(String error);
     }
 
-    // Current user's chat list callbacks
+    /**
+     * Current user's chat list callbacks
+     */
     interface OnUsersChat {
         void onFriendsChat(List<AllUsers> data);
 
         void onError(String error);
     }
 
-    // Current user's friends list
+    /**
+     * Current user's friends list
+     */
     interface OnFriendsList {
         void onData(List<AllUsers> data);
 
