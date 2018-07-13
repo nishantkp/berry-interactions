@@ -25,6 +25,9 @@
 
 package com.example.nishant.berry.data;
 
+import android.net.Uri;
+import android.support.annotation.NonNull;
+
 import com.example.nishant.berry.ui.adapter.AllUsersViewHolder;
 import com.example.nishant.berry.ui.adapter.FriendRequestViewHolder;
 import com.example.nishant.berry.ui.model.AllUsers;
@@ -32,7 +35,35 @@ import com.firebase.ui.database.FirebaseRecyclerAdapter;
 
 import java.util.List;
 
+/**
+ * DataManager contract class
+ */
 public interface DataCallback {
+    void loginUser(@NonNull String email,
+                   @NonNull String password,
+                   @NonNull OnTaskCompletion callback);
+
+    void signUpUser(@NonNull String displayName,
+                    @NonNull String email,
+                    @NonNull String password,
+                    @NonNull OnTaskCompletion callback);
+
+    void saveUserStatus(@NonNull String status, @NonNull OnTaskCompletion callback);
+
+    void getAllRegisteredUsers(@NonNull OnFriendsList callback);
+
+    void getCurrentUserInfo(@NonNull OnCurrentUserInfo callback);
+
+    void storeAvatar(Uri avatarUri,
+                     byte[] thumbnailByte,
+                     @NonNull OnTaskCompletion callback);
+
+    void currentUsersFriendReq(@NonNull OnFriendRequest callback);
+
+    void getChatList(@NonNull OnUsersChat callback);
+
+    void fetchFriends(@NonNull OnFriendsList callback);
+
     // Success and failure callbacks
     interface OnTaskCompletion {
         void onSuccess();

@@ -47,7 +47,7 @@ import com.google.firebase.storage.StorageReference;
 /**
  * Data Manager class, that deals with business logic
  */
-public class DataManager {
+public class DataManager implements DataCallback {
     private static FirebaseUtils sFirebaseUtils;
     private static FriendsUtils sFriendsUtils;
     private static RequestsUtils sRequestsUtils;
@@ -247,9 +247,10 @@ public class DataManager {
      * @param password password provided by user
      * @param callback callback for success and errors
      */
+    @Override
     public void loginUser(@NonNull String email,
                           @NonNull String password,
-                          @NonNull DataCallback.OnTaskCompletion callback) {
+                          @NonNull OnTaskCompletion callback) {
         sAccountUtils.signInUser(email, password, callback);
     }
 
@@ -261,10 +262,11 @@ public class DataManager {
      * @param password    password
      * @param callback    callbacks for success and failure
      */
+    @Override
     public void signUpUser(@NonNull String displayName,
                            @NonNull String email,
                            @NonNull String password,
-                           @NonNull DataCallback.OnTaskCompletion callback) {
+                           @NonNull OnTaskCompletion callback) {
         sAccountUtils.signUpUser(displayName, email, password, callback);
     }
 
@@ -274,8 +276,9 @@ public class DataManager {
      * @param status   User's status
      * @param callback callbacks for success and failure
      */
+    @Override
     public void saveUserStatus(@NonNull String status,
-                               @NonNull DataCallback.OnTaskCompletion callback) {
+                               @NonNull OnTaskCompletion callback) {
         sAccountUtils.saveUserStatus(status, callback);
     }
 
@@ -284,7 +287,8 @@ public class DataManager {
      *
      * @param callback DataCallback for list of users and error
      */
-    public void getAllRegisteredUsers(@NonNull DataCallback.OnFriendsList callback) {
+    @Override
+    public void getAllRegisteredUsers(@NonNull OnFriendsList callback) {
         sFirebaseUtils.getAllRegisteredUsers(callback);
     }
 
@@ -294,7 +298,8 @@ public class DataManager {
      *
      * @param callback Callback for detail user info and error
      */
-    public void getCurrentUserInfo(@NonNull final DataCallback.OnCurrentUserInfo callback) {
+    @Override
+    public void getCurrentUserInfo(@NonNull final OnCurrentUserInfo callback) {
         sFirebaseUtils.getUsersObject(getCurrentUserId(), null, new DataCallback.OnUsersData() {
             @Override
             public void onData(AllUsers model, String userId, AllUsersViewHolder holder) {
@@ -314,9 +319,10 @@ public class DataManager {
      * @param avatarUri     uri of user avatar
      * @param thumbnailByte user avatar thumbnail in form of byte array
      */
+    @Override
     public void storeAvatar(Uri avatarUri,
                             final byte[] thumbnailByte,
-                            final @NonNull DataCallback.OnTaskCompletion callback) {
+                            final @NonNull OnTaskCompletion callback) {
         sSettingsUtils.storeAvatarToFirebaseDatabase(avatarUri, thumbnailByte, callback);
     }
 
@@ -324,7 +330,8 @@ public class DataManager {
      * Call this method to get current user's friend request
      * received or sent
      */
-    public void currentUsersFriendReq(@NonNull final DataCallback.OnFriendRequest callback) {
+    @Override
+    public void currentUsersFriendReq(@NonNull final OnFriendRequest callback) {
         sRequestsUtils.getCurrentUsersFriendRequests(callback);
     }
 
@@ -335,7 +342,8 @@ public class DataManager {
      *
      * @param callback DataCallback for list of interactions and error
      */
-    public void getChatList(@NonNull final DataCallback.OnUsersChat callback) {
+    @Override
+    public void getChatList(@NonNull final OnUsersChat callback) {
         sChatUtils.getUsersInteraction(callback);
     }
 
@@ -344,7 +352,8 @@ public class DataManager {
      *
      * @param callback DataCallback for list of friends and error
      */
-    public void fetchFriends(@NonNull final DataCallback.OnFriendsList callback) {
+    @Override
+    public void fetchFriends(@NonNull final OnFriendsList callback) {
         sFriendsUtils.getAllFriends(callback);
     }
 }
