@@ -27,7 +27,6 @@ package com.example.nishant.berry.data;
 
 import android.net.Uri;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,24 +35,14 @@ import com.example.nishant.berry.R;
 import com.example.nishant.berry.config.IFirebaseConfig;
 import com.example.nishant.berry.databinding.AllUsersListItemBinding;
 import com.example.nishant.berry.ui.adapter.AllUsersViewHolder;
-import com.example.nishant.berry.ui.dashboard.fragment.chat.ChatFragment;
 import com.example.nishant.berry.ui.model.AllUsers;
-import com.example.nishant.berry.ui.model.Friends;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ServerValue;
-import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.storage.StorageReference;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Data Manager class, that deals with business logic
@@ -64,6 +53,7 @@ public class DataManager {
     private static RequestsUtils sRequestsUtils;
     private static SettingsUtils sSettingsUtils;
     private static ChatUtils sChatUtils;
+    private static AccountUtils sAccountUtils;
 
     // Lazy Initialization pattern
     private static class StaticHolder {
@@ -83,6 +73,7 @@ public class DataManager {
         sRequestsUtils = new RequestsUtils();
         sSettingsUtils = new SettingsUtils();
         sChatUtils = new ChatUtils();
+        sAccountUtils = new AccountUtils();
     }
 
     /**
@@ -258,39 +249,8 @@ public class DataManager {
      */
     public void loginUser(@NonNull String email,
                           @NonNull String password,
-                          @NonNull final DataCallback.OnTaskCompletion callback) {
-        sFirebaseUtils.getFirebaseAuth()
-                .signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Get the device token
-                            String deviceToken = FirebaseInstanceId.getInstance().getToken();
-                            String userId = getCurrentUserId();
-
-                            Map<String, Object> singInMap = new HashMap<>();
-                            singInMap.put(IFirebaseConfig.DEVICE_TOKEN_ID, deviceToken);
-                            singInMap.put(IFirebaseConfig.ONLINE, true);
-
-                            // Store token Id to users database
-                            getUsersRef().child(userId).updateChildren(singInMap,
-                                    new DatabaseReference.CompletionListener() {
-                                        @Override
-                                        public void onComplete(@Nullable DatabaseError databaseError,
-                                                               @NonNull DatabaseReference databaseReference) {
-                                            if (databaseError != null) {
-                                                callback.onError("Sign in error!");
-                                            } else {
-                                                callback.onSuccess();
-                                            }
-                                        }
-                                    });
-                        } else {
-                            callback.onError("Sign in error!");
-                        }
-                    }
-                });
+                          @NonNull DataCallback.OnTaskCompletion callback) {
+        sAccountUtils.signInUser(email, password, callback);
     }
 
     /**
@@ -301,56 +261,11 @@ public class DataManager {
      * @param password    password
      * @param callback    callbacks for success and failure
      */
-    public void signUpUser(@NonNull final String displayName,
+    public void signUpUser(@NonNull String displayName,
                            @NonNull String email,
                            @NonNull String password,
-                           @NonNull final DataCallback.OnTaskCompletion callback) {
-        // Register user with email, password and cancel progress dialog
-        sFirebaseUtils.getFirebaseAuth().createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isComplete() && task.isSuccessful()) {
-                            //Store data
-                            storeDataToFirebaseDatabase(displayName, callback);
-                        } else {
-                            callback.onError("Error creating account!");
-                        }
-                    }
-                });
-    }
-
-    /**
-     * Store user data to database and sets callbacks for success and error
-     *
-     * @param displayName display name
-     * @param callback    callbacks for success and failure
-     */
-    private void storeDataToFirebaseDatabase(@NonNull String displayName,
-                                             @NonNull final DataCallback.OnTaskCompletion callback) {
-        String deviceToken = FirebaseInstanceId.getInstance().getToken();
-
-        // Value Map for Firebase database
-        Map<String, Object> userMap = new HashMap<>();
-        userMap.put(IFirebaseConfig.NAME, displayName);
-        userMap.put(IFirebaseConfig.STATUS, IFirebaseConfig.DEFAULT_STATUS);
-        userMap.put(IFirebaseConfig.IMAGE, IFirebaseConfig.DEFAULT_VALUE);
-        userMap.put(IFirebaseConfig.THUMBNAIL, IFirebaseConfig.DEFAULT_VALUE);
-        userMap.put(IFirebaseConfig.DEVICE_TOKEN_ID, deviceToken);
-        userMap.put(IFirebaseConfig.ONLINE, true);
-
-        // Set the values to Firebase database
-        DataManager.getCurrentUsersRef().setValue(userMap)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isComplete() && task.isSuccessful()) {
-                            callback.onSuccess();
-                        } else {
-                            callback.onError("Error creating account!");
-                        }
-                    }
-                });
+                           @NonNull DataCallback.OnTaskCompletion callback) {
+        sAccountUtils.signUpUser(displayName, email, password, callback);
     }
 
     /**
@@ -360,18 +275,8 @@ public class DataManager {
      * @param callback callbacks for success and failure
      */
     public void saveUserStatus(@NonNull String status,
-                               @NonNull final DataCallback.OnTaskCompletion callback) {
-        getCurrentUsersRef().child(IFirebaseConfig.STATUS).setValue(status)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()) {
-                            callback.onSuccess();
-                        } else {
-                            callback.onError("Error while saving changes!");
-                        }
-                    }
-                });
+                               @NonNull DataCallback.OnTaskCompletion callback) {
+        sAccountUtils.saveUserStatus(status, callback);
     }
 
     /**
