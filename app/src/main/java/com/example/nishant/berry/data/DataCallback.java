@@ -71,13 +71,6 @@ public interface DataCallback {
         void onError(String error);
     }
 
-    // All users list callback for list-item click and firebase adapter
-    interface OnAllUsersList {
-        void onListItemClick(String listUserId);
-
-        void onFirebaseAdapter(FirebaseRecyclerAdapter adapter);
-    }
-
     // Users data callback when dealing with user's object from firebase
     interface OnUsersData {
         void onData(AllUsers model, String userId, AllUsersViewHolder holder);
