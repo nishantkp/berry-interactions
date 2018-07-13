@@ -36,16 +36,18 @@ import android.view.ViewGroup;
 import com.example.nishant.berry.R;
 import com.example.nishant.berry.config.IConstants;
 import com.example.nishant.berry.databinding.AllUsersListItemBinding;
+import com.example.nishant.berry.ui.allusers.AllUsersActivity;
 import com.example.nishant.berry.ui.dashboard.DashboardActivity;
 import com.example.nishant.berry.ui.dashboard.fragment.friends.FriendsFragment;
 import com.example.nishant.berry.ui.model.AllUsers;
+import com.example.nishant.berry.ui.utils.ImageLoad;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Custom RecyclerViewAdapter to display current user's friends
- * in {@link DashboardActivity}'s {@link FriendsFragment}
+ * in {@link DashboardActivity}'s {@link FriendsFragment} and in {@link AllUsersActivity}
  */
 public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.FriendsViewHolder> {
 
@@ -94,6 +96,10 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.FriendsV
                     int onlineStatus = bundle.getInt(IConstants.KEY_ONLINE_STATUS);
                     holder.mBinding.allUsersOnlineStatus.setVisibility(onlineStatus);
                 }
+                if (bundle.containsKey(IConstants.KEY_THUMBNAIL)) {
+                    String thumbUrl = bundle.getString(IConstants.KEY_THUMBNAIL);
+                    ImageLoad.load(thumbUrl, holder.mBinding.allUsersListItemAvatar);
+                }
             }
         }
     }
@@ -106,10 +112,12 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.FriendsV
     /**
      * Call this method to update the RecyclerView with new batch of data or specific data
      *
-     * @param data List of users containing information about user name, last message sent/received
-     *             and avatar url
+     * @param data       List of users containing information about user name, last message sent/received
+     *                   and avatar url
+     * @param identifier Identifier to determine which data needs to be checked in diffUtils
+     *                   between old and new batch of data
      */
-    public void updateData(List<AllUsers> data) {
+    public void updateData(List<AllUsers> data, int identifier) {
         // If data set is empty, that means we are loading data for the first time
         if (mData.isEmpty()) {
             mData.addAll(data);
@@ -120,7 +128,7 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.FriendsV
         // So we can update only specific views rather that updating whole list with
         // notifyDataSetChanged()
         DiffUtil.DiffResult diffResult =
-                DiffUtil.calculateDiff(new AllUsersDiffCallback(mData, data, 2));
+                DiffUtil.calculateDiff(new AllUsersDiffCallback(mData, data, identifier));
         mData.clear();
         mData.addAll(data);
         diffResult.dispatchUpdatesTo(this);

@@ -31,6 +31,9 @@ public interface IConstants {
     String KEY_USER_DISPLAY_NAME = "display_name";
     String KEY_LAST_MESSAGE = "last_message";
     String KEY_ONLINE_STATUS = "online_status";
+    String KEY_THUMBNAIL = "thumbnail";
+    int DIFF_ONLINE_STATUS = 2;
+    int DIFF_ALL = 0;
 
     // Constants values to make Views VISIBLE, INVISIBLE and GONE
     int VIEW_GONE = 8;

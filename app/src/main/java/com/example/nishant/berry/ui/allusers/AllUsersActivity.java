@@ -27,7 +27,6 @@ package com.example.nishant.berry.ui.allusers;
 
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -36,9 +35,11 @@ import com.example.nishant.berry.R;
 import com.example.nishant.berry.base.BaseActivity;
 import com.example.nishant.berry.config.IConstants;
 import com.example.nishant.berry.databinding.ActivityAllUsersBinding;
+import com.example.nishant.berry.ui.adapter.FriendsAdapter;
+import com.example.nishant.berry.ui.model.AllUsers;
 import com.example.nishant.berry.ui.profile.UserProfileActivity;
-import com.firebase.ui.database.FirebaseRecyclerAdapter;
 
+import java.util.List;
 import java.util.Objects;
 
 import static android.support.v7.widget.LinearLayoutManager.VERTICAL;
@@ -48,11 +49,11 @@ import static android.support.v7.widget.LinearLayoutManager.VERTICAL;
  */
 public class AllUsersActivity
         extends BaseActivity
-        implements AllUsersContract.View {
+        implements AllUsersContract.View, FriendsAdapter.OnClick {
 
     private ActivityAllUsersBinding mBinding;
     private AllUsersPresenter mPresenter;
-    private FirebaseRecyclerAdapter mFirebaseRecyclerAdapter;
+    private FriendsAdapter mFriendsAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +66,9 @@ public class AllUsersActivity
         getSupportActionBar().setTitle("All users");
         Objects.requireNonNull(getSupportActionBar()).setElevation(0f);
 
+        mFriendsAdapter = new FriendsAdapter(this);
+        mBinding.allUsersRv.setAdapter(mFriendsAdapter);
+
         // Setup presenter
         mPresenter = new AllUsersPresenter();
         mPresenter.attachView(this);
@@ -72,25 +76,11 @@ public class AllUsersActivity
         // Setup recycler view
         mBinding.allUsersRv.setLayoutManager(new LinearLayoutManager(this));
         mBinding.allUsersRv.setHasFixedSize(true);
+
         // Add divider between two items
         DividerItemDecoration itemDecor =
                 new DividerItemDecoration(mBinding.allUsersRv.getContext(), VERTICAL);
         mBinding.allUsersRv.addItemDecoration(itemDecor);
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        // The FirebaseRecyclerAdapter uses an event listener to monitor changes to the
-        // Firebase query. To begin listening for data, call the startListening() on adapter
-        mFirebaseRecyclerAdapter.startListening();
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        // Stop listening to data by calling stopListening() on adapter
-        mFirebaseRecyclerAdapter.stopListening();
     }
 
     @Override
@@ -104,21 +94,26 @@ public class AllUsersActivity
     }
 
     @Override
-    public void getFirebaseRecyclerAdapter(FirebaseRecyclerAdapter adapter) {
-        mFirebaseRecyclerAdapter = adapter;
-        mBinding.allUsersRv.setAdapter(mFirebaseRecyclerAdapter);
+    public void onAllUsersData(List<AllUsers> data) {
+        mFriendsAdapter.updateData(data, IConstants.DIFF_ALL);
+    }
+
+    @Override
+    public void onError(String error) {
+        // Error handling
     }
 
     /**
      * Implement this functionality to set behavior when user clicks on list item from
      * all users list
      *
-     * @param userId Id of a user on which click event occurred
+     * @param id   id of a user on which click event occurred
+     * @param name name of a user on which click event occured
      */
     @Override
-    public void onListItemClick(String userId) {
+    public void onItemClick(String id, String name) {
         startActivity(
                 new Intent(this, UserProfileActivity.class)
-                        .putExtra(IConstants.KEY_USER_ID, userId));
+                        .putExtra(IConstants.KEY_USER_ID, id));
     }
 }

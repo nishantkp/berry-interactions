@@ -29,6 +29,7 @@ import android.os.Bundle;
 import android.support.v7.util.DiffUtil;
 
 import com.example.nishant.berry.config.IConstants;
+import com.example.nishant.berry.config.IFirebaseConfig;
 import com.example.nishant.berry.ui.model.AllUsers;
 
 import java.util.List;
@@ -74,7 +75,11 @@ final class AllUsersDiffCallback extends DiffUtil.Callback {
         final AllUsers newUser = mNewList.get(newItemPosition);
         if (mIdentifier == LAST_MESSAGE)
             return oldUser.getStatus().equals(newUser.getStatus());
-        return mIdentifier != ONLINE_STATUS || oldUser.getOnlineStatus() == newUser.getOnlineStatus();
+        if (mIdentifier == ONLINE_STATUS)
+            return oldUser.getOnlineStatus() == newUser.getOnlineStatus();
+        return oldUser.getStatus().equals(newUser.getStatus())
+                && oldUser.getOnlineStatus() == newUser.getOnlineStatus()
+                && oldUser.getThumbnail().equals(newUser.getThumbnail());
     }
 
     @Override
@@ -87,6 +92,9 @@ final class AllUsersDiffCallback extends DiffUtil.Callback {
         }
         if (oldUser.getOnlineStatus() != newUser.getOnlineStatus()) {
             bundle.putInt(IConstants.KEY_ONLINE_STATUS, newUser.getOnlineStatus());
+        }
+        if (!oldUser.getThumbnail().equals(newUser.getThumbnail())) {
+            bundle.putString(IConstants.KEY_THUMBNAIL, newUser.getThumbnail());
         }
         if (bundle.size() == 0) return null;
         return bundle;

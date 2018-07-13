@@ -37,14 +37,20 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Firebase Utility class
  */
 final class FirebaseUtils {
+
+    private List<AllUsers> mAllUsersList = new LinkedList<>();
 
     FirebaseUtils() {
     }
@@ -242,6 +248,37 @@ final class FirebaseUtils {
             }
         });
 
+    }
+
+    /**
+     * Call this method to get list of last 50 registered user in app
+     *
+     * @param callback Callback for list of user and error
+     */
+    void getAllRegisteredUsers(@NonNull final DataCallback.OnFriendsList callback) {
+        Query query = DataManager.getUsersRef().limitToLast(50);
+        query.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot data : dataSnapshot.getChildren()) {
+                    AllUsers user = data.getValue(AllUsers.class);
+                    if (user != null) {
+                        user.setId(data.getKey());
+                        if (!mAllUsersList.contains(user)) mAllUsersList.add(user);
+                        else {
+                            int index = mAllUsersList.indexOf(user);
+                            mAllUsersList.set(index, user);
+                        }
+                    }
+                }
+                callback.onData(mAllUsersList);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                callback.onError(databaseError.getMessage());
+            }
+        });
     }
 
     /**

@@ -27,17 +27,17 @@ package com.example.nishant.berry.ui.allusers;
 
 import com.example.nishant.berry.base.MvpView;
 import com.example.nishant.berry.ui.model.AllUsers;
-import com.firebase.ui.database.FirebaseRecyclerAdapter;
-import com.google.firebase.database.Query;
+
+import java.util.List;
 
 public interface AllUsersContract {
     interface View extends MvpView {
-        void getFirebaseRecyclerAdapter(FirebaseRecyclerAdapter adapter);
+        void onAllUsersData(List<AllUsers> data);
 
-        void onListItemClick(String userId);
+        void onError(String error);
     }
 
     interface Presenter {
-        void setupFirebaseRecyclerAdapter(Query query);
+        void getAllUsers();
     }
 }

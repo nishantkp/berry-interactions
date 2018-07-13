@@ -96,7 +96,7 @@ public class FriendsFragment
 
     @Override
     public void onFriendsList(List<AllUsers> friendsList) {
-        mFriendsAdapter.updateData(friendsList);
+        mFriendsAdapter.updateData(friendsList, IConstants.DIFF_ONLINE_STATUS);
     }
 
     @Override

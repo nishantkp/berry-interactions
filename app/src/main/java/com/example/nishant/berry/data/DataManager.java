@@ -280,50 +280,12 @@ public class DataManager {
     }
 
     /**
-     * Call this method to get all the users from database
-     * This method sets callback for list item click and setting up firebase adapter
+     * Call this method to get all the list of all registered users
      *
-     * @param query    Firebase query
-     * @param callback callback for list item click and firebase recycler adapter
-     *                 FirebaseRecyclerAdapter which we can use in Activity/Fragment for
-     *                 setting up on RecyclerView
-     *                 Also we have to call startListening() and stopListening() method form
-     *                 Activity/Fragment to actually get the data
+     * @param callback DataCallback for list of users and error
      */
-    public void getAllUsersFromDatabase(Query query,
-                                        @NonNull final DataCallback.OnAllUsersList callback) {
-        FirebaseRecyclerOptions<AllUsers> options =
-                new FirebaseRecyclerOptions.Builder<AllUsers>().setQuery(query, AllUsers.class)
-                        .build();
-
-        FirebaseRecyclerAdapter<AllUsers, AllUsersViewHolder> adapter
-                = new FirebaseRecyclerAdapter<AllUsers, AllUsersViewHolder>(options) {
-            @Override
-            protected void onBindViewHolder(@NonNull final AllUsersViewHolder holder,
-                                            int position,
-                                            @NonNull final AllUsers model) {
-                holder.bind(model);
-
-                // Set onclick listener on ViewHolder
-                holder.itemView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        // set call back with user id parameter
-                        callback.onListItemClick(getRef(holder.getAdapterPosition()).getKey());
-                    }
-                });
-            }
-
-            @NonNull
-            @Override
-            public AllUsersViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-                // get the View
-                View view = LayoutInflater.from(parent.getContext())
-                        .inflate(R.layout.all_users_list_item, parent, false);
-                return new AllUsersViewHolder(AllUsersListItemBinding.bind(view.getRootView()));
-            }
-        };
-        callback.onFirebaseAdapter(adapter);
+    public void getAllRegisteredUsers(@NonNull DataCallback.OnFriendsList callback) {
+        sFirebaseUtils.getAllRegisteredUsers(callback);
     }
 
     /**
