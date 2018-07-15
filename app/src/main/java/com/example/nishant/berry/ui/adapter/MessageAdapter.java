@@ -145,7 +145,7 @@ public class MessageAdapter
         public void bind(Message message) {
             messageListItemBinding.setMessage(message);
             // Load interaction user avatar
-            ImageLoad.load(mInteractionUserThumbUrl, messageListItemBinding.messageListItemAvatar);
+            ImageLoad.setImageResource(messageListItemBinding.messageListItemAvatar, mInteractionUserThumbUrl);
         }
     }
 

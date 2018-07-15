@@ -103,7 +103,7 @@ public class UserProfileActivity
      */
     @Override
     public void updateUserProfileAvatar(final String url) {
-        ImageLoad.load(url, mBinding.profileAvatar);
+        ImageLoad.setImageResource(mBinding.profileAvatar, url);
     }
 
     /**

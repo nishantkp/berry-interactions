@@ -98,7 +98,7 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.FriendsV
                 }
                 if (bundle.containsKey(IConstants.KEY_THUMBNAIL)) {
                     String thumbUrl = bundle.getString(IConstants.KEY_THUMBNAIL);
-                    ImageLoad.load(thumbUrl, holder.mBinding.allUsersListItemAvatar);
+                    ImageLoad.setImageResource(holder.mBinding.allUsersListItemAvatar, thumbUrl);
                 }
             }
         }
