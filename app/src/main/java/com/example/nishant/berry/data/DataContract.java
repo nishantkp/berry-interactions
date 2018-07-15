@@ -61,4 +61,6 @@ interface DataContract {
     void getChatList(@NonNull OnUsersList callback);
 
     void fetchFriends(@NonNull OnUsersList callback);
+
+    void findUser(@NonNull String searchString, int limit, @NonNull OnUsersList callback);
 }

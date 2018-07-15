@@ -25,23 +25,14 @@
 
 package com.example.nishant.berry.ui.search;
 
-import android.support.annotation.NonNull;
 import android.text.TextUtils;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
-import com.example.nishant.berry.R;
 import com.example.nishant.berry.base.BasePresenter;
-import com.example.nishant.berry.config.IFirebaseConfig;
 import com.example.nishant.berry.data.DataManager;
-import com.example.nishant.berry.databinding.AllUsersListItemBinding;
-import com.example.nishant.berry.ui.adapter.AllUsersViewHolder;
+import com.example.nishant.berry.data.callbacks.OnUsersList;
 import com.example.nishant.berry.ui.model.AllUsers;
-import com.firebase.ui.database.FirebaseRecyclerAdapter;
-import com.firebase.ui.database.FirebaseRecyclerOptions;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
+
+import java.util.List;
 
 /**
  * Presenter responsible for querying database as per user search query
@@ -64,60 +55,28 @@ public class SearchPresenter
     }
 
     /**
-     * Call this method to set FirebaseRecycler Adapter and set callback for the same
-     * So in activity we can start and stop listening to firebase adapter
+     * Call this method to find user from firebase database
      *
      * @param searchQuery search query entered by user
      */
     @Override
-    public void setFirebaseAdapter(String searchQuery) {
+    public void findUserFromQuery(String searchQuery) {
         // If user has not given any search query, return from the method
         if (TextUtils.isEmpty(searchQuery)) {
-            getView().setRecyclerView(null);
             return;
         }
 
-        // Firebase database Query of Users object
-        Query databaseQuery = DataManager.getUsersRef()
-                .orderByChild(IFirebaseConfig.NAME)
-                .startAt(searchQuery.toUpperCase())
-                .endAt(searchQuery.toLowerCase() + "\uf8ff")
-                .limitToFirst(15);
+        // Get the user's list which contains 15 users with the help of DataManager
+        DataManager.getInstance().findUser(searchQuery, 15, new OnUsersList() {
+            @Override
+            public void onData(List<AllUsers> data) {
+                getView().onData(data);
+            }
 
-        FirebaseRecyclerOptions<AllUsers> options =
-                new FirebaseRecyclerOptions.Builder<AllUsers>().setQuery(databaseQuery, AllUsers.class)
-                        .build();
-
-        // Setup recycler adapter
-        FirebaseRecyclerAdapter<AllUsers, AllUsersViewHolder> adapter =
-                new FirebaseRecyclerAdapter<AllUsers, AllUsersViewHolder>(options) {
-                    @Override
-                    protected void onBindViewHolder(@NonNull final AllUsersViewHolder holder,
-                                                    final int position,
-                                                    @NonNull final AllUsers model) {
-                        // Set the online status to false so user can not find other users are online
-                        // or not while performing a search
-                        model.setOnline(false);
-                        holder.bind(model);
-                        holder.itemView.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                // Set callback to start ProfileActivity with userId
-                                getView().onListItemSelected(getRef(holder.getAdapterPosition()).getKey());
-                            }
-                        });
-                    }
-
-                    @NonNull
-                    @Override
-                    public AllUsersViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-                        // get the View
-                        View view = LayoutInflater.from(parent.getContext())
-                                .inflate(R.layout.all_users_list_item, parent, false);
-                        return new AllUsersViewHolder(AllUsersListItemBinding.bind(view.getRootView()));
-                    }
-                };
-        // Set callback to setup recycler view in activity
-        getView().setRecyclerView(adapter);
+            @Override
+            public void onError(String error) {
+                getView().onError(error);
+            }
+        });
     }
 }

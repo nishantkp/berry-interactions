@@ -50,6 +50,7 @@ public class DataManager implements DataContract {
     private static SettingsUtils sSettingsUtils;
     private static ChatUtils sChatUtils;
     private static AccountUtils sAccountUtils;
+    private static SearchUtils sSearchUtils;
 
     // Lazy Initialization pattern
     private static class StaticHolder {
@@ -70,6 +71,7 @@ public class DataManager implements DataContract {
         sSettingsUtils = new SettingsUtils();
         sChatUtils = new ChatUtils();
         sAccountUtils = new AccountUtils();
+        sSearchUtils = new SearchUtils();
     }
 
     /**
@@ -351,5 +353,17 @@ public class DataManager implements DataContract {
     @Override
     public void fetchFriends(@NonNull final OnUsersList callback) {
         sFriendsUtils.getAllFriends(callback);
+    }
+
+    /**
+     * Call this method to find the user from user's object in firebase database
+     *
+     * @param searchString Input text by user
+     * @param limit        number of search item you want to see in result
+     * @param callback     DataCallback for list of users
+     */
+    @Override
+    public void findUser(@NonNull String searchString, int limit, @NonNull OnUsersList callback) {
+        sSearchUtils.findUser(searchString, limit, callback);
     }
 }

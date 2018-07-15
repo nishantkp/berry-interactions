@@ -26,16 +26,21 @@
 package com.example.nishant.berry.ui.search;
 
 import com.example.nishant.berry.base.MvpView;
-import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.example.nishant.berry.ui.model.AllUsers;
 
+import java.util.List;
+
+/**
+ * Contract class for {@link SearchPresenter} and {@link SearchActivity}
+ */
 public interface SearchContract {
     interface View extends MvpView {
-        void setRecyclerView(FirebaseRecyclerAdapter adapter);
+        void onData(List<AllUsers> data);
 
-        void onListItemSelected(String userId);
+        void onError(String error);
     }
 
     interface Presenter {
-        void setFirebaseAdapter(String query);
+        void findUserFromQuery(String query);
     }
 }
