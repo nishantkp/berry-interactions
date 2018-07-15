@@ -28,6 +28,9 @@ package com.example.nishant.berry.data;
 import android.support.annotation.NonNull;
 
 import com.example.nishant.berry.config.IFirebaseConfig;
+import com.example.nishant.berry.data.callbacks.OnFriendRequestUserData;
+import com.example.nishant.berry.data.callbacks.OnUsersData;
+import com.example.nishant.berry.data.callbacks.OnUsersList;
 import com.example.nishant.berry.ui.adapter.AllUsersViewHolder;
 import com.example.nishant.berry.ui.adapter.FriendRequestViewHolder;
 import com.example.nishant.berry.ui.model.AllUsers;
@@ -183,7 +186,7 @@ final class FirebaseUtils {
      */
     void getUsersObject(@NonNull final String userId,
                         final AllUsersViewHolder holder,
-                        @NonNull final DataCallback.OnUsersData callback) {
+                        @NonNull final OnUsersData callback) {
         // Database reference for particular reference
         DatabaseReference reference = getMainObjectRef(IFirebaseConfig.USERS_OBJECT).child(userId);
 
@@ -224,7 +227,7 @@ final class FirebaseUtils {
     void getUsersObject(@NonNull final String userId,
                         final String requestType,
                         final FriendRequestViewHolder holder,
-                        @NonNull final DataCallback.OnFriendRequestUserData callback) {
+                        @NonNull final OnFriendRequestUserData callback) {
 
         // Database reference for particular reference
         DatabaseReference reference = getMainObjectRef(IFirebaseConfig.USERS_OBJECT).child(userId);
@@ -255,7 +258,7 @@ final class FirebaseUtils {
      *
      * @param callback Callback for list of user and error
      */
-    void getAllRegisteredUsers(@NonNull final DataCallback.OnFriendsList callback) {
+    void getAllRegisteredUsers(@NonNull final OnUsersList callback) {
         Query query = DataManager.getUsersRef().limitToLast(50);
         query.addValueEventListener(new ValueEventListener() {
             @Override

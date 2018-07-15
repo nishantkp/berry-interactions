@@ -26,8 +26,8 @@
 package com.example.nishant.berry.ui.dashboard.fragment.friends;
 
 import com.example.nishant.berry.base.BasePresenter;
-import com.example.nishant.berry.data.DataCallback;
 import com.example.nishant.berry.data.DataManager;
+import com.example.nishant.berry.data.callbacks.OnUsersList;
 import com.example.nishant.berry.ui.dashboard.DashboardActivity;
 import com.example.nishant.berry.ui.model.AllUsers;
 
@@ -59,7 +59,7 @@ public class FriendsPresenter
 
     @Override
     public void getAllFriends() {
-        DataManager.getInstance().fetchFriends(new DataCallback.OnFriendsList() {
+        DataManager.getInstance().fetchFriends(new OnUsersList() {
             @Override
             public void onData(List<AllUsers> data) {
                 getView().onFriendsList(data);

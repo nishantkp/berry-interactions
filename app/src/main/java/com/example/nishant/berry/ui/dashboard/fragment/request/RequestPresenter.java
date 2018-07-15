@@ -26,8 +26,8 @@
 package com.example.nishant.berry.ui.dashboard.fragment.request;
 
 import com.example.nishant.berry.base.BasePresenter;
-import com.example.nishant.berry.data.DataCallback;
 import com.example.nishant.berry.data.DataManager;
+import com.example.nishant.berry.data.callbacks.OnFriendRequest;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 
 /**
@@ -58,7 +58,7 @@ public class RequestPresenter
      */
     @Override
     public void setupFirebaseRecyclerAdapter() {
-        DataManager.getInstance().currentUsersFriendReq(new DataCallback.OnFriendRequest() {
+        DataManager.getInstance().currentUsersFriendReq(new OnFriendRequest() {
             @Override
             public void onAdapter(FirebaseRecyclerAdapter adapter) {
                 // callback for FirebaseRecyclerAdapter, so that we can use set this adapter

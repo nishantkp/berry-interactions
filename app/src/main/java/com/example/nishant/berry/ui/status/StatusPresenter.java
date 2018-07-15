@@ -28,8 +28,8 @@ package com.example.nishant.berry.ui.status;
 import android.text.TextUtils;
 
 import com.example.nishant.berry.base.BasePresenter;
-import com.example.nishant.berry.data.DataCallback;
 import com.example.nishant.berry.data.DataManager;
+import com.example.nishant.berry.data.callbacks.OnTaskCompletion;
 import com.example.nishant.berry.ui.settings.SettingsActivity;
 
 /**
@@ -69,7 +69,7 @@ public class StatusPresenter
         }
 
         // Save user's status
-        mDataManager.saveUserStatus(status, new DataCallback.OnTaskCompletion() {
+        mDataManager.saveUserStatus(status, new OnTaskCompletion() {
             @Override
             public void onSuccess() {
                 getView().cancelProgressDialog();

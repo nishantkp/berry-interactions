@@ -29,6 +29,8 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.example.nishant.berry.config.IFirebaseConfig;
+import com.example.nishant.berry.data.callbacks.OnUsersData;
+import com.example.nishant.berry.data.callbacks.OnUsersList;
 import com.example.nishant.berry.ui.adapter.AllUsersViewHolder;
 import com.example.nishant.berry.ui.model.AllUsers;
 import com.google.firebase.database.ChildEventListener;
@@ -59,7 +61,7 @@ final class ChatUtils {
      *
      * @param callback DataCallback for error handling and list of all interactions
      */
-    void getUsersInteraction(@NonNull final DataCallback.OnUsersChat callback) {
+    void getUsersInteraction(@NonNull final OnUsersList callback) {
         // Query for Interactions database
         Query query = DataManager.getCurrentUserInteractionRef()
                 .orderByChild(IFirebaseConfig.TIMESTAMP);
@@ -87,9 +89,9 @@ final class ChatUtils {
      *                 Error we get while querying users database
      */
     private void getUsersInfo(final String id,
-                              @NonNull final DataCallback.OnUsersChat callback) {
+                              @NonNull final OnUsersList callback) {
         // Use FirebaseUtils method to get information about particular user
-        sFirebaseUtils.getUsersObject(id, null, new DataCallback.OnUsersData() {
+        sFirebaseUtils.getUsersObject(id, null, new OnUsersData() {
             @Override
             public void onData(AllUsers model, String userId, AllUsersViewHolder holder) {
                 model.setId(id);
@@ -113,7 +115,7 @@ final class ChatUtils {
      *                 by user
      */
     private void getLastMessage(final AllUsers users,
-                                @NonNull final DataCallback.OnUsersChat callback) {
+                                @NonNull final OnUsersList callback) {
         // Query for Message object to get the last message for particular user
         final Query lastMessageQuery = DataManager.getCurrentUserMessageRef()
                 .child(users.getId())
@@ -136,7 +138,7 @@ final class ChatUtils {
                     mData.remove(index);
                     mData.add(mData.size(), users);
                 }
-                callback.onFriendsChat(mData);
+                callback.onData(mData);
             }
 
             @Override

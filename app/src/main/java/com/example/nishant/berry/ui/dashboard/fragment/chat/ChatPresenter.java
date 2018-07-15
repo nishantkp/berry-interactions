@@ -26,10 +26,9 @@
 package com.example.nishant.berry.ui.dashboard.fragment.chat;
 
 import com.example.nishant.berry.base.BasePresenter;
-import com.example.nishant.berry.data.DataCallback;
 import com.example.nishant.berry.data.DataManager;
+import com.example.nishant.berry.data.callbacks.OnUsersList;
 import com.example.nishant.berry.ui.model.AllUsers;
-import com.firebase.ui.database.FirebaseRecyclerAdapter;
 
 import java.util.List;
 
@@ -60,9 +59,9 @@ public class ChatPresenter
      */
     @Override
     public void getCurrentUsersChatList() {
-        DataManager.getInstance().getChatList(new DataCallback.OnUsersChat() {
+        DataManager.getInstance().getChatList(new OnUsersList() {
             @Override
-            public void onFriendsChat(List<AllUsers> data) {
+            public void onData(List<AllUsers> data) {
                 getView().onInteractionData(data);
             }
 

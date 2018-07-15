@@ -29,6 +29,11 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 
 import com.example.nishant.berry.config.IFirebaseConfig;
+import com.example.nishant.berry.data.callbacks.OnFriendRequest;
+import com.example.nishant.berry.data.callbacks.OnTaskCompletion;
+import com.example.nishant.berry.data.callbacks.OnUserInfo;
+import com.example.nishant.berry.data.callbacks.OnUsersData;
+import com.example.nishant.berry.data.callbacks.OnUsersList;
 import com.example.nishant.berry.ui.adapter.AllUsersViewHolder;
 import com.example.nishant.berry.ui.model.AllUsers;
 import com.google.firebase.database.DatabaseReference;
@@ -38,7 +43,7 @@ import com.google.firebase.storage.StorageReference;
 /**
  * Data Manager class, that deals with business logic
  */
-public class DataManager implements DataCallback {
+public class DataManager implements DataContract {
     private static FirebaseUtils sFirebaseUtils;
     private static FriendsUtils sFriendsUtils;
     private static RequestsUtils sRequestsUtils;
@@ -279,7 +284,7 @@ public class DataManager implements DataCallback {
      * @param callback DataCallback for list of users and error
      */
     @Override
-    public void getAllRegisteredUsers(@NonNull OnFriendsList callback) {
+    public void getAllRegisteredUsers(@NonNull OnUsersList callback) {
         sFirebaseUtils.getAllRegisteredUsers(callback);
     }
 
@@ -290,8 +295,8 @@ public class DataManager implements DataCallback {
      * @param callback Callback for detail user info and error
      */
     @Override
-    public void getCurrentUserInfo(@NonNull final OnCurrentUserInfo callback) {
-        sFirebaseUtils.getUsersObject(getCurrentUserId(), null, new DataCallback.OnUsersData() {
+    public void getCurrentUserInfo(@NonNull final OnUserInfo callback) {
+        sFirebaseUtils.getUsersObject(getCurrentUserId(), null, new OnUsersData() {
             @Override
             public void onData(AllUsers model, String userId, AllUsersViewHolder holder) {
                 callback.onData(model);
@@ -334,7 +339,7 @@ public class DataManager implements DataCallback {
      * @param callback DataCallback for list of interactions and error
      */
     @Override
-    public void getChatList(@NonNull final OnUsersChat callback) {
+    public void getChatList(@NonNull final OnUsersList callback) {
         sChatUtils.getUsersInteraction(callback);
     }
 
@@ -344,7 +349,7 @@ public class DataManager implements DataCallback {
      * @param callback DataCallback for list of friends and error
      */
     @Override
-    public void fetchFriends(@NonNull final OnFriendsList callback) {
+    public void fetchFriends(@NonNull final OnUsersList callback) {
         sFriendsUtils.getAllFriends(callback);
     }
 }

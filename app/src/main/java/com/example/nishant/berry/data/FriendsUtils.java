@@ -27,6 +27,8 @@ package com.example.nishant.berry.data;
 
 import android.support.annotation.NonNull;
 
+import com.example.nishant.berry.data.callbacks.OnUsersData;
+import com.example.nishant.berry.data.callbacks.OnUsersList;
 import com.example.nishant.berry.ui.adapter.AllUsersViewHolder;
 import com.example.nishant.berry.ui.dashboard.fragment.friends.FriendsFragment;
 import com.example.nishant.berry.ui.model.AllUsers;
@@ -69,7 +71,7 @@ final class FriendsUtils {
      * FlatMapIterable to loop though list of Ids, then makes parallel calls to fetch information
      * about user and in the end converts the results of those parallel calls to list.
      */
-    void getFriends(@NonNull final DataCallback.OnFriendsList callback) {
+    void getFriends(@NonNull final OnUsersList callback) {
         getFriendsIds(callback).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
                 .flatMapIterable(new Function<List<String>, Iterable<String>>() {
                     @Override
@@ -108,7 +110,7 @@ final class FriendsUtils {
      *
      * @return Observable object for getting the list of friend's id
      */
-    private Observable<List<String>> getFriendsIds(final @NonNull DataCallback.OnFriendsList callback) {
+    private Observable<List<String>> getFriendsIds(final @NonNull OnUsersList callback) {
         return Observable.create(new ObservableOnSubscribe<List<String>>() {
             @Override
             public void subscribe(final ObservableEmitter<List<String>> emitter) {
@@ -145,11 +147,11 @@ final class FriendsUtils {
      * @return Observable for fetching data about specific user
      */
     private ObservableSource<AllUsers> getUserInfo(final @NonNull String id,
-                                                   final @NonNull DataCallback.OnFriendsList callback) {
+                                                   final @NonNull OnUsersList callback) {
         return Observable.create(new ObservableOnSubscribe<AllUsers>() {
             @Override
             public void subscribe(final ObservableEmitter<AllUsers> emitter) throws Exception {
-                sFirebaseUtils.getUsersObject(id, null, new DataCallback.OnUsersData() {
+                sFirebaseUtils.getUsersObject(id, null, new OnUsersData() {
                     @Override
                     public void onData(AllUsers model, String userId, AllUsersViewHolder holder) {
                         // Getting all users here
@@ -176,7 +178,7 @@ final class FriendsUtils {
      *
      * @param callback DataCallback for list of friends and error
      */
-    void getAllFriends(@NonNull final DataCallback.OnFriendsList callback) {
+    void getAllFriends(@NonNull final OnUsersList callback) {
         Query query = DataManager.getCurrentUserFriendsRef();
         query.addValueEventListener(new ValueEventListener() {
             @Override
@@ -201,8 +203,8 @@ final class FriendsUtils {
      * @param list     empty list of friends
      * @param callback DataCallback for list of friends and error
      */
-    private void getInfoFromId(final String userId, final List<AllUsers> list, @NonNull final DataCallback.OnFriendsList callback) {
-        sFirebaseUtils.getUsersObject(userId, null, new DataCallback.OnUsersData() {
+    private void getInfoFromId(final String userId, final List<AllUsers> list, @NonNull final OnUsersList callback) {
+        sFirebaseUtils.getUsersObject(userId, null, new OnUsersData() {
             @Override
             public void onData(AllUsers model, String userId, AllUsersViewHolder holder) {
                 model.setId(userId);

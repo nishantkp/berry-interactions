@@ -34,6 +34,8 @@ import android.view.ViewGroup;
 
 import com.example.nishant.berry.R;
 import com.example.nishant.berry.config.IFirebaseConfig;
+import com.example.nishant.berry.data.callbacks.OnFriendRequest;
+import com.example.nishant.berry.data.callbacks.OnFriendRequestUserData;
 import com.example.nishant.berry.databinding.FriendRequestListItemBinding;
 import com.example.nishant.berry.ui.adapter.FriendRequestViewHolder;
 import com.example.nishant.berry.ui.model.AllUsers;
@@ -71,7 +73,7 @@ final class RequestsUtils
      * @param callback DataCallback for error and firebase adapter to display list of friend
      *                 requests whether sent or received
      */
-    void getCurrentUsersFriendRequests(@NonNull final DataCallback.OnFriendRequest callback) {
+    void getCurrentUsersFriendRequests(@NonNull final OnFriendRequest callback) {
 
         // Firebase query for Friend request object
         Query reqQuery = DataManager.getCurrentUserFriendsReqRef();
@@ -91,7 +93,7 @@ final class RequestsUtils
                         final String requestType = model.getRequest_type();
                         if (listUserId == null) return;
                         sFirebaseUtils.getUsersObject(listUserId, requestType, holder,
-                                new DataCallback.OnFriendRequestUserData() {
+                                new OnFriendRequestUserData() {
                                     @Override
                                     public void onData(AllUsers model, String userId, FriendRequestViewHolder holder) {
                                         // bind the {@link AllUsers} model to view

@@ -29,8 +29,9 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 
 import com.example.nishant.berry.base.BasePresenter;
-import com.example.nishant.berry.data.DataCallback;
 import com.example.nishant.berry.data.DataManager;
+import com.example.nishant.berry.data.callbacks.OnTaskCompletion;
+import com.example.nishant.berry.data.callbacks.OnUserInfo;
 import com.example.nishant.berry.ui.model.AllUsers;
 
 import java.io.ByteArrayOutputStream;
@@ -67,7 +68,7 @@ public class SettingsPresenter
     @Override
     public void retrieveDataFromFirebaseDatabase() {
         // Current user's detail
-        mDataManager.getCurrentUserInfo(new DataCallback.OnCurrentUserInfo() {
+        mDataManager.getCurrentUserInfo(new OnUserInfo() {
             @Override
             public void onData(AllUsers model) {
                 getView().setUserInfo(model);
@@ -113,7 +114,7 @@ public class SettingsPresenter
         final byte[] finalThumb_byte = thumb_byte;
 
         // Store avatar and thumbnail to firebase database
-        mDataManager.storeAvatar(avatarUri, finalThumb_byte, new DataCallback.OnTaskCompletion() {
+        mDataManager.storeAvatar(avatarUri, finalThumb_byte, new OnTaskCompletion() {
             @Override
             public void onSuccess() {
                 getView().cancelProgressDialog();

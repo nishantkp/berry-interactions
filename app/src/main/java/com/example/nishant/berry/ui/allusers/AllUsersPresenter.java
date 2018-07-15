@@ -26,8 +26,8 @@
 package com.example.nishant.berry.ui.allusers;
 
 import com.example.nishant.berry.base.BasePresenter;
-import com.example.nishant.berry.data.DataCallback;
 import com.example.nishant.berry.data.DataManager;
+import com.example.nishant.berry.data.callbacks.OnUsersList;
 import com.example.nishant.berry.ui.model.AllUsers;
 
 import java.util.List;
@@ -57,7 +57,7 @@ public class AllUsersPresenter
 
     @Override
     public void getAllUsers() {
-        DataManager.getInstance().getAllRegisteredUsers(new DataCallback.OnFriendsList() {
+        DataManager.getInstance().getAllRegisteredUsers(new OnUsersList() {
             @Override
             public void onData(List<AllUsers> data) {
                 getView().onAllUsersData(data);

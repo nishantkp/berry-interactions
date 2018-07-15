@@ -29,6 +29,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.example.nishant.berry.config.IFirebaseConfig;
+import com.example.nishant.berry.data.callbacks.OnTaskCompletion;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -62,7 +63,7 @@ final class AccountUtils {
      */
     public void signInUser(@NonNull final String email,
                            @NonNull final String password,
-                           @NonNull final DataCallback.OnTaskCompletion callback) {
+                           @NonNull final OnTaskCompletion callback) {
         sFirebaseUtils.getFirebaseAuth()
                 .signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
@@ -82,7 +83,7 @@ final class AccountUtils {
      *
      * @param callback callback for success and errors
      */
-    private void updateUserDatabase(@NonNull final DataCallback.OnTaskCompletion callback) {
+    private void updateUserDatabase(@NonNull final OnTaskCompletion callback) {
         // Get the device token
         String deviceToken = FirebaseInstanceId.getInstance().getToken();
         String userId = DataManager.getCurrentUserId();
@@ -121,7 +122,7 @@ final class AccountUtils {
     void signUpUser(@NonNull final String displayName,
                     @NonNull String email,
                     @NonNull String password,
-                    @NonNull final DataCallback.OnTaskCompletion callback) {
+                    @NonNull final OnTaskCompletion callback) {
         // Register user with email, password and cancel progress dialog
         sFirebaseUtils.getFirebaseAuth().createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
@@ -144,7 +145,7 @@ final class AccountUtils {
      * @param callback    callbacks for success and failure
      */
     private void storeDataToFirebaseDatabase(@NonNull String displayName,
-                                             @NonNull final DataCallback.OnTaskCompletion callback) {
+                                             @NonNull final OnTaskCompletion callback) {
         String deviceToken = FirebaseInstanceId.getInstance().getToken();
 
         // Value Map for Firebase database
@@ -181,7 +182,7 @@ final class AccountUtils {
      * @param callback callbacks for success and failure
      */
     void saveUserStatus(@NonNull String status,
-                        @NonNull final DataCallback.OnTaskCompletion callback) {
+                        @NonNull final OnTaskCompletion callback) {
         DataManager.getCurrentUsersRef().child(IFirebaseConfig.STATUS).setValue(status)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override

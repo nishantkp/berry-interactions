@@ -26,8 +26,8 @@
 package com.example.nishant.berry.ui.signup;
 
 import com.example.nishant.berry.base.BasePresenter;
-import com.example.nishant.berry.data.DataCallback;
 import com.example.nishant.berry.data.DataManager;
+import com.example.nishant.berry.data.callbacks.OnTaskCompletion;
 import com.example.nishant.berry.ui.model.User;
 
 public class SignUpPresenter
@@ -78,7 +78,7 @@ public class SignUpPresenter
 
         // Show progress dialog
         getView().showProgressDialog();
-        mDataManager.signUpUser(displayName, email, password, new DataCallback.OnTaskCompletion() {
+        mDataManager.signUpUser(displayName, email, password, new OnTaskCompletion() {
             @Override
             public void onSuccess() {
                 getView().cancelProgressDialog();

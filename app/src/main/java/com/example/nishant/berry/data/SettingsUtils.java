@@ -29,6 +29,7 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 
 import com.example.nishant.berry.config.IFirebaseConfig;
+import com.example.nishant.berry.data.callbacks.OnTaskCompletion;
 import com.example.nishant.berry.ui.settings.SettingsActivity;
 import com.example.nishant.berry.ui.settings.SettingsPresenter;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -53,7 +54,7 @@ final class SettingsUtils {
      */
     void storeAvatarToFirebaseDatabase(Uri avatarUri,
                                        final byte[] thumbnailByte,
-                                       final @NonNull DataCallback.OnTaskCompletion callback) {
+                                       final @NonNull OnTaskCompletion callback) {
         DataManager.getAvatarStorageRef().putFile(avatarUri)
                 .addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
                     @Override
@@ -75,7 +76,7 @@ final class SettingsUtils {
      * @param callback       task completion callback for success and failure
      */
     private void uploadAvatarThumbnail(byte[] thumbnailBytes,
-                                       final @NonNull DataCallback.OnTaskCompletion callback) {
+                                       final @NonNull OnTaskCompletion callback) {
         UploadTask uploadTask = DataManager.getAvatarThumbStorageRef().putBytes(thumbnailBytes);
         uploadTask.addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
             @Override
@@ -96,7 +97,7 @@ final class SettingsUtils {
      *
      * @param callback task completion callback for success and failure
      */
-    private void getDownloadUrlFromStorageRef(final @NonNull DataCallback.OnTaskCompletion callback) {
+    private void getDownloadUrlFromStorageRef(final @NonNull OnTaskCompletion callback) {
         // Get the download url of original avatar
         DataManager.getAvatarStorageRef().getDownloadUrl()
                 .addOnCompleteListener(new OnCompleteListener<Uri>() {
@@ -137,7 +138,7 @@ final class SettingsUtils {
      */
     private void updateDatabaseWithAvatarUrl(String url,
                                              String field,
-                                             final @NonNull DataCallback.OnTaskCompletion callback) {
+                                             final @NonNull OnTaskCompletion callback) {
         DataManager.getCurrentUsersRef().child(field).setValue(url)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
