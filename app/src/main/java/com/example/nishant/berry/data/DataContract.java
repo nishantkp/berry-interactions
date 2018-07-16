@@ -29,7 +29,7 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 
 import com.example.nishant.berry.data.callbacks.OnTaskCompletion;
-import com.example.nishant.berry.data.callbacks.OnUserInfo;
+import com.example.nishant.berry.data.callbacks.OnUsersData;
 import com.example.nishant.berry.data.callbacks.OnUsersList;
 
 /**
@@ -49,7 +49,7 @@ interface DataContract {
 
     void getAllRegisteredUsers(@NonNull OnUsersList callback);
 
-    void getCurrentUserInfo(@NonNull OnUserInfo callback);
+    void getCurrentUserInfo(@NonNull OnUsersData callback);
 
     void storeAvatar(Uri avatarUri,
                      byte[] thumbnailByte,

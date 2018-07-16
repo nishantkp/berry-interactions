@@ -30,7 +30,6 @@ import android.support.annotation.NonNull;
 
 import com.example.nishant.berry.config.IFirebaseConfig;
 import com.example.nishant.berry.data.callbacks.OnTaskCompletion;
-import com.example.nishant.berry.data.callbacks.OnUserInfo;
 import com.example.nishant.berry.data.callbacks.OnUsersData;
 import com.example.nishant.berry.data.callbacks.OnUsersList;
 import com.example.nishant.berry.ui.model.AllUsers;
@@ -292,21 +291,11 @@ public class DataManager implements DataContract {
      * Call this method to get detail information about current user like name, status, avatar etc..
      * User must implement UserObjectCallback before using this particular method to get the
      *
-     * @param callback Callback for detail user info and error
+     * @param callback Callback for detail user info, user id and error
      */
     @Override
-    public void getCurrentUserInfo(@NonNull final OnUserInfo callback) {
-        sFirebaseUtils.getUsersObject(getCurrentUserId(), new OnUsersData() {
-            @Override
-            public void onData(AllUsers model, String userId) {
-                callback.onData(model);
-            }
-
-            @Override
-            public void onError(String error) {
-                callback.onError(error);
-            }
-        });
+    public void getCurrentUserInfo(@NonNull final OnUsersData callback) {
+        sFirebaseUtils.getUsersObject(getCurrentUserId(), callback);
     }
 
     /**
