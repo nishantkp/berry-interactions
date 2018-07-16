@@ -28,11 +28,9 @@ package com.example.nishant.berry.data;
 import android.support.annotation.NonNull;
 
 import com.example.nishant.berry.config.IFirebaseConfig;
-import com.example.nishant.berry.data.callbacks.OnFriendRequestUserData;
 import com.example.nishant.berry.data.callbacks.OnUsersData;
 import com.example.nishant.berry.data.callbacks.OnUsersList;
 import com.example.nishant.berry.ui.adapter.AllUsersViewHolder;
-import com.example.nishant.berry.ui.adapter.FriendRequestViewHolder;
 import com.example.nishant.berry.ui.model.AllUsers;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -204,53 +202,6 @@ final class FirebaseUtils {
                 callback.onError(databaseError.getMessage());
             }
         });
-
-    }
-
-    /**
-     * Call this method to get information about any User from users object
-     * Must use setFriendReqUserObjectCallbacks() along side with the method in order to get the
-     * results
-     * <p>
-     * Note: For just retrieving user info, give the userId and null for other parameters
-     *
-     * @param userId      ID of user, whose information we are interested in
-     * @param requestType request type, whether the user has sent or received the friend request
-     * @param holder      FriendRequestViewHolder object : especially used for retrieving friend requests.
-     *                    So when we use this method to get detail about user in FirebaseRecyclerAdapter
-     *                    we need ViewHolder object in callback to bind the {@link AllUsers} model
-     *                    to view
-     *                    NOTE : We don't do anything with the ViewHolder object in this method, we just
-     *                    need it set the
-     * @param callback    callback for detail user info and error
-     */
-    void getUsersObject(@NonNull final String userId,
-                        final String requestType,
-                        final FriendRequestViewHolder holder,
-                        @NonNull final OnFriendRequestUserData callback) {
-
-        // Database reference for particular reference
-        DatabaseReference reference = getMainObjectRef(IFirebaseConfig.USERS_OBJECT).child(userId);
-        // Enable offline functionality
-        reference.keepSynced(true);
-        reference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                // Extract the values from DataSnapshot
-                AllUsers user = extractValues(dataSnapshot);
-                // Set the request type on model
-                user.setFriendRequestType(requestType);
-
-                // Setup callbacks
-                callback.onData(user, userId, holder);
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                callback.onError(databaseError.getMessage());
-            }
-        });
-
     }
 
     /**

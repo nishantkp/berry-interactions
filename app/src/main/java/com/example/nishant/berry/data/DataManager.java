@@ -325,15 +325,6 @@ public class DataManager implements DataContract {
     }
 
     /**
-     * Call this method to get current user's friend request
-     * received or sent
-     */
-    @Override
-    public void currentUsersFriendReq(@NonNull final OnFriendRequest callback) {
-        sRequestsUtils.getCurrentUsersFriendRequests(callback);
-    }
-
-    /**
      * Call this method to get the list of users with whom current user has interactions with
      * This method with give List<AllUsers> in callback
      * {@link AllUsers} object consists of user name, last message sent/received, thumbnail avatar url
@@ -365,5 +356,38 @@ public class DataManager implements DataContract {
     @Override
     public void findUser(@NonNull String searchString, int limit, @NonNull OnUsersList callback) {
         sSearchUtils.findUser(searchString, limit, callback);
+    }
+
+    /**
+     * Call this method to get all the friend requests send or received by user in List<AllUsers>
+     * format
+     *
+     * @param callback DataCallback for list of users and error dealing with firebase database
+     */
+    @Override
+    public void getFriendRequests(@NonNull OnFriendRequest callback) {
+        sRequestsUtils.getCurrentUsersFriendReq(callback);
+    }
+
+    /**
+     * Call this method to accept the friend request
+     *
+     * @param userId   id of user whose friend request we are accepting
+     * @param callback DataCallback for task completion
+     */
+    @Override
+    public void acceptFriendRequest(@NonNull String userId, @NonNull OnTaskCompletion callback) {
+        sRequestsUtils.acceptFriendRequest(userId, callback);
+    }
+
+    /**
+     * Call this method to cancel/decline friend request
+     *
+     * @param userId   id of user
+     * @param callback DataCallback for task completion
+     */
+    @Override
+    public void ignoreFriendRequest(@NonNull String userId, @NonNull OnTaskCompletion callback) {
+        sRequestsUtils.ignoreFriendRequest(userId, callback);
     }
 }

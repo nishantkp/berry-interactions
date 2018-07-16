@@ -19,22 +19,23 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  *
- * File Created on 15/07/18 2:06 PM by nishant
- * Last Modified on 15/07/18 2:06 PM
+ * File Created on 15/07/18 5:35 PM by nishant
+ * Last Modified on 15/07/18 5:35 PM
  */
 
 package com.example.nishant.berry.data.callbacks;
 
-import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.example.nishant.berry.ui.model.AllUsers;
+
+import java.util.List;
 
 /**
- * Callbacks for displaying all friend requests whether user has sent or received
- * FirebaseRecyclerAdapter to set it on RecyclerView to display list of requests
+ * Callbacks for getting list of all friend requests whether user has sent or received
  * <p>
  * Interface for interacting(i.e getting results from) with DataManager Class
  */
 public interface OnFriendRequest {
-    void onAdapter(FirebaseRecyclerAdapter adapter);
+    void onData(List<AllUsers> data);
 
     void onError(String error);
 }

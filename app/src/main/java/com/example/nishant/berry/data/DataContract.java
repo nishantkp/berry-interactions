@@ -56,11 +56,15 @@ interface DataContract {
                      byte[] thumbnailByte,
                      @NonNull OnTaskCompletion callback);
 
-    void currentUsersFriendReq(@NonNull OnFriendRequest callback);
-
     void getChatList(@NonNull OnUsersList callback);
 
     void fetchFriends(@NonNull OnUsersList callback);
 
     void findUser(@NonNull String searchString, int limit, @NonNull OnUsersList callback);
+
+    void getFriendRequests(@NonNull OnFriendRequest callback);
+
+    void acceptFriendRequest(@NonNull String userId, @NonNull OnTaskCompletion callback);
+
+    void ignoreFriendRequest(@NonNull String userId, @NonNull OnTaskCompletion callback);
 }

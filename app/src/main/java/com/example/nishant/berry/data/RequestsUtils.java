@@ -28,35 +28,32 @@ package com.example.nishant.berry.data;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
-import com.example.nishant.berry.R;
 import com.example.nishant.berry.config.IFirebaseConfig;
 import com.example.nishant.berry.data.callbacks.OnFriendRequest;
-import com.example.nishant.berry.data.callbacks.OnFriendRequestUserData;
-import com.example.nishant.berry.databinding.FriendRequestListItemBinding;
-import com.example.nishant.berry.ui.adapter.FriendRequestViewHolder;
+import com.example.nishant.berry.data.callbacks.OnTaskCompletion;
+import com.example.nishant.berry.data.callbacks.OnUsersData;
+import com.example.nishant.berry.ui.adapter.AllUsersViewHolder;
 import com.example.nishant.berry.ui.model.AllUsers;
 import com.example.nishant.berry.ui.model.FriendRequest;
-import com.firebase.ui.database.FirebaseRecyclerAdapter;
-import com.firebase.ui.database.FirebaseRecyclerOptions;
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
 import java.text.DateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
  * Utility class which deals with displaying friend request and performing action when
  * accept/cancel/decline button is pressed
  */
-final class RequestsUtils
-        implements FriendRequestViewHolder.onButtonClick {
+final class RequestsUtils {
 
     // Log tag
     private static final String LOG_TAG = RequestsUtils.class.getSimpleName();
@@ -67,115 +64,131 @@ final class RequestsUtils
     }
 
     /**
-     * Call this method to get the friend requests of current user
-     * All the request, whether user has sent or received it
+     * Call this method to get the list of friend request by current user
+     * whether sent/received
      *
-     * @param callback DataCallback for error and firebase adapter to display list of friend
-     *                 requests whether sent or received
+     * @param callback DataCallback for list of users and error
      */
-    void getCurrentUsersFriendRequests(@NonNull final OnFriendRequest callback) {
-
+    void getCurrentUsersFriendReq(@NonNull final OnFriendRequest callback) {
         // Firebase query for Friend request object
         Query reqQuery = DataManager.getCurrentUserFriendsReqRef();
 
-        FirebaseRecyclerOptions<FriendRequest> options =
-                new FirebaseRecyclerOptions.Builder<FriendRequest>().setQuery(reqQuery, FriendRequest.class)
-                        .build();
+        reqQuery.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                List<AllUsers> reqList = new ArrayList<>();
 
-        // Adapter
-        FirebaseRecyclerAdapter<FriendRequest, FriendRequestViewHolder> adapter =
-                new FirebaseRecyclerAdapter<FriendRequest, FriendRequestViewHolder>(options) {
-                    @Override
-                    protected void onBindViewHolder(@NonNull final FriendRequestViewHolder holder,
-                                                    int position,
-                                                    @NonNull FriendRequest model) {
-                        final String listUserId = getRef(position).getKey();
-                        final String requestType = model.getRequest_type();
-                        if (listUserId == null) return;
-                        sFirebaseUtils.getUsersObject(listUserId, requestType, holder,
-                                new OnFriendRequestUserData() {
-                                    @Override
-                                    public void onData(AllUsers model, String userId, FriendRequestViewHolder holder) {
-                                        // bind the {@link AllUsers} model to view
-                                        holder.bind(model, userId);
-                                    }
+                // If data Snapshot does't exists that means user has dealt with all the friend requests
+                // and there is no friend request object for current user so set empty list on callback
+                if (!dataSnapshot.exists()) {
+                    callback.onData(new ArrayList<AllUsers>());
+                    return;
+                }
 
-                                    @Override
-                                    public void onError(String error) {
-                                        callback.onError(error);
-                                    }
-                                });
-                    }
+                // Otherwise loop through data snapshot to get the details about current user
+                for (DataSnapshot data : dataSnapshot.getChildren()) {
+                    FriendRequest object = data.getValue(FriendRequest.class);
+                    if (object != null)
+                        getUsersObject(data.getKey(), object.getRequest_type(), reqList, callback);
+                }
+            }
 
-                    @NonNull
-                    @Override
-                    public FriendRequestViewHolder onCreateViewHolder(@NonNull ViewGroup parent,
-                                                                      int viewType) {
-
-                        // Inflate the view
-                        View view = LayoutInflater.from(parent.getContext())
-                                .inflate(R.layout.friend_request_list_item, parent, false);
-
-                        return new FriendRequestViewHolder(FriendRequestListItemBinding.bind(view),
-                                RequestsUtils.this);
-                    }
-                };
-        // Set call back for firebase recycler adapter, so that in fragment/activity we can start
-        // and stop listing to adapter in onStart() and onPause() methods respectively
-        // By doing so we can get data from Firebase Database
-        callback.onAdapter(adapter);
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                callback.onError(databaseError.getMessage());
+            }
+        });
     }
 
     /**
-     * {@link FriendRequestViewHolder} callback when user clicks on accept friend request button
-     * from list
+     * Call this method to get the detail about user from it's id
      *
-     * @param listUserId Id of a user who has sent current user a request or to whom current user
-     *                   has sent a request
+     * @param key          id of a user to whom current user has sent a request
+     *                     or from received a request
+     * @param request_type request type : sent or received
+     * @param reqList      list of users to whom current user has sent/ from whom received requests
+     * @param callback     DataCallback for list of users and error
      */
-    @Override
-    public void onPositiveClick(String listUserId) {
+    private void getUsersObject(final String key,
+                                final String request_type,
+                                final List<AllUsers> reqList,
+                                @NonNull final OnFriendRequest callback) {
+        sFirebaseUtils.getUsersObject(key, null, new OnUsersData() {
+            @Override
+            public void onData(AllUsers model, String userId, AllUsersViewHolder holder) {
+                model.setId(userId);
+                model.setFriendRequestType(request_type);
+                if (!reqList.contains(model)) {
+                    reqList.add(model);
+                }
+                callback.onData(reqList);
+            }
+
+            @Override
+            public void onError(String error) {
+                callback.onError(error);
+            }
+        });
+    }
+
+    /**
+     * Call this method to accept the friend request
+     * This method will update the Friends object with userIds and simultaneously delete the
+     * friend request references from FriendRequest object from firebase
+     *
+     * @param userId   Id of a user who has sent current user a request or to whom current user
+     *                 has sent a request
+     * @param callback DataCallback for task success/ failure
+     */
+    void acceptFriendRequest(String userId, @NonNull final OnTaskCompletion callback) {
         String currentUserId = DataManager.getCurrentUserId();
         // Get the current date and time
         final String currentDateTime = DateFormat.getDateTimeInstance().format(new Date());
         // HashMap for updating friends object and friend requests object
         Map<String, Object> friendsMap = new HashMap<>();
-        friendsMap.put(IFirebaseConfig.FRIENDS_OBJECT + "/" + currentUserId + "/" + listUserId + "/" + IFirebaseConfig.FRIEND_SINCE, currentDateTime);
-        friendsMap.put(IFirebaseConfig.FRIENDS_OBJECT + "/" + listUserId + "/" + currentUserId + "/" + IFirebaseConfig.FRIEND_SINCE, currentDateTime);
-        friendsMap.put(IFirebaseConfig.FRIEND_REQUEST_OBJECT + "/" + currentUserId + "/" + listUserId, null);
-        friendsMap.put(IFirebaseConfig.FRIEND_REQUEST_OBJECT + "/" + listUserId + "/" + currentUserId, null);
+        friendsMap.put(IFirebaseConfig.FRIENDS_OBJECT + "/" + currentUserId + "/" + userId + "/" + IFirebaseConfig.FRIEND_SINCE, currentDateTime);
+        friendsMap.put(IFirebaseConfig.FRIENDS_OBJECT + "/" + userId + "/" + currentUserId + "/" + IFirebaseConfig.FRIEND_SINCE, currentDateTime);
+        friendsMap.put(IFirebaseConfig.FRIEND_REQUEST_OBJECT + "/" + currentUserId + "/" + userId, null);
+        friendsMap.put(IFirebaseConfig.FRIEND_REQUEST_OBJECT + "/" + userId + "/" + currentUserId, null);
 
         DataManager.getRootRef().updateChildren(friendsMap, new DatabaseReference.CompletionListener() {
             @Override
             public void onComplete(@Nullable DatabaseError databaseError,
                                    @NonNull DatabaseReference databaseReference) {
                 if (databaseError != null) {
+                    callback.onError(databaseError.getMessage());
                     Log.d(LOG_TAG, "Unable to accept request!");
+                } else {
+                    callback.onSuccess();
                 }
             }
         });
     }
 
     /**
-     * {@link FriendRequestViewHolder} callback when user clicks on cancel/decline friend request
-     * button from list
+     * Call this method to cancel or decline the friend request
+     * This method will remove references of friend requests from FriendRequest object in firebase
+     * database
      *
-     * @param listUserId Id of a user who has sent current user a request or to whom current user
-     *                   has sent a request
+     * @param userId   Id of a user who has sent current user a request or to whom current user
+     *                 has sent a request
+     * @param callback DataCallback for task success/ failure
      */
-    @Override
-    public void onNegativeClick(String listUserId) {
+    void ignoreFriendRequest(String userId, @NonNull final OnTaskCompletion callback) {
         String currentUserId = DataManager.getCurrentUserId();
         // HashMap to delete friend requests from friend requests table
         Map<String, Object> cancelMap = new HashMap<>();
-        cancelMap.put(IFirebaseConfig.FRIEND_REQUEST_OBJECT + "/" + currentUserId + "/" + listUserId, null);
-        cancelMap.put(IFirebaseConfig.FRIEND_REQUEST_OBJECT + "/" + listUserId + "/" + currentUserId, null);
+        cancelMap.put(IFirebaseConfig.FRIEND_REQUEST_OBJECT + "/" + currentUserId + "/" + userId, null);
+        cancelMap.put(IFirebaseConfig.FRIEND_REQUEST_OBJECT + "/" + userId + "/" + currentUserId, null);
 
         DataManager.getRootRef().updateChildren(cancelMap, new DatabaseReference.CompletionListener() {
             @Override
             public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
                 if (databaseError != null) {
+                    callback.onError(databaseError.getMessage());
                     Log.d(LOG_TAG, "Unable to cancel request!");
+                } else {
+                    callback.onSuccess();
                 }
             }
         });
