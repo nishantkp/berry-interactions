@@ -29,7 +29,6 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 
 import com.example.nishant.berry.config.IFirebaseConfig;
-import com.example.nishant.berry.data.callbacks.OnFriendRequest;
 import com.example.nishant.berry.data.callbacks.OnTaskCompletion;
 import com.example.nishant.berry.data.callbacks.OnUserInfo;
 import com.example.nishant.berry.data.callbacks.OnUsersData;
@@ -365,7 +364,7 @@ public class DataManager implements DataContract {
      * @param callback DataCallback for list of users and error dealing with firebase database
      */
     @Override
-    public void getFriendRequests(@NonNull OnFriendRequest callback) {
+    public void getFriendRequests(@NonNull OnUsersList callback) {
         sRequestsUtils.getCurrentUsersFriendReq(callback);
     }
 

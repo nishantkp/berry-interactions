@@ -28,7 +28,6 @@ package com.example.nishant.berry.data;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 
-import com.example.nishant.berry.data.callbacks.OnFriendRequest;
 import com.example.nishant.berry.data.callbacks.OnTaskCompletion;
 import com.example.nishant.berry.data.callbacks.OnUserInfo;
 import com.example.nishant.berry.data.callbacks.OnUsersList;
@@ -62,7 +61,7 @@ interface DataContract {
 
     void findUser(@NonNull String searchString, int limit, @NonNull OnUsersList callback);
 
-    void getFriendRequests(@NonNull OnFriendRequest callback);
+    void getFriendRequests(@NonNull OnUsersList callback);
 
     void acceptFriendRequest(@NonNull String userId, @NonNull OnTaskCompletion callback);
 

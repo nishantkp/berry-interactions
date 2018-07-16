@@ -27,8 +27,8 @@ package com.example.nishant.berry.ui.dashboard.fragment.request;
 
 import com.example.nishant.berry.base.BasePresenter;
 import com.example.nishant.berry.data.DataManager;
-import com.example.nishant.berry.data.callbacks.OnFriendRequest;
 import com.example.nishant.berry.data.callbacks.OnTaskCompletion;
+import com.example.nishant.berry.data.callbacks.OnUsersList;
 import com.example.nishant.berry.ui.model.AllUsers;
 
 import java.util.List;
@@ -64,7 +64,7 @@ public class RequestPresenter
      */
     @Override
     public void getFriendRequestList() {
-        mDataManager.getFriendRequests(new OnFriendRequest() {
+        mDataManager.getFriendRequests(new OnUsersList() {
             @Override
             public void onData(List<AllUsers> data) {
                 getView().onFriendReq(data);

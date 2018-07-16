@@ -30,9 +30,9 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.example.nishant.berry.config.IFirebaseConfig;
-import com.example.nishant.berry.data.callbacks.OnFriendRequest;
 import com.example.nishant.berry.data.callbacks.OnTaskCompletion;
 import com.example.nishant.berry.data.callbacks.OnUsersData;
+import com.example.nishant.berry.data.callbacks.OnUsersList;
 import com.example.nishant.berry.ui.adapter.AllUsersViewHolder;
 import com.example.nishant.berry.ui.model.AllUsers;
 import com.example.nishant.berry.ui.model.FriendRequest;
@@ -69,7 +69,7 @@ final class RequestsUtils {
      *
      * @param callback DataCallback for list of users and error
      */
-    void getCurrentUsersFriendReq(@NonNull final OnFriendRequest callback) {
+    void getCurrentUsersFriendReq(@NonNull final OnUsersList callback) {
         // Firebase query for Friend request object
         Query reqQuery = DataManager.getCurrentUserFriendsReqRef();
 
@@ -112,7 +112,7 @@ final class RequestsUtils {
     private void getUsersObject(final String key,
                                 final String request_type,
                                 final List<AllUsers> reqList,
-                                @NonNull final OnFriendRequest callback) {
+                                @NonNull final OnUsersList callback) {
         sFirebaseUtils.getUsersObject(key, null, new OnUsersData() {
             @Override
             public void onData(AllUsers model, String userId, AllUsersViewHolder holder) {
