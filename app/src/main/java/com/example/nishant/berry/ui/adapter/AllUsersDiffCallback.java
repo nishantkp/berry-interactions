@@ -29,7 +29,6 @@ import android.os.Bundle;
 import android.support.v7.util.DiffUtil;
 
 import com.example.nishant.berry.config.IConstants;
-import com.example.nishant.berry.config.IFirebaseConfig;
 import com.example.nishant.berry.ui.model.AllUsers;
 
 import java.util.List;

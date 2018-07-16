@@ -31,7 +31,6 @@ import android.support.annotation.Nullable;
 import com.example.nishant.berry.config.IFirebaseConfig;
 import com.example.nishant.berry.data.callbacks.OnUsersData;
 import com.example.nishant.berry.data.callbacks.OnUsersList;
-import com.example.nishant.berry.ui.adapter.AllUsersViewHolder;
 import com.example.nishant.berry.ui.model.AllUsers;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -91,9 +90,9 @@ final class ChatUtils {
     private void getUsersInfo(final String id,
                               @NonNull final OnUsersList callback) {
         // Use FirebaseUtils method to get information about particular user
-        sFirebaseUtils.getUsersObject(id, null, new OnUsersData() {
+        sFirebaseUtils.getUsersObject(id, new OnUsersData() {
             @Override
-            public void onData(AllUsers model, String userId, AllUsersViewHolder holder) {
+            public void onData(AllUsers model, String userId) {
                 model.setId(id);
                 getLastMessage(model, callback);
             }

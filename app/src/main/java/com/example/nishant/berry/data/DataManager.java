@@ -33,7 +33,6 @@ import com.example.nishant.berry.data.callbacks.OnTaskCompletion;
 import com.example.nishant.berry.data.callbacks.OnUserInfo;
 import com.example.nishant.berry.data.callbacks.OnUsersData;
 import com.example.nishant.berry.data.callbacks.OnUsersList;
-import com.example.nishant.berry.ui.adapter.AllUsersViewHolder;
 import com.example.nishant.berry.ui.model.AllUsers;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ServerValue;
@@ -297,9 +296,9 @@ public class DataManager implements DataContract {
      */
     @Override
     public void getCurrentUserInfo(@NonNull final OnUserInfo callback) {
-        sFirebaseUtils.getUsersObject(getCurrentUserId(), null, new OnUsersData() {
+        sFirebaseUtils.getUsersObject(getCurrentUserId(), new OnUsersData() {
             @Override
-            public void onData(AllUsers model, String userId, AllUsersViewHolder holder) {
+            public void onData(AllUsers model, String userId) {
                 callback.onData(model);
             }
 

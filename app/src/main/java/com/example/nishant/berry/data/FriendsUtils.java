@@ -29,7 +29,6 @@ import android.support.annotation.NonNull;
 
 import com.example.nishant.berry.data.callbacks.OnUsersData;
 import com.example.nishant.berry.data.callbacks.OnUsersList;
-import com.example.nishant.berry.ui.adapter.AllUsersViewHolder;
 import com.example.nishant.berry.ui.dashboard.fragment.friends.FriendsFragment;
 import com.example.nishant.berry.ui.model.AllUsers;
 import com.google.firebase.database.DataSnapshot;
@@ -151,9 +150,9 @@ final class FriendsUtils {
         return Observable.create(new ObservableOnSubscribe<AllUsers>() {
             @Override
             public void subscribe(final ObservableEmitter<AllUsers> emitter) throws Exception {
-                sFirebaseUtils.getUsersObject(id, null, new OnUsersData() {
+                sFirebaseUtils.getUsersObject(id, new OnUsersData() {
                     @Override
-                    public void onData(AllUsers model, String userId, AllUsersViewHolder holder) {
+                    public void onData(AllUsers model, String userId) {
                         // Getting all users here
                         model.setId(id);
                         emitter.onNext(model);
@@ -204,9 +203,9 @@ final class FriendsUtils {
      * @param callback DataCallback for list of friends and error
      */
     private void getInfoFromId(final String userId, final List<AllUsers> list, @NonNull final OnUsersList callback) {
-        sFirebaseUtils.getUsersObject(userId, null, new OnUsersData() {
+        sFirebaseUtils.getUsersObject(userId, new OnUsersData() {
             @Override
-            public void onData(AllUsers model, String userId, AllUsersViewHolder holder) {
+            public void onData(AllUsers model, String userId) {
                 model.setId(userId);
                 // If user doesn't exists in the list, add it
                 if (!list.contains(model)) {

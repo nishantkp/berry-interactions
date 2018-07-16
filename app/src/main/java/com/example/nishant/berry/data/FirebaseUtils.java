@@ -30,7 +30,6 @@ import android.support.annotation.NonNull;
 import com.example.nishant.berry.config.IFirebaseConfig;
 import com.example.nishant.berry.data.callbacks.OnUsersData;
 import com.example.nishant.berry.data.callbacks.OnUsersList;
-import com.example.nishant.berry.ui.adapter.AllUsersViewHolder;
 import com.example.nishant.berry.ui.model.AllUsers;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -171,19 +170,9 @@ final class FirebaseUtils {
      * results
      *
      * @param userId   ID of user, whose information we are interested in
-     * @param holder   AllUsersViewHolder object : especially used for retrieving friends list.
-     *                 So when we use this method to get detail about user in FirebaseRecyclerAdapter
-     *                 we need ViewHolder object in callback to bind the {@link AllUsers} model
-     *                 to view
-     *                 NOTE : We don't do anything with the ViewHolder object in this method, we just
-     *                 need it set the callback
-     *                 Pass null for this parameter when you don't need it.
-     *                 i.e just retrieving a user info from User's object without FirebaseRecyclerAdapter
-     *                 Refer {@link FriendsUtils} class
      * @param callback Users info callback for detail user info and error
      */
     void getUsersObject(@NonNull final String userId,
-                        final AllUsersViewHolder holder,
                         @NonNull final OnUsersData callback) {
         // Database reference for particular reference
         DatabaseReference reference = getMainObjectRef(IFirebaseConfig.USERS_OBJECT).child(userId);
@@ -194,7 +183,7 @@ final class FirebaseUtils {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 // Setup callbacks
-                callback.onData(extractValues(dataSnapshot), userId, holder);
+                callback.onData(extractValues(dataSnapshot), userId);
             }
 
             @Override

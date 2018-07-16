@@ -33,7 +33,6 @@ import com.example.nishant.berry.config.IFirebaseConfig;
 import com.example.nishant.berry.data.callbacks.OnTaskCompletion;
 import com.example.nishant.berry.data.callbacks.OnUsersData;
 import com.example.nishant.berry.data.callbacks.OnUsersList;
-import com.example.nishant.berry.ui.adapter.AllUsersViewHolder;
 import com.example.nishant.berry.ui.model.AllUsers;
 import com.example.nishant.berry.ui.model.FriendRequest;
 import com.google.firebase.database.DataSnapshot;
@@ -113,9 +112,9 @@ final class RequestsUtils {
                                 final String request_type,
                                 final List<AllUsers> reqList,
                                 @NonNull final OnUsersList callback) {
-        sFirebaseUtils.getUsersObject(key, null, new OnUsersData() {
+        sFirebaseUtils.getUsersObject(key, new OnUsersData() {
             @Override
-            public void onData(AllUsers model, String userId, AllUsersViewHolder holder) {
+            public void onData(AllUsers model, String userId) {
                 model.setId(userId);
                 model.setFriendRequestType(request_type);
                 if (!reqList.contains(model)) {

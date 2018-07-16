@@ -25,7 +25,6 @@
 
 package com.example.nishant.berry.data.callbacks;
 
-import com.example.nishant.berry.ui.adapter.AllUsersViewHolder;
 import com.example.nishant.berry.ui.model.AllUsers;
 
 /**
@@ -34,7 +33,7 @@ import com.example.nishant.berry.ui.model.AllUsers;
  * Interface for interacting(i.e getting results from) with DataManager Class
  */
 public interface OnUsersData {
-    void onData(AllUsers model, String userId, AllUsersViewHolder holder);
+    void onData(AllUsers model, String userId);
 
     void onError(String error);
 }
