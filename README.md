@@ -2,6 +2,66 @@
 
 Chat app with firebase.
 
+#### Helpers :smiley:
+
+- Android dataBinding  `(@BindingAdapters + twoWayDatabinding)`
+- Lazy @SingleTon pattern
+- Firebase `LOL`
+- Picasso for image loading
+- RxAndroid2
+- DiffUtils.Callback `@RecyclerView Adapter`
+- Dagger2 `::FUTURE UPDATE::`
+- Test cases `::FUTURE UPDATE::`
+
+#### DiffUtils.Callback `RecyclerView++` :smiley:
+
+As of 24.2.0, RecyclerView support library, v7 package offers really handy utility class called DiffUtil. This class finds the difference between two lists and provides the updated list as an output. This class is used to notify updates to a RecyclerView Adapter.
+<br>For detailed information click [here](https://android.jlelse.eu/smart-way-to-update-recyclerview-using-diffutil-345941a160e0).</br>
+
+```java
+public class UserDiffCallback extends DiffUtil.Callback {
+    protected User[] oldList, newList;
+
+    public UserDiffCallback(User[] oldList, User[] newList) {
+        this.oldList = oldList;
+        this.newList = newList;
+    }
+
+    @Override
+    public int getOldListSize() {
+        return oldList == null ? 0 : oldList.length;
+    }
+
+    @Override
+    public int getNewListSize() {
+        return newList == null ? 0 : newList.length;
+    }
+
+    @Override
+    public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
+        return oldList[oldItemPosition].equals(newList[newItemPosition]);
+    }
+
+    @Override
+    public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
+        return true;
+    }
+}
+```
+Update RecyclerView adapter with,
+```java
+public void updateData(List<AllUsers> data) {
+    // DiffUtils callbacks for calculating difference between new batch of data and old data
+    // So we can update only specific views rather that updating whole list with
+    // notifyDataSetChanged()
+    DiffUtil.DiffResult diffResult =
+            DiffUtil.calculateDiff(new UserDiffCallback(mData, data));
+    mData.clear();
+    mData.addAll(data);
+    diffResult.dispatchUpdatesTo(this);
+}
+```
+
 #### MVP Model
 
 ![berry-model](/ux/berry-model.jpg)
