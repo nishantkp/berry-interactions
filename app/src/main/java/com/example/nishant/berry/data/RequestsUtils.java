@@ -134,6 +134,22 @@ final class RequestsUtils {
      * Call this method to accept the friend request
      * This method will update the Friends object with userIds and simultaneously delete the
      * friend request references from FriendRequest object from firebase
+     * <p>
+     * i.e if user1 accept the request from user2 friends table would look like
+     * Firebase Object Structure:
+     * <p>
+     * friends{
+     * user1_key{
+     * user2_key{
+     * date: currentDate
+     * }
+     * }
+     * user2_key{
+     * user1_key{
+     * date: currentDate
+     * }
+     * }
+     * }
      *
      * @param userId   Id of a user who has sent current user a request or to whom current user
      *                 has sent a request
@@ -189,6 +205,86 @@ final class RequestsUtils {
                 } else {
                     callback.onSuccess();
                 }
+            }
+        });
+    }
+
+    /**
+     * Call this method to send user a friend request
+     * This method also update the Notifications object, so that firebase function gets invoked and
+     * it will send notification to respective device.
+     * <p>
+     * Firebase Object Structure:
+     * friend_request:
+     * <p>
+     * user1_key{
+     * user2_key{
+     * request_type : sent
+     * }
+     * }
+     * <p>
+     * user2_key{
+     * user1_key{
+     * request_type: received
+     * }
+     * }
+     *
+     * @param userId   Id of user to whom current user wants to send request
+     * @param callback DataCallback for task success/ failure
+     */
+    void sendFriendRequest(String userId, @NonNull final OnTaskCompletion callback) {
+        DatabaseReference rootRef = DataManager.getRootRef();
+        String currentUserId = DataManager.getCurrentUserId();
+
+        // Get the notification ID
+        DatabaseReference notificationReference = rootRef.child(IFirebaseConfig.NOTIFICATION_OBJECT).child(userId).push();
+        String notificationId = notificationReference.getKey();
+
+        // HashMap for notification details
+        HashMap<String, String> notificationMap = new HashMap<>();
+        notificationMap.put(IFirebaseConfig.NOTIFICATION_FROM, currentUserId);
+        notificationMap.put(IFirebaseConfig.NOTIFICATION_TYPE, IFirebaseConfig.NOTIFICATION_TYPE_REQUEST);
+
+        // Update database
+        Map<String, Object> requestMap = new HashMap<>();
+        requestMap.put(IFirebaseConfig.FRIEND_REQUEST_OBJECT + "/" + currentUserId + "/" + userId + "/" + IFirebaseConfig.FRIEND_REQUEST_TYPE, IFirebaseConfig.FRIEND_REQUEST_SENT);
+        requestMap.put(IFirebaseConfig.FRIEND_REQUEST_OBJECT + "/" + userId + "/" + currentUserId + "/" + IFirebaseConfig.FRIEND_REQUEST_TYPE, IFirebaseConfig.FRIEND_REQUEST_RECEIVED);
+        requestMap.put(IFirebaseConfig.NOTIFICATION_OBJECT + "/" + userId + "/" + notificationId, notificationMap);
+        rootRef.updateChildren(requestMap, new DatabaseReference.CompletionListener() {
+            @Override
+            public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
+                if (databaseError != null) {
+                    callback.onError("Unable to send friend request");
+                } else {
+                    callback.onSuccess();
+                }
+            }
+        });
+    }
+
+    /**
+     * Call this method to unfriend a user
+     *
+     * @param userId   Id of user to whom current user wants to unfriend
+     * @param callback DataCallback for task success/ failure
+     */
+    void unfriendUser(String userId, @NonNull final OnTaskCompletion callback) {
+        DatabaseReference rootRef = DataManager.getRootRef();
+        String currentUserId = DataManager.getCurrentUserId();
+
+        // HashMap to unfriend user
+        Map<String, Object> unfriendMap = new HashMap<>();
+        unfriendMap.put(IFirebaseConfig.FRIENDS_OBJECT + "/" + currentUserId + "/" + userId, null);
+        unfriendMap.put(IFirebaseConfig.FRIENDS_OBJECT + "/" + userId + "/" + currentUserId, null);
+
+        rootRef.updateChildren(unfriendMap, new DatabaseReference.CompletionListener() {
+            @Override
+            public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
+                if (databaseError != null) {
+                    callback.onError("Error while unfriend!");
+                    return;
+                }
+                callback.onSuccess();
             }
         });
     }

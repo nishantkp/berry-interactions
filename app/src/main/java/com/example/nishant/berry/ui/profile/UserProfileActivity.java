@@ -26,7 +26,6 @@
 package com.example.nishant.berry.ui.profile;
 
 import android.databinding.DataBindingUtil;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.Toast;
 
@@ -35,10 +34,6 @@ import com.example.nishant.berry.base.BaseActivity;
 import com.example.nishant.berry.config.IConstants;
 import com.example.nishant.berry.databinding.ActivityUserProfileBinding;
 import com.example.nishant.berry.ui.model.UserProfile;
-import com.example.nishant.berry.ui.utils.ImageLoad;
-import com.squareup.picasso.Callback;
-import com.squareup.picasso.NetworkPolicy;
-import com.squareup.picasso.Picasso;
 
 public class UserProfileActivity
         extends BaseActivity
@@ -94,16 +89,6 @@ public class UserProfileActivity
     @Override
     public void updateProfile(UserProfile profile) {
         mBinding.setProfile(profile);
-    }
-
-    /**
-     * Use this method to update user avatar
-     *
-     * @param url url of user avatar
-     */
-    @Override
-    public void updateUserProfileAvatar(final String url) {
-        ImageLoad.setImageResource(mBinding.profileAvatar, url);
     }
 
     /**
