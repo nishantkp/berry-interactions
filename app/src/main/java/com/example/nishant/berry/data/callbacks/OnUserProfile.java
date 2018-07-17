@@ -19,37 +19,29 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  *
- * File Created on 06/06/18 8:04 PM by nishant
- * Last Modified on 06/06/18 8:04 PM
+ * File Created on 16/07/18 5:31 PM by nishant
+ * Last Modified on 16/07/18 5:31 PM
  */
 
-package com.example.nishant.berry.ui.profile;
+package com.example.nishant.berry.data.callbacks;
 
-import com.example.nishant.berry.base.MvpView;
-import com.example.nishant.berry.ui.model.UserProfile;
+import com.example.nishant.berry.ui.model.AllUsers;
 
-public interface UserProfileContract {
-    interface View extends MvpView {
-        void onError(String errorMessage);
+/**
+ * User profile callbacks for friend request related data and user information
+ * <p>
+ * Interface for interacting(i.e getting results from) with DataManager Class
+ */
+public interface OnUserProfile {
+    void onFriendRequestReceived();
 
-        void updateProfile(UserProfile profile);
+    void onFriendRequestSent();
 
-        void friendRequestSentSuccessfully(String message);
-    }
+    void onSendFriendRequest();
 
-    interface Presenter {
-        void getDataFromFirebaseDatabase();
+    void onFriend();
 
-        void sendFriendRequestButtonClick();
+    void onData(AllUsers model);
 
-        void sendRequest();
-
-        void cancelRequest();
-
-        void acceptRequest();
-
-        void removeFriend();
-
-        void onDeclineFriendRequestBtnClick();
-    }
+    void onError(String error);
 }

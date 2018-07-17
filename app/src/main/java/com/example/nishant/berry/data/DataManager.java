@@ -26,10 +26,12 @@
 package com.example.nishant.berry.data;
 
 import android.net.Uri;
+import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 
 import com.example.nishant.berry.config.IFirebaseConfig;
 import com.example.nishant.berry.data.callbacks.OnTaskCompletion;
+import com.example.nishant.berry.data.callbacks.OnUserProfile;
 import com.example.nishant.berry.data.callbacks.OnUsersData;
 import com.example.nishant.berry.data.callbacks.OnUsersList;
 import com.example.nishant.berry.ui.model.AllUsers;
@@ -48,6 +50,7 @@ public class DataManager implements DataContract {
     private static ChatUtils sChatUtils;
     private static AccountUtils sAccountUtils;
     private static SearchUtils sSearchUtils;
+    private static ProfileUtils sProfileUtils;
 
     // Lazy Initialization pattern
     private static class StaticHolder {
@@ -69,6 +72,7 @@ public class DataManager implements DataContract {
         sChatUtils = new ChatUtils();
         sAccountUtils = new AccountUtils();
         sSearchUtils = new SearchUtils();
+        sProfileUtils = new ProfileUtils();
     }
 
     /**
@@ -376,5 +380,39 @@ public class DataManager implements DataContract {
     @Override
     public void ignoreFriendRequest(@NonNull String userId, @NonNull OnTaskCompletion callback) {
         sRequestsUtils.ignoreFriendRequest(userId, callback);
+    }
+
+    /**
+     * Call this method to unfriend a user
+     *
+     * @param userId   Id of user which current user wants to unfriend
+     * @param callback DataCallback for task completion
+     */
+    @Override
+    public void unfriendUser(String userId, @NonNull OnTaskCompletion callback) {
+        sRequestsUtils.unfriendUser(userId, callback);
+    }
+
+    /**
+     * Call this method to send friend request to particular user
+     *
+     * @param userId   Id of user to whom current user wants to send friend request
+     * @param callback DataCallback fot task completion
+     */
+    @Override
+    public void sendFriendRequest(String userId, @NonNull OnTaskCompletion callback) {
+        sRequestsUtils.sendFriendRequest(userId, callback);
+    }
+
+    /**
+     * Call this method to get the user's profile
+     *
+     * @param userId   Id of user in which profile we are interested in
+     * @param callback DataCallbacks for friend request sent/ received/ already friend and user's
+     *                 info
+     */
+    @Override
+    public void getUserProfile(String userId, @NonNull OnUserProfile callback) {
+        sProfileUtils.getUserProfile(userId, callback);
     }
 }

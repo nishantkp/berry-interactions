@@ -29,6 +29,7 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 
 import com.example.nishant.berry.data.callbacks.OnTaskCompletion;
+import com.example.nishant.berry.data.callbacks.OnUserProfile;
 import com.example.nishant.berry.data.callbacks.OnUsersData;
 import com.example.nishant.berry.data.callbacks.OnUsersList;
 
@@ -66,4 +67,10 @@ interface DataContract {
     void acceptFriendRequest(@NonNull String userId, @NonNull OnTaskCompletion callback);
 
     void ignoreFriendRequest(@NonNull String userId, @NonNull OnTaskCompletion callback);
+
+    void getUserProfile(String userId, @NonNull final OnUserProfile callback);
+
+    void unfriendUser(String userId, @NonNull final OnTaskCompletion callback);
+
+    void sendFriendRequest(String userId, @NonNull final OnTaskCompletion callback);
 }
