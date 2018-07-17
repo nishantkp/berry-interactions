@@ -50,6 +50,7 @@ public class UserProfilePresenter
         mNewUserId = userId;
         mUserProfile = new UserProfile();
 
+        // Get user's profile
         getDataFromFirebaseDatabase();
     }
 
@@ -138,23 +139,7 @@ public class UserProfilePresenter
     }
 
     /**
-     * Call this method to send friend request
-     * <p>
-     * i.e if user1 sends friend request to user2
-     * <p>
-     * friend_request:
-     * <p>
-     * user1_key{
-     * user2_key{
-     * request_type : sent
-     * }
-     * }
-     * <p>
-     * user2_key{
-     * user1_key{
-     * request_type: received
-     * }
-     * }
+     * Provide implementation of this method to send friend request
      */
     @Override
     public void sendRequest() {
@@ -180,7 +165,7 @@ public class UserProfilePresenter
     }
 
     /**
-     * Call this method to cancel friend request
+     * Provide implementation of this method to cancel friend request
      */
     @Override
     public void cancelRequest() {
@@ -201,24 +186,7 @@ public class UserProfilePresenter
     }
 
     /**
-     * Call this method to accept the friend request
-     * This method will update friends table and remove references of friend request
-     * from friend request table
-     * <p>
-     * i.e if user1 accept the request from user2 friends table would look like
-     * <p>
-     * friends{
-     * user1_key{
-     * user2_key{
-     * date: currentDate
-     * }
-     * }
-     * user2_key{
-     * user1_key{
-     * date: currentDate
-     * }
-     * }
-     * }
+     * Provide implementation of this method to accept the friend request
      */
     @Override
     public void acceptRequest() {
@@ -239,7 +207,7 @@ public class UserProfilePresenter
     }
 
     /**
-     * Call this to unfriend the user
+     * Provide implementation of this method to remove friend
      */
     @Override
     public void removeFriend() {
