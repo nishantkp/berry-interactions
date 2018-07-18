@@ -28,6 +28,7 @@ package com.example.nishant.berry.data;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 
+import com.example.nishant.berry.data.callbacks.OnInteraction;
 import com.example.nishant.berry.data.callbacks.OnTaskCompletion;
 import com.example.nishant.berry.data.callbacks.OnUserProfile;
 import com.example.nishant.berry.data.callbacks.OnUsersData;
@@ -73,4 +74,14 @@ interface DataContract {
     void unfriendUser(String userId, @NonNull final OnTaskCompletion callback);
 
     void sendFriendRequest(String userId, @NonNull final OnTaskCompletion callback);
+
+    void getMessageList(@NonNull final String interactionUserId, @NonNull final OnInteraction callback);
+
+    void getChatUserInfo(@NonNull final String interactionUserId, @NonNull final OnUsersData callback);
+
+    void onInteraction(@NonNull final String interactionUserId,
+                       @NonNull final String message,
+                       @NonNull final OnTaskCompletion callback);
+
+    void loadMoreMessages(@NonNull final String interactionUserId, @NonNull final OnInteraction callback);
 }

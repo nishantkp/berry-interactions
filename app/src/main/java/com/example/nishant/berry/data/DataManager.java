@@ -26,10 +26,10 @@
 package com.example.nishant.berry.data;
 
 import android.net.Uri;
-import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 
 import com.example.nishant.berry.config.IFirebaseConfig;
+import com.example.nishant.berry.data.callbacks.OnInteraction;
 import com.example.nishant.berry.data.callbacks.OnTaskCompletion;
 import com.example.nishant.berry.data.callbacks.OnUserProfile;
 import com.example.nishant.berry.data.callbacks.OnUsersData;
@@ -51,6 +51,7 @@ public class DataManager implements DataContract {
     private static AccountUtils sAccountUtils;
     private static SearchUtils sSearchUtils;
     private static ProfileUtils sProfileUtils;
+    private static InteractionUtils sInteractionUtils;
 
     // Lazy Initialization pattern
     private static class StaticHolder {
@@ -73,6 +74,7 @@ public class DataManager implements DataContract {
         sAccountUtils = new AccountUtils();
         sSearchUtils = new SearchUtils();
         sProfileUtils = new ProfileUtils();
+        sInteractionUtils = new InteractionUtils();
     }
 
     /**
@@ -414,5 +416,56 @@ public class DataManager implements DataContract {
     @Override
     public void getUserProfile(String userId, @NonNull OnUserProfile callback) {
         sProfileUtils.getUserProfile(userId, callback);
+    }
+
+
+    /**
+     * Call this method to get the list of messages send/received by current user and
+     * Id specified in method signature
+     *
+     * @param interactionUserId Id of user with whom current user is chatting
+     * @param callback          DataCallback for list of messages and error
+     */
+    @Override
+    public void getMessageList(@NonNull String interactionUserId, @NonNull OnInteraction callback) {
+        sInteractionUtils.getMessageList(interactionUserId, callback);
+    }
+
+    /**
+     * Call this method to get the info about user with whom current user is chatting
+     *
+     * @param interactionUserId Id of user with whom current user is chatting
+     * @param callback          DataCallback for user info and error
+     */
+    @Override
+    public void getChatUserInfo(@NonNull String interactionUserId, @NonNull OnUsersData callback) {
+        sInteractionUtils.getChatUserInfo(interactionUserId, callback);
+    }
+
+    /**
+     * Call this method to update message database
+     *
+     * @param interactionUserId Id of user with whom current user is chatting
+     * @param message           Message which current user wants to send
+     * @param callback          DataCallback for success/ failure
+     */
+    @Override
+    public void onInteraction(@NonNull String interactionUserId,
+                              @NonNull String message,
+                              @NonNull OnTaskCompletion callback) {
+        sInteractionUtils.onInteraction(interactionUserId, message, callback);
+    }
+
+    /**
+     * Call this method to load more messages i.e second page
+     * When user scrolls the screen or swipe the screen to refresh
+     *
+     * @param interactionUserId If of a user with whom current user if chatting
+     * @param callback          DataCallback for message list, offset for ListView/ RecyclerView
+     *                          and error
+     */
+    @Override
+    public void loadMoreMessages(@NonNull String interactionUserId, @NonNull OnInteraction callback) {
+        sInteractionUtils.loadMoreMessages(interactionUserId, callback);
     }
 }
