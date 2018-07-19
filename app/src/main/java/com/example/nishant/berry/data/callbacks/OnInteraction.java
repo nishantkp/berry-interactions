@@ -40,4 +40,6 @@ public interface OnInteraction {
     void onError(String error);
 
     void listOffset(int position);
+
+    int numOfMessagePerPage();
 }

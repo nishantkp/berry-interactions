@@ -157,6 +157,11 @@ public class InteractionPresenter
             public void listOffset(int position) {
                 /* Not needed for now */
             }
+
+            @Override
+            public int numOfMessagePerPage() {
+                return 20;
+            }
         });
     }
 
@@ -180,6 +185,11 @@ public class InteractionPresenter
             @Override
             public void listOffset(int position) {
                 getView().setLayoutManagerOffset(position);
+            }
+
+            @Override
+            public int numOfMessagePerPage() {
+                return 20;
             }
         });
     }

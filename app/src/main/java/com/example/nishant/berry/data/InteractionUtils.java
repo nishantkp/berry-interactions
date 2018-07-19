@@ -50,11 +50,12 @@ import java.util.Map;
  * interactionUserId
  */
 final class InteractionUtils {
-    private static final int NUMBER_OF_MESSAGES_PER_PAGE = 20;
+    private static final int DEFAULT_NUMBER_OF_MESSAGES_PER_PAGE = 20;
     private String mLastMessageKey = "";
     private String mPreviousMessageKey = "";
     private int mCurrentPage = 1;
     private int mItemPosition = 0;
+    private int mNumberOfMessagesPerPage = 0;
     private DatabaseReference mRootRef;
     private List<Message> mMessageList = new ArrayList<>();
 
@@ -73,10 +74,13 @@ final class InteractionUtils {
         // had chat with
         initInteractionDatabase(interactionUserId, callback);
 
+        mNumberOfMessagesPerPage = callback.numOfMessagePerPage();
+        if (mNumberOfMessagesPerPage == 0) mNumberOfMessagesPerPage = DEFAULT_NUMBER_OF_MESSAGES_PER_PAGE;
+
         Query query = DataManager.getMessageRef()
                 .child(DataManager.getCurrentUserId())
                 .child(interactionUserId)
-                .limitToLast(mCurrentPage * NUMBER_OF_MESSAGES_PER_PAGE);
+                .limitToLast(mCurrentPage * mNumberOfMessagesPerPage);
 
         query.addChildEventListener(new ChildEventListener() {
             @Override
@@ -251,9 +255,12 @@ final class InteractionUtils {
                 .child(DataManager.getCurrentUserId())
                 .child(interactionUserId);
 
+        mNumberOfMessagesPerPage = callback.numOfMessagePerPage();
+        if (mNumberOfMessagesPerPage == 0) mNumberOfMessagesPerPage = DEFAULT_NUMBER_OF_MESSAGES_PER_PAGE;
+
         Query query = messageRef.orderByKey()
                 .endAt(mLastMessageKey)
-                .limitToLast(NUMBER_OF_MESSAGES_PER_PAGE);
+                .limitToLast(mNumberOfMessagesPerPage);
 
         query.addChildEventListener(new ChildEventListener() {
             @Override
@@ -270,7 +277,7 @@ final class InteractionUtils {
 
                 if (mItemPosition == 1) mLastMessageKey = dataSnapshot.getKey();
                 callback.onInteractions(mMessageList);
-                callback.listOffset(NUMBER_OF_MESSAGES_PER_PAGE - 1);
+                callback.listOffset(mNumberOfMessagesPerPage - 1);
             }
 
             @Override
