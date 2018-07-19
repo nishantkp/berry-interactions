@@ -432,17 +432,6 @@ public class DataManager implements DataContract {
     }
 
     /**
-     * Call this method to get the info about user with whom current user is chatting
-     *
-     * @param interactionUserId Id of user with whom current user is chatting
-     * @param callback          DataCallback for user info and error
-     */
-    @Override
-    public void getChatUserInfo(@NonNull String interactionUserId, @NonNull OnUsersData callback) {
-        sInteractionUtils.getChatUserInfo(interactionUserId, callback);
-    }
-
-    /**
      * Call this method to update message database
      *
      * @param interactionUserId Id of user with whom current user is chatting
@@ -460,12 +449,23 @@ public class DataManager implements DataContract {
      * Call this method to load more messages i.e second page
      * When user scrolls the screen or swipe the screen to refresh
      *
-     * @param interactionUserId If of a user with whom current user if chatting
+     * @param interactionUserId Id of a user with whom current user if chatting
      * @param callback          DataCallback for message list, offset for ListView/ RecyclerView
      *                          and error
      */
     @Override
     public void loadMoreMessages(@NonNull String interactionUserId, @NonNull OnInteraction callback) {
         sInteractionUtils.loadMoreMessages(interactionUserId, callback);
+    }
+
+    /**
+     * Call this method to get the basic information about user just by passing Id
+     *
+     * @param userId   Id of a user whose information we are interested in
+     * @param callback DataCallback for user info and error
+     */
+    @Override
+    public void getUserInfoFromId(String userId, @NonNull OnUsersData callback) {
+        sFirebaseUtils.getUsersObject(userId, callback);
     }
 }

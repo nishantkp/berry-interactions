@@ -77,11 +77,11 @@ interface DataContract {
 
     void getMessageList(@NonNull final String interactionUserId, @NonNull final OnInteraction callback);
 
-    void getChatUserInfo(@NonNull final String interactionUserId, @NonNull final OnUsersData callback);
-
     void onInteraction(@NonNull final String interactionUserId,
                        @NonNull final String message,
                        @NonNull final OnTaskCompletion callback);
 
     void loadMoreMessages(@NonNull final String interactionUserId, @NonNull final OnInteraction callback);
+
+    void getUserInfoFromId(String userId, @NonNull final OnUsersData callback);
 }

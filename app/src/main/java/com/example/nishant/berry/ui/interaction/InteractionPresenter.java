@@ -83,7 +83,7 @@ public class InteractionPresenter
      */
     @Override
     public void extractBasicInfoDatabase() {
-        mDataManager.getChatUserInfo(mInteractionUserId, new OnUsersData() {
+        mDataManager.getUserInfoFromId(mInteractionUserId, new OnUsersData() {
             @Override
             public void onData(AllUsers model, String userId) {
                 String onlineStatus;

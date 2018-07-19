@@ -31,8 +31,6 @@ import android.support.annotation.Nullable;
 import com.example.nishant.berry.config.IFirebaseConfig;
 import com.example.nishant.berry.data.callbacks.OnInteraction;
 import com.example.nishant.berry.data.callbacks.OnTaskCompletion;
-import com.example.nishant.berry.data.callbacks.OnUsersData;
-import com.example.nishant.berry.ui.model.AllUsers;
 import com.example.nishant.berry.ui.model.Message;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -52,9 +50,7 @@ import java.util.Map;
  * interactionUserId
  */
 final class InteractionUtils {
-
     private static final int NUMBER_OF_MESSAGES_PER_PAGE = 20;
-    private static FirebaseUtils sFirebaseUtils;
     private String mLastMessageKey = "";
     private String mPreviousMessageKey = "";
     private int mCurrentPage = 1;
@@ -63,7 +59,6 @@ final class InteractionUtils {
     private List<Message> mMessageList = new ArrayList<>();
 
     InteractionUtils() {
-        sFirebaseUtils = new FirebaseUtils();
         mRootRef = DataManager.getRootRef();
     }
 
@@ -131,26 +126,6 @@ final class InteractionUtils {
                         .child(key)
                         .child(IFirebaseConfig.MESSAGE_SEEN);
         seenMessageRef.setValue(true);
-    }
-
-    /**
-     * Call this method to get information about chat user
-     *
-     * @param interactionUserId Id of user with whom current user is chatting
-     * @param callback          DataCallback for user information and error
-     */
-    void getChatUserInfo(@NonNull final String interactionUserId, @NonNull final OnUsersData callback) {
-        sFirebaseUtils.getUsersObject(interactionUserId, new OnUsersData() {
-            @Override
-            public void onData(AllUsers model, String userId) {
-                callback.onData(model, userId);
-            }
-
-            @Override
-            public void onError(String error) {
-                callback.onError(error);
-            }
-        });
     }
 
     /**
