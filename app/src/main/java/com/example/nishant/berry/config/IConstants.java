@@ -25,6 +25,9 @@
 
 package com.example.nishant.berry.config;
 
+/**
+ * General Constants and Keys
+ */
 public interface IConstants {
     String KEY_STATUS_INTENT = "status";
     String KEY_USER_ID = "user_id";
