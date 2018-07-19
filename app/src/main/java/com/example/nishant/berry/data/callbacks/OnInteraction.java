@@ -19,44 +19,27 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  *
- * File Created on 11/06/18 11:27 PM by nishant
- * Last Modified on 11/06/18 11:27 PM
+ * File Created on 17/07/18 7:33 PM by nishant
+ * Last Modified on 17/07/18 7:33 PM
  */
 
-package com.example.nishant.berry.ui.interaction;
+package com.example.nishant.berry.data.callbacks;
 
-import com.example.nishant.berry.base.MvpView;
-import com.example.nishant.berry.ui.model.InteractionActionBar;
 import com.example.nishant.berry.ui.model.Message;
 
 import java.util.List;
 
-public interface InteractionContract {
-    interface View extends MvpView {
-        void setActionBar(InteractionActionBar model);
+/**
+ * User interaction callbacks
+ * <p>
+ * Interface for interacting(i.e getting results from) with DataManager Class
+ */
+public interface OnInteraction {
+    void onInteractions(List<Message> messageList);
 
-        void updateMessageList(List<Message> messageList);
+    void onError(String error);
 
-        void clearEditTextField();
+    void listOffset(int position);
 
-        void setUpRecyclerView();
-
-        void onSwipeRefreshComplete();
-
-        void interactionUserAvatar(String url);
-
-        void setLayoutManagerOffset(int position);
-
-        void onError(String error);
-    }
-
-    interface Presenter {
-        void extractBasicInfoDatabase();
-
-        void onInteractions(String message);
-
-        void updateMessageList();
-
-        void swipeMessageRefresh();
-    }
+    int numOfMessagePerPage();
 }

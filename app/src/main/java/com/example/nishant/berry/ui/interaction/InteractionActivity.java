@@ -30,12 +30,14 @@ import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.LinearLayoutManager;
+import android.util.Log;
 import android.view.View;
 
 import com.example.nishant.berry.R;
 import com.example.nishant.berry.base.BaseActivity;
 import com.example.nishant.berry.databinding.ActivityInteractionBinding;
 import com.example.nishant.berry.databinding.InteractionCustomBarBinding;
+import com.example.nishant.berry.ui.adapter.InteractionAdapter;
 import com.example.nishant.berry.ui.adapter.MessageAdapter;
 import com.example.nishant.berry.ui.model.Interaction;
 import com.example.nishant.berry.ui.model.InteractionActionBar;
@@ -50,6 +52,7 @@ public class InteractionActivity
         extends BaseActivity
         implements InteractionContract.View {
 
+    private static final String LOG_TAG = InteractionActivity.class.getSimpleName();
     private InteractionPresenter mPresenter;
     private ActivityInteractionBinding mBinding;
     private MessageAdapter mAdapter;
@@ -165,5 +168,11 @@ public class InteractionActivity
     @Override
     public void setLayoutManagerOffset(int position) {
         mLinearLayoutManager.scrollToPositionWithOffset(position, 0);
+    }
+
+    @Override
+    public void onError(String error) {
+        // Just log errors
+        Log.d(LOG_TAG, error);
     }
 }
