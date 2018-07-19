@@ -12,6 +12,8 @@ Chat app with firebase.
 - DiffUtils.Callback `@RecyclerView Adapter`
 - Dagger2 `::FUTURE UPDATE::`
 - Test cases `::FUTURE UPDATE::`
+- Java Lambdas `::FUTURE UPDATE::`
+- Kotlin Code-base `::FUTURE UPDATE::`
 
 #### DiffUtils.Callback `RecyclerView++` :smiley:
 
