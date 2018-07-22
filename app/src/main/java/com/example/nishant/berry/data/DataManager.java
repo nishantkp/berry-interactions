@@ -41,15 +41,15 @@ import com.google.firebase.database.DatabaseReference;
  * Data Manager class, that deals with business logic
  */
 public class DataManager implements DataContract {
-    private FirebaseUtils mFirebaseUtils;
-    private FriendsUtils mFriendsUtils;
-    private RequestsUtils mRequestsUtils;
-    private SettingsUtils mSettingsUtils;
-    private ChatUtils mChatUtils;
-    private AccountUtils mAccountUtils;
-    private SearchUtils mSearchUtils;
-    private ProfileUtils mProfileUtils;
-    private InteractionUtils mInteractionUtils;
+    private FbUsersUseCase mFbUsersUseCase;
+    private FriendsUseCase mFriendsUseCase;
+    private RequestsUseCase mRequestsUseCase;
+    private SettingsUseCase mSettingsUseCase;
+    private ChatUseCase mChatUseCase;
+    private AccountUseCase mAccountUseCase;
+    private SearchUseCase mSearchUseCase;
+    private ProfileUseCase mProfileUseCase;
+    private InteractionUseCase mInteractionUseCase;
 
     // Lazy Initialization pattern
     private static class StaticHolder {
@@ -64,15 +64,15 @@ public class DataManager implements DataContract {
      * Private constructor so no one can make object of a data manager
      */
     private DataManager() {
-        mFirebaseUtils = new FirebaseUtils();
-        mFriendsUtils = new FriendsUtils(mFirebaseUtils);
-        mRequestsUtils = new RequestsUtils(mFirebaseUtils);
-        mSettingsUtils = new SettingsUtils(mFirebaseUtils);
-        mChatUtils = new ChatUtils(mFirebaseUtils);
-        mAccountUtils = new AccountUtils(mFirebaseUtils);
-        mSearchUtils = new SearchUtils(mFirebaseUtils);
-        mProfileUtils = new ProfileUtils(mFirebaseUtils);
-        mInteractionUtils = new InteractionUtils(mFirebaseUtils);
+        mFbUsersUseCase = new FbUsersUseCase();
+        mFriendsUseCase = new FriendsUseCase(mFbUsersUseCase);
+        mRequestsUseCase = new RequestsUseCase(mFbUsersUseCase);
+        mSettingsUseCase = new SettingsUseCase(mFbUsersUseCase);
+        mChatUseCase = new ChatUseCase(mFbUsersUseCase);
+        mAccountUseCase = new AccountUseCase(mFbUsersUseCase);
+        mSearchUseCase = new SearchUseCase(mFbUsersUseCase);
+        mProfileUseCase = new ProfileUseCase(mFbUsersUseCase);
+        mInteractionUseCase = new InteractionUseCase(mFbUsersUseCase);
     }
 
     /**
@@ -82,7 +82,7 @@ public class DataManager implements DataContract {
      */
     @Override
     public DatabaseReference getCurrentUsersRef() {
-        return mFirebaseUtils.getCurrentUserRefFromMainObject(IFirebaseConfig.USERS_OBJECT);
+        return mFbUsersUseCase.getCurrentUserRefFromMainObject(IFirebaseConfig.USERS_OBJECT);
     }
 
     /**
@@ -90,7 +90,7 @@ public class DataManager implements DataContract {
      */
     @Override
     public void signOutUser() {
-        mFirebaseUtils.signOut();
+        mFbUsersUseCase.signOut();
     }
 
     /**
@@ -100,7 +100,7 @@ public class DataManager implements DataContract {
      */
     @Override
     public boolean isCurrentUserAvailable() {
-        return mFirebaseUtils.isCurrentUserAvailable();
+        return mFbUsersUseCase.isCurrentUserAvailable();
     }
 
     /**
@@ -114,7 +114,7 @@ public class DataManager implements DataContract {
     public void loginUser(@NonNull String email,
                           @NonNull String password,
                           @NonNull OnTaskCompletion callback) {
-        mAccountUtils.signInUser(email, password, callback);
+        mAccountUseCase.signInUser(email, password, callback);
     }
 
     /**
@@ -130,7 +130,7 @@ public class DataManager implements DataContract {
                            @NonNull String email,
                            @NonNull String password,
                            @NonNull OnTaskCompletion callback) {
-        mAccountUtils.signUpUser(displayName, email, password, callback);
+        mAccountUseCase.signUpUser(displayName, email, password, callback);
     }
 
     /**
@@ -142,7 +142,7 @@ public class DataManager implements DataContract {
     @Override
     public void saveUserStatus(@NonNull String status,
                                @NonNull OnTaskCompletion callback) {
-        mAccountUtils.saveUserStatus(status, callback);
+        mAccountUseCase.saveUserStatus(status, callback);
     }
 
     /**
@@ -152,7 +152,7 @@ public class DataManager implements DataContract {
      */
     @Override
     public void getAllRegisteredUsers(@NonNull OnUsersList callback) {
-        mFirebaseUtils.getAllRegisteredUsers(callback);
+        mFbUsersUseCase.getAllRegisteredUsers(callback);
     }
 
     /**
@@ -163,7 +163,7 @@ public class DataManager implements DataContract {
      */
     @Override
     public void getCurrentUserInfo(@NonNull final OnUsersData callback) {
-        mFirebaseUtils.getUsersObject(mFirebaseUtils.getCurrentUserId(), callback);
+        mFbUsersUseCase.getUsersObject(mFbUsersUseCase.getCurrentUserId(), callback);
     }
 
     /**
@@ -176,7 +176,7 @@ public class DataManager implements DataContract {
     public void storeAvatar(Uri avatarUri,
                             final byte[] thumbnailByte,
                             final @NonNull OnTaskCompletion callback) {
-        mSettingsUtils.storeAvatarToFirebaseDatabase(avatarUri, thumbnailByte, callback);
+        mSettingsUseCase.storeAvatarToFirebaseDatabase(avatarUri, thumbnailByte, callback);
     }
 
     /**
@@ -188,7 +188,7 @@ public class DataManager implements DataContract {
      */
     @Override
     public void getChatList(@NonNull final OnUsersList callback) {
-        mChatUtils.getUsersInteraction(callback);
+        mChatUseCase.getUsersInteraction(callback);
     }
 
     /**
@@ -198,7 +198,7 @@ public class DataManager implements DataContract {
      */
     @Override
     public void fetchFriends(@NonNull final OnUsersList callback) {
-        mFriendsUtils.getAllFriends(callback);
+        mFriendsUseCase.getAllFriends(callback);
     }
 
     /**
@@ -210,7 +210,7 @@ public class DataManager implements DataContract {
      */
     @Override
     public void findUser(@NonNull String searchString, int limit, @NonNull OnUsersList callback) {
-        mSearchUtils.findUser(searchString, limit, callback);
+        mSearchUseCase.findUser(searchString, limit, callback);
     }
 
     /**
@@ -221,7 +221,7 @@ public class DataManager implements DataContract {
      */
     @Override
     public void getFriendRequests(@NonNull OnUsersList callback) {
-        mRequestsUtils.getCurrentUsersFriendReq(callback);
+        mRequestsUseCase.getCurrentUsersFriendReq(callback);
     }
 
     /**
@@ -232,7 +232,7 @@ public class DataManager implements DataContract {
      */
     @Override
     public void acceptFriendRequest(@NonNull String userId, @NonNull OnTaskCompletion callback) {
-        mRequestsUtils.acceptFriendRequest(userId, callback);
+        mRequestsUseCase.acceptFriendRequest(userId, callback);
     }
 
     /**
@@ -243,7 +243,7 @@ public class DataManager implements DataContract {
      */
     @Override
     public void ignoreFriendRequest(@NonNull String userId, @NonNull OnTaskCompletion callback) {
-        mRequestsUtils.ignoreFriendRequest(userId, callback);
+        mRequestsUseCase.ignoreFriendRequest(userId, callback);
     }
 
     /**
@@ -254,7 +254,7 @@ public class DataManager implements DataContract {
      */
     @Override
     public void unfriendUser(String userId, @NonNull OnTaskCompletion callback) {
-        mRequestsUtils.unfriendUser(userId, callback);
+        mRequestsUseCase.unfriendUser(userId, callback);
     }
 
     /**
@@ -265,7 +265,7 @@ public class DataManager implements DataContract {
      */
     @Override
     public void sendFriendRequest(String userId, @NonNull OnTaskCompletion callback) {
-        mRequestsUtils.sendFriendRequest(userId, callback);
+        mRequestsUseCase.sendFriendRequest(userId, callback);
     }
 
     /**
@@ -277,7 +277,7 @@ public class DataManager implements DataContract {
      */
     @Override
     public void getUserProfile(String userId, @NonNull OnUserProfile callback) {
-        mProfileUtils.getUserProfile(userId, callback);
+        mProfileUseCase.getUserProfile(userId, callback);
     }
 
 
@@ -290,7 +290,7 @@ public class DataManager implements DataContract {
      */
     @Override
     public void getMessageList(@NonNull String interactionUserId, @NonNull OnInteraction callback) {
-        mInteractionUtils.getMessageList(interactionUserId, callback);
+        mInteractionUseCase.getMessageList(interactionUserId, callback);
     }
 
     /**
@@ -304,7 +304,7 @@ public class DataManager implements DataContract {
     public void onInteraction(@NonNull String interactionUserId,
                               @NonNull String message,
                               @NonNull OnTaskCompletion callback) {
-        mInteractionUtils.onInteraction(interactionUserId, message, callback);
+        mInteractionUseCase.onInteraction(interactionUserId, message, callback);
     }
 
     /**
@@ -317,7 +317,7 @@ public class DataManager implements DataContract {
      */
     @Override
     public void loadMoreMessages(@NonNull String interactionUserId, @NonNull OnInteraction callback) {
-        mInteractionUtils.loadMoreMessages(interactionUserId, callback);
+        mInteractionUseCase.loadMoreMessages(interactionUserId, callback);
     }
 
     /**
@@ -328,6 +328,6 @@ public class DataManager implements DataContract {
      */
     @Override
     public void getUserInfoFromId(String userId, @NonNull OnUsersData callback) {
-        mFirebaseUtils.getUsersObject(userId, callback);
+        mFbUsersUseCase.getUsersObject(userId, callback);
     }
 }

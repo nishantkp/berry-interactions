@@ -49,10 +49,10 @@ import java.util.List;
 /**
  * Firebase Utility class
  */
-final class FirebaseUtils {
+final class FbUsersUseCase {
     private List<AllUsers> mAllUsersList = new LinkedList<>();
 
-    FirebaseUtils() {
+    FbUsersUseCase() {
     }
 
     /**

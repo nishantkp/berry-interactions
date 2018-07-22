@@ -40,11 +40,11 @@ import com.google.firebase.storage.UploadTask;
  * Utility class that deals with storing user avatar and thumbnail to FirebaseStorage
  * i.e usually required for {@link SettingsActivity}, {@link SettingsPresenter}
  */
-final class SettingsUtils {
-    private FirebaseUtils mFirebaseUtils;
+final class SettingsUseCase {
+    private FbUsersUseCase mFbUsersUseCase;
 
-    SettingsUtils(FirebaseUtils firebaseUtils) {
-        mFirebaseUtils = firebaseUtils;
+    SettingsUseCase(FbUsersUseCase fbUsersUseCase) {
+        mFbUsersUseCase = fbUsersUseCase;
     }
 
     /**
@@ -57,7 +57,7 @@ final class SettingsUtils {
     void storeAvatarToFirebaseDatabase(Uri avatarUri,
                                        final byte[] thumbnailByte,
                                        final @NonNull OnTaskCompletion callback) {
-        mFirebaseUtils.getAvatarStorageRef().putFile(avatarUri)
+        mFbUsersUseCase.getAvatarStorageRef().putFile(avatarUri)
                 .addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
@@ -79,7 +79,7 @@ final class SettingsUtils {
      */
     private void uploadAvatarThumbnail(byte[] thumbnailBytes,
                                        final @NonNull OnTaskCompletion callback) {
-        UploadTask uploadTask = mFirebaseUtils.getAvatarThumbnailStorageRef().putBytes(thumbnailBytes);
+        UploadTask uploadTask = mFbUsersUseCase.getAvatarThumbnailStorageRef().putBytes(thumbnailBytes);
         uploadTask.addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
@@ -101,7 +101,7 @@ final class SettingsUtils {
      */
     private void getDownloadUrlFromStorageRef(final @NonNull OnTaskCompletion callback) {
         // Get the download url of original avatar
-        mFirebaseUtils.getAvatarStorageRef().getDownloadUrl()
+        mFbUsersUseCase.getAvatarStorageRef().getDownloadUrl()
                 .addOnCompleteListener(new OnCompleteListener<Uri>() {
                     @Override
                     public void onComplete(@NonNull Task<Uri> task) {
@@ -116,7 +116,7 @@ final class SettingsUtils {
                 });
 
         // Get the download url of avatar thumbnail
-        mFirebaseUtils.getAvatarThumbnailStorageRef().getDownloadUrl()
+        mFbUsersUseCase.getAvatarThumbnailStorageRef().getDownloadUrl()
                 .addOnCompleteListener(new OnCompleteListener<Uri>() {
                     @Override
                     public void onComplete(@NonNull Task<Uri> task) {
@@ -141,7 +141,7 @@ final class SettingsUtils {
     private void updateDatabaseWithAvatarUrl(String url,
                                              String field,
                                              final @NonNull OnTaskCompletion callback) {
-        mFirebaseUtils.getCurrentUsersRef().child(field).setValue(url)
+        mFbUsersUseCase.getCurrentUsersRef().child(field).setValue(url)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {

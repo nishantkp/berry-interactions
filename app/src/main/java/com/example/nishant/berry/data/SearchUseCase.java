@@ -41,11 +41,11 @@ import java.util.List;
 /**
  * Utility class the deals with finding user from User's database in Firebase Database
  */
-final class SearchUtils {
-    private FirebaseUtils mFirebaseUtils;
+final class SearchUseCase {
+    private FbUsersUseCase mFbUsersUseCase;
 
-    SearchUtils(FirebaseUtils firebaseUtils) {
-        mFirebaseUtils = firebaseUtils;
+    SearchUseCase(FbUsersUseCase fbUsersUseCase) {
+        mFbUsersUseCase = fbUsersUseCase;
     }
 
     /**
@@ -57,7 +57,7 @@ final class SearchUtils {
      */
     void findUser(String searchString, int limit, @NonNull final OnUsersList callback) {
         // Firebase database Query of Users object
-        Query databaseQuery = mFirebaseUtils.getUsersRef()
+        Query databaseQuery = mFbUsersUseCase.getUsersRef()
                 .orderByChild(IFirebaseConfig.NAME)
                 .startAt(searchString.toUpperCase())
                 .endAt(searchString.toLowerCase() + "\uf8ff")

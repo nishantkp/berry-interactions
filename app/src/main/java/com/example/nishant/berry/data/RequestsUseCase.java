@@ -52,13 +52,13 @@ import java.util.Map;
  * Utility class which deals with displaying friend request and performing action when
  * accept/cancel/decline button is pressed
  */
-final class RequestsUtils {
+final class RequestsUseCase {
     // Log tag
-    private static final String LOG_TAG = RequestsUtils.class.getSimpleName();
-    private FirebaseUtils mFirebaseUtils;
+    private static final String LOG_TAG = RequestsUseCase.class.getSimpleName();
+    private FbUsersUseCase mFbUsersUseCase;
 
-    RequestsUtils(FirebaseUtils firebaseUtils) {
-        mFirebaseUtils = firebaseUtils;
+    RequestsUseCase(FbUsersUseCase fbUsersUseCase) {
+        mFbUsersUseCase = fbUsersUseCase;
     }
 
     /**
@@ -69,7 +69,7 @@ final class RequestsUtils {
      */
     void getCurrentUsersFriendReq(@NonNull final OnUsersList callback) {
         // Firebase query for Friend request object
-        Query reqQuery = mFirebaseUtils.getCurrentUserFriendsReqRef();
+        Query reqQuery = mFbUsersUseCase.getCurrentUserFriendsReqRef();
 
         reqQuery.addValueEventListener(new ValueEventListener() {
             @Override
@@ -111,7 +111,7 @@ final class RequestsUtils {
                                 final String request_type,
                                 final List<AllUsers> reqList,
                                 @NonNull final OnUsersList callback) {
-        mFirebaseUtils.getUsersObject(key, new OnUsersData() {
+        mFbUsersUseCase.getUsersObject(key, new OnUsersData() {
             @Override
             public void onData(AllUsers model, String userId) {
                 model.setId(userId);
@@ -155,7 +155,7 @@ final class RequestsUtils {
      * @param callback DataCallback for task success/ failure
      */
     void acceptFriendRequest(String userId, @NonNull final OnTaskCompletion callback) {
-        String currentUserId = mFirebaseUtils.getCurrentUserId();
+        String currentUserId = mFbUsersUseCase.getCurrentUserId();
         // Get the current date and time
         final String currentDateTime = DateFormat.getDateTimeInstance().format(new Date());
         // HashMap for updating friends object and friend requests object
@@ -165,7 +165,7 @@ final class RequestsUtils {
         friendsMap.put(IFirebaseConfig.FRIEND_REQUEST_OBJECT + "/" + currentUserId + "/" + userId, null);
         friendsMap.put(IFirebaseConfig.FRIEND_REQUEST_OBJECT + "/" + userId + "/" + currentUserId, null);
 
-        mFirebaseUtils.getRootRef().updateChildren(friendsMap, new DatabaseReference.CompletionListener() {
+        mFbUsersUseCase.getRootRef().updateChildren(friendsMap, new DatabaseReference.CompletionListener() {
             @Override
             public void onComplete(@Nullable DatabaseError databaseError,
                                    @NonNull DatabaseReference databaseReference) {
@@ -189,13 +189,13 @@ final class RequestsUtils {
      * @param callback DataCallback for task success/ failure
      */
     void ignoreFriendRequest(String userId, @NonNull final OnTaskCompletion callback) {
-        String currentUserId = mFirebaseUtils.getCurrentUserId();
+        String currentUserId = mFbUsersUseCase.getCurrentUserId();
         // HashMap to delete friend requests from friend requests table
         Map<String, Object> cancelMap = new HashMap<>();
         cancelMap.put(IFirebaseConfig.FRIEND_REQUEST_OBJECT + "/" + currentUserId + "/" + userId, null);
         cancelMap.put(IFirebaseConfig.FRIEND_REQUEST_OBJECT + "/" + userId + "/" + currentUserId, null);
 
-        mFirebaseUtils.getRootRef().updateChildren(cancelMap, new DatabaseReference.CompletionListener() {
+        mFbUsersUseCase.getRootRef().updateChildren(cancelMap, new DatabaseReference.CompletionListener() {
             @Override
             public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
                 if (databaseError != null) {
@@ -232,8 +232,8 @@ final class RequestsUtils {
      * @param callback DataCallback for task success/ failure
      */
     void sendFriendRequest(String userId, @NonNull final OnTaskCompletion callback) {
-        DatabaseReference rootRef = mFirebaseUtils.getRootRef();
-        String currentUserId = mFirebaseUtils.getCurrentUserId();
+        DatabaseReference rootRef = mFbUsersUseCase.getRootRef();
+        String currentUserId = mFbUsersUseCase.getCurrentUserId();
 
         // Get the notification ID
         DatabaseReference notificationReference = rootRef.child(IFirebaseConfig.NOTIFICATION_OBJECT).child(userId).push();
@@ -268,8 +268,8 @@ final class RequestsUtils {
      * @param callback DataCallback for task success/ failure
      */
     void unfriendUser(String userId, @NonNull final OnTaskCompletion callback) {
-        DatabaseReference rootRef = mFirebaseUtils.getRootRef();
-        String currentUserId = mFirebaseUtils.getCurrentUserId();
+        DatabaseReference rootRef = mFbUsersUseCase.getRootRef();
+        String currentUserId = mFbUsersUseCase.getCurrentUserId();
 
         // HashMap to unfriend user
         Map<String, Object> unfriendMap = new HashMap<>();

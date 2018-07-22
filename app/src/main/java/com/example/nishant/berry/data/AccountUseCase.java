@@ -43,11 +43,11 @@ import java.util.Map;
 /**
  * Class that deals with login and signUp of user, saving status
  */
-final class AccountUtils {
-    private FirebaseUtils mFirebaseUtils;
+final class AccountUseCase {
+    private FbUsersUseCase mFbUsersUseCase;
 
-    AccountUtils(FirebaseUtils firebaseUtils) {
-        mFirebaseUtils = firebaseUtils;
+    AccountUseCase(FbUsersUseCase fbUsersUseCase) {
+        mFbUsersUseCase = fbUsersUseCase;
     }
 
     //--------------------------------------------------------------------------------------------//
@@ -64,7 +64,7 @@ final class AccountUtils {
     public void signInUser(@NonNull final String email,
                            @NonNull final String password,
                            @NonNull final OnTaskCompletion callback) {
-        mFirebaseUtils.getFirebaseAuth()
+        mFbUsersUseCase.getFirebaseAuth()
                 .signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
@@ -86,14 +86,14 @@ final class AccountUtils {
     private void updateUserDatabase(@NonNull final OnTaskCompletion callback) {
         // Get the device token
         String deviceToken = FirebaseInstanceId.getInstance().getToken();
-        String userId = mFirebaseUtils.getCurrentUserId();
+        String userId = mFbUsersUseCase.getCurrentUserId();
 
         Map<String, Object> singInMap = new HashMap<>();
         singInMap.put(IFirebaseConfig.DEVICE_TOKEN_ID, deviceToken);
         singInMap.put(IFirebaseConfig.ONLINE, true);
 
         // Store token Id to users database
-        mFirebaseUtils.getUsersRef().child(userId).updateChildren(singInMap,
+        mFbUsersUseCase.getUsersRef().child(userId).updateChildren(singInMap,
                 new DatabaseReference.CompletionListener() {
                     @Override
                     public void onComplete(@Nullable DatabaseError databaseError,
@@ -124,7 +124,7 @@ final class AccountUtils {
                     @NonNull String password,
                     @NonNull final OnTaskCompletion callback) {
         // Register user with email, password and cancel progress dialog
-        mFirebaseUtils.getFirebaseAuth().createUserWithEmailAndPassword(email, password)
+        mFbUsersUseCase.getFirebaseAuth().createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
@@ -158,7 +158,7 @@ final class AccountUtils {
         userMap.put(IFirebaseConfig.ONLINE, true);
 
         // Set the values to Firebase database
-        mFirebaseUtils.getCurrentUsersRef().setValue(userMap)
+        mFbUsersUseCase.getCurrentUsersRef().setValue(userMap)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
@@ -183,7 +183,7 @@ final class AccountUtils {
      */
     void saveUserStatus(@NonNull String status,
                         @NonNull final OnTaskCompletion callback) {
-        mFirebaseUtils.getCurrentUsersRef().child(IFirebaseConfig.STATUS).setValue(status)
+        mFbUsersUseCase.getCurrentUsersRef().child(IFirebaseConfig.STATUS).setValue(status)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {

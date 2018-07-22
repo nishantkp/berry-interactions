@@ -41,11 +41,11 @@ import java.util.Objects;
  * Utility class that is responsible for getting user profile and friend request status from
  * firebase database
  */
-final class ProfileUtils {
-    private FirebaseUtils mFirebaseUtils;
+final class ProfileUseCase {
+    private FbUsersUseCase mFbUsersUseCase;
 
-    ProfileUtils(FirebaseUtils firebaseUtils) {
-        mFirebaseUtils = firebaseUtils;
+    ProfileUseCase(FbUsersUseCase fbUsersUseCase) {
+        mFbUsersUseCase = fbUsersUseCase;
     }
 
     /**
@@ -59,7 +59,7 @@ final class ProfileUtils {
      * @param callback DataCallback for user info, friend request status and error
      */
     void getUserProfile(String userId, @NonNull final OnUserProfile callback) {
-        mFirebaseUtils.getUsersObject(userId, new OnUsersData() {
+        mFbUsersUseCase.getUsersObject(userId, new OnUsersData() {
             @Override
             public void onData(final AllUsers model, final String userId) {
                 model.setId(userId);
@@ -84,7 +84,7 @@ final class ProfileUtils {
      * @param callback DataCallback for friend request status and error
      */
     private void queryFriendRequestDatabase(final String userId, @NonNull final OnUserProfile callback) {
-        mFirebaseUtils.getFriendReqRef().child(mFirebaseUtils.getCurrentUserId())
+        mFbUsersUseCase.getFriendReqRef().child(mFbUsersUseCase.getCurrentUserId())
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -122,7 +122,7 @@ final class ProfileUtils {
      * @param callback DataCallback for friends status and error
      */
     private void queryFriendsDatabase(final String userId, @NonNull final OnUserProfile callback) {
-        mFirebaseUtils.getFriendsRef().child(mFirebaseUtils.getCurrentUserId())
+        mFbUsersUseCase.getFriendsRef().child(mFbUsersUseCase.getCurrentUserId())
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {

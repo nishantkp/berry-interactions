@@ -44,13 +44,13 @@ import java.util.List;
 /**
  * ChatUtility class to display chat list
  */
-final class ChatUtils {
+final class ChatUseCase {
     // TODO: Use stack instead linkedList to store interaction data : <<<FUTURE UPDATE>>>
     private static List<AllUsers> mData = new LinkedList<>();
-    private FirebaseUtils mFirebaseUtils;
+    private FbUsersUseCase mFbUsersUseCase;
 
-    ChatUtils(FirebaseUtils firebaseUtils) {
-        mFirebaseUtils = firebaseUtils;
+    ChatUseCase(FbUsersUseCase fbUsersUseCase) {
+        mFbUsersUseCase = fbUsersUseCase;
     }
 
     /**
@@ -61,7 +61,7 @@ final class ChatUtils {
      */
     void getUsersInteraction(@NonNull final OnUsersList callback) {
         // Query for Interactions database
-        Query query = mFirebaseUtils.getCurrentUserInteractionRef()
+        Query query = mFbUsersUseCase.getCurrentUserInteractionRef()
                 .orderByChild(IFirebaseConfig.TIMESTAMP);
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -88,8 +88,8 @@ final class ChatUtils {
      */
     private void getUsersInfo(final String id,
                               @NonNull final OnUsersList callback) {
-        // Use FirebaseUtils method to get information about particular user
-        mFirebaseUtils.getUsersObject(id, new OnUsersData() {
+        // Use FbUsersUseCase method to get information about particular user
+        mFbUsersUseCase.getUsersObject(id, new OnUsersData() {
             @Override
             public void onData(AllUsers model, String userId) {
                 model.setId(id);
@@ -115,7 +115,7 @@ final class ChatUtils {
     private void getLastMessage(final AllUsers users,
                                 @NonNull final OnUsersList callback) {
         // Query for Message object to get the last message for particular user
-        final Query lastMessageQuery = mFirebaseUtils.getCurrentUserMessageRef()
+        final Query lastMessageQuery = mFbUsersUseCase.getCurrentUserMessageRef()
                 .child(users.getId())
                 .limitToLast(1);
 
