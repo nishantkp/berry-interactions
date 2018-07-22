@@ -38,6 +38,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -150,8 +151,13 @@ final class FirebaseUtils {
 
     /**
      * Call this method to sign out current user
+     * Update user's status offline and last_seen to firebase's timestamp before signing out
      */
     void signOut() {
+        getCurrentUserRefFromMainObject(IFirebaseConfig.USERS_OBJECT)
+                .child(IFirebaseConfig.ONLINE).setValue(false);
+        getCurrentUserRefFromMainObject(IFirebaseConfig.USERS_OBJECT)
+                .child(IFirebaseConfig.LAST_SEEN).setValue(ServerValue.TIMESTAMP);
         getFirebaseAuth().signOut();
     }
 

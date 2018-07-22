@@ -223,12 +223,9 @@ public class DataManager implements DataContract {
     }
 
     /**
-     * Use this method to sign out current user and
-     * Update user's status offline and last_seen to firebase's timestamp before signing out
+     * Use this method to sign out current user
      */
     public static void signOutUser() {
-        getCurrentUsersRef().child(IFirebaseConfig.ONLINE).setValue(false);
-        getCurrentUsersRef().child(IFirebaseConfig.LAST_SEEN).setValue(ServerValue.TIMESTAMP);
         sFirebaseUtils.signOut();
     }
 
