@@ -50,7 +50,7 @@ public class UserDiffCallback extends DiffUtil.Callback {
     }
 }
 ```
-Update RecyclerView adapter with,
+###### Update RecyclerView adapter with,
 ```java
 public void updateData(List<AllUsers> data) {
     // DiffUtils callbacks for calculating difference between new batch of data and old data
