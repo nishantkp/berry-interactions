@@ -42,11 +42,10 @@ import java.util.Objects;
  * firebase database
  */
 final class ProfileUtils {
+    private FirebaseUtils mFirebaseUtils;
 
-    private static FirebaseUtils sFirebaseUtils;
-
-    ProfileUtils() {
-        sFirebaseUtils = new FirebaseUtils();
+    ProfileUtils(FirebaseUtils firebaseUtils) {
+        mFirebaseUtils = firebaseUtils;
     }
 
     /**
@@ -60,7 +59,7 @@ final class ProfileUtils {
      * @param callback DataCallback for user info, friend request status and error
      */
     void getUserProfile(String userId, @NonNull final OnUserProfile callback) {
-        sFirebaseUtils.getUsersObject(userId, new OnUsersData() {
+        mFirebaseUtils.getUsersObject(userId, new OnUsersData() {
             @Override
             public void onData(final AllUsers model, final String userId) {
                 model.setId(userId);
@@ -85,7 +84,7 @@ final class ProfileUtils {
      * @param callback DataCallback for friend request status and error
      */
     private void queryFriendRequestDatabase(final String userId, @NonNull final OnUserProfile callback) {
-        DataManager.getFriendReqRef().child(DataManager.getCurrentUserId())
+        mFirebaseUtils.getFriendReqRef().child(mFirebaseUtils.getCurrentUserId())
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -123,7 +122,7 @@ final class ProfileUtils {
      * @param callback DataCallback for friends status and error
      */
     private void queryFriendsDatabase(final String userId, @NonNull final OnUserProfile callback) {
-        DataManager.getFriendsRef().child(DataManager.getCurrentUserId())
+        mFirebaseUtils.getFriendsRef().child(mFirebaseUtils.getCurrentUserId())
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {

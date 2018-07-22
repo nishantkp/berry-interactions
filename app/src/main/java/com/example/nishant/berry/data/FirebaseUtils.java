@@ -50,7 +50,6 @@ import java.util.List;
  * Firebase Utility class
  */
 final class FirebaseUtils {
-
     private List<AllUsers> mAllUsersList = new LinkedList<>();
 
     FirebaseUtils() {
@@ -70,6 +69,7 @@ final class FirebaseUtils {
      *
      * @return user Id
      */
+    @NonNull
     String getCurrentUserId() {
         FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         return firebaseUser != null ? firebaseUser.getUid() : "";
@@ -80,8 +80,19 @@ final class FirebaseUtils {
      *
      * @return root database reference
      */
+    @NonNull
     DatabaseReference getRootRef() {
         return FirebaseDatabase.getInstance().getReference();
+    }
+
+    /**
+     * Call this method to get reference to Users object on root database
+     *
+     * @return firebase database reference to Users object
+     */
+    @NonNull
+    DatabaseReference getUsersRef() {
+        return getMainObjectRef(IFirebaseConfig.USERS_OBJECT);
     }
 
     /**
@@ -89,7 +100,8 @@ final class FirebaseUtils {
      *
      * @return root storage reference
      */
-    StorageReference getStorageRootRef() {
+    @NonNull
+    private StorageReference getStorageRootRef() {
         return FirebaseStorage.getInstance().getReference();
     }
 
@@ -99,7 +111,8 @@ final class FirebaseUtils {
      * @param object object in root database
      * @return database reference
      */
-    DatabaseReference getMainObjectRef(String object) {
+    @NonNull
+    private DatabaseReference getMainObjectRef(@NonNull String object) {
         return getRootRef().child(object);
     }
 
@@ -110,7 +123,8 @@ final class FirebaseUtils {
      * @param object object in root database
      * @return database reference
      */
-    DatabaseReference getUserObjectRef(String userId, String object) {
+    @NonNull
+    DatabaseReference getUserObjectRef(@NonNull String userId, @NonNull String object) {
         return getRootRef().child(object).child(userId);
     }
 
@@ -120,8 +134,99 @@ final class FirebaseUtils {
      * @param object Main object in root ref
      * @return database reference for current user in users object
      */
-    DatabaseReference getCurrentUserRefFromMainObject(String object) {
+    @NonNull
+    DatabaseReference getCurrentUserRefFromMainObject(@NonNull String object) {
         return getMainObjectRef(object).child(getCurrentUserId());
+    }
+
+    /**
+     * Call this method to get reference of current user from Friend requests object in root ref
+     *
+     * @return database reference for current user in Friend requests object
+     */
+    @NonNull
+    DatabaseReference getCurrentUserFriendsReqRef() {
+        return getCurrentUserRefFromMainObject(IFirebaseConfig.FRIEND_REQUEST_OBJECT);
+    }
+
+    /**
+     * Call this method to get reference of current user from Users object in root ref
+     *
+     * @return database reference for current user in users object
+     */
+    @NonNull
+    DatabaseReference getCurrentUsersRef() {
+        return getCurrentUserRefFromMainObject(IFirebaseConfig.USERS_OBJECT);
+    }
+
+    /**
+     * Call this method to get reference of current user from Interaction object in root ref
+     *
+     * @return database reference for current user in interaction object
+     */
+    @NonNull
+    DatabaseReference getCurrentUserInteractionRef() {
+        return getCurrentUserRefFromMainObject(IFirebaseConfig.INTERACTIONS_OBJECT);
+    }
+
+    /**
+     * Call this method to get reference of current user from Message object in root ref
+     *
+     * @return database reference for current user in Message object
+     */
+    @NonNull
+    DatabaseReference getCurrentUserMessageRef() {
+        return getCurrentUserRefFromMainObject(IFirebaseConfig.MESSAGE_OBJECT);
+    }
+
+    /**
+     * Call this method to get reference of current user from Friends object in root ref
+     *
+     * @return database reference for current user in Friends object
+     */
+    @NonNull
+    DatabaseReference getCurrentUserFriendsRef() {
+        return getCurrentUserRefFromMainObject(IFirebaseConfig.FRIENDS_OBJECT);
+    }
+
+    /**
+     * Call this method to get reference to Message object on root database
+     *
+     * @return firebase database reference to Message object
+     */
+    @NonNull
+    DatabaseReference getMessageRef() {
+        return getMainObjectRef(IFirebaseConfig.MESSAGE_OBJECT);
+    }
+
+    /**
+     * Call this method to get reference to Interactions object on root database
+     *
+     * @return firebase database reference to Interactions object
+     */
+    @NonNull
+    DatabaseReference getInteractionsRef() {
+        return getMainObjectRef(IFirebaseConfig.INTERACTIONS_OBJECT);
+    }
+
+    /**
+     * Call this method to get reference to Friend Requests object on root database
+     *
+     * @return firebase database reference to Friend Requests object
+     */
+    @NonNull
+    DatabaseReference getFriendReqRef() {
+        return getMainObjectRef(IFirebaseConfig.FRIEND_REQUEST_OBJECT);
+    }
+
+    /**
+     * Call this method to get reference to Friends object on root database
+     *
+     * @return firebase database reference to Friends object
+     */
+    @NonNull
+    DatabaseReference getFriendsRef() {
+        return getMainObjectRef(IFirebaseConfig.FRIENDS_OBJECT);
     }
 
     /**
@@ -130,6 +235,7 @@ final class FirebaseUtils {
      *
      * @return firebase storage reference to store user's avatar
      */
+    @NonNull
     StorageReference getAvatarStorageRef() {
         return getStorageRootRef()
                 .child(IFirebaseConfig.AVATAR_STORAGE_DIR)
@@ -142,6 +248,7 @@ final class FirebaseUtils {
      *
      * @return firebase storage reference to store user's avatar thumbnail
      */
+    @NonNull
     StorageReference getAvatarThumbnailStorageRef() {
         return getStorageRootRef()
                 .child(IFirebaseConfig.AVATAR_STORAGE_DIR)
@@ -205,7 +312,7 @@ final class FirebaseUtils {
      * @param callback Callback for list of user and error
      */
     void getAllRegisteredUsers(@NonNull final OnUsersList callback) {
-        Query query = DataManager.getUsersRef().limitToLast(50);
+        Query query = getUsersRef().limitToLast(50);
         query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -237,7 +344,7 @@ final class FirebaseUtils {
      *                     information about user
      * @return {@link AllUsers} object
      */
-    static AllUsers extractValues(@NonNull DataSnapshot dataSnapshot) {
+    private AllUsers extractValues(@NonNull DataSnapshot dataSnapshot) {
         return dataSnapshot.getValue(AllUsers.class);
     }
 }

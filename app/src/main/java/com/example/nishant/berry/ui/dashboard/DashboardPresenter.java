@@ -52,7 +52,7 @@ public class DashboardPresenter
     @Override
     public void checkCurrentUser() {
         // If current user is not available set call back for no active user
-        if (!DataManager.isCurrentUserAvailable()) {
+        if (!DataManager.getInstance().isCurrentUserAvailable()) {
             getView().noActiveUser();
         }
     }
@@ -62,6 +62,6 @@ public class DashboardPresenter
      */
     @Override
     public void signOutUser() {
-        DataManager.signOutUser();
+        DataManager.getInstance().signOutUser();
     }
 }

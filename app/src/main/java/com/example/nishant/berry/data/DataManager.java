@@ -36,22 +36,20 @@ import com.example.nishant.berry.data.callbacks.OnUsersData;
 import com.example.nishant.berry.data.callbacks.OnUsersList;
 import com.example.nishant.berry.ui.model.AllUsers;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.ServerValue;
-import com.google.firebase.storage.StorageReference;
 
 /**
  * Data Manager class, that deals with business logic
  */
 public class DataManager implements DataContract {
-    private static FirebaseUtils sFirebaseUtils;
-    private static FriendsUtils sFriendsUtils;
-    private static RequestsUtils sRequestsUtils;
-    private static SettingsUtils sSettingsUtils;
-    private static ChatUtils sChatUtils;
-    private static AccountUtils sAccountUtils;
-    private static SearchUtils sSearchUtils;
-    private static ProfileUtils sProfileUtils;
-    private static InteractionUtils sInteractionUtils;
+    private FirebaseUtils mFirebaseUtils;
+    private FriendsUtils mFriendsUtils;
+    private RequestsUtils mRequestsUtils;
+    private SettingsUtils mSettingsUtils;
+    private ChatUtils mChatUtils;
+    private AccountUtils mAccountUtils;
+    private SearchUtils mSearchUtils;
+    private ProfileUtils mProfileUtils;
+    private InteractionUtils mInteractionUtils;
 
     // Lazy Initialization pattern
     private static class StaticHolder {
@@ -66,42 +64,15 @@ public class DataManager implements DataContract {
      * Private constructor so no one can make object of a data manager
      */
     private DataManager() {
-        sFirebaseUtils = new FirebaseUtils();
-        sFriendsUtils = new FriendsUtils();
-        sRequestsUtils = new RequestsUtils();
-        sSettingsUtils = new SettingsUtils();
-        sChatUtils = new ChatUtils();
-        sAccountUtils = new AccountUtils();
-        sSearchUtils = new SearchUtils();
-        sProfileUtils = new ProfileUtils();
-        sInteractionUtils = new InteractionUtils();
-    }
-
-    /**
-     * Call this method to get current user's ID
-     *
-     * @return user Id
-     */
-    public static String getCurrentUserId() {
-        return sFirebaseUtils.getCurrentUserId();
-    }
-
-    /**
-     * Call this method to get root firebase database reference
-     *
-     * @return root database reference
-     */
-    public static DatabaseReference getRootRef() {
-        return sFirebaseUtils.getRootRef();
-    }
-
-    /**
-     * Call this method to get reference to Users object on root database
-     *
-     * @return firebase database reference to Users object
-     */
-    public static DatabaseReference getUsersRef() {
-        return sFirebaseUtils.getMainObjectRef(IFirebaseConfig.USERS_OBJECT);
+        mFirebaseUtils = new FirebaseUtils();
+        mFriendsUtils = new FriendsUtils(mFirebaseUtils);
+        mRequestsUtils = new RequestsUtils(mFirebaseUtils);
+        mSettingsUtils = new SettingsUtils(mFirebaseUtils);
+        mChatUtils = new ChatUtils(mFirebaseUtils);
+        mAccountUtils = new AccountUtils(mFirebaseUtils);
+        mSearchUtils = new SearchUtils(mFirebaseUtils);
+        mProfileUtils = new ProfileUtils(mFirebaseUtils);
+        mInteractionUtils = new InteractionUtils(mFirebaseUtils);
     }
 
     /**
@@ -109,124 +80,17 @@ public class DataManager implements DataContract {
      *
      * @return database reference for current user in users object
      */
-    public static DatabaseReference getCurrentUsersRef() {
-        return sFirebaseUtils.getCurrentUserRefFromMainObject(IFirebaseConfig.USERS_OBJECT);
-    }
-
-    /**
-     * Call this method to get reference to particular user in Users object in root ref
-     *
-     * @param userId user Id
-     * @return database reference for a user whose userId is passed in
-     */
-    public static DatabaseReference getNewUserRef(String userId) {
-        return sFirebaseUtils.getUserObjectRef(userId, IFirebaseConfig.USERS_OBJECT);
-    }
-
-    /**
-     * Call this method to get reference to Friend Requests object on root database
-     *
-     * @return firebase database reference to Friend Requests object
-     */
-    public static DatabaseReference getFriendReqRef() {
-        return sFirebaseUtils.getMainObjectRef(IFirebaseConfig.FRIEND_REQUEST_OBJECT);
-    }
-
-    /**
-     * Call this method to get reference of current user from Friend requests object in root ref
-     *
-     * @return database reference for current user in Friend requests object
-     */
-    public static DatabaseReference getCurrentUserFriendsReqRef() {
-        return sFirebaseUtils.getCurrentUserRefFromMainObject(IFirebaseConfig.FRIEND_REQUEST_OBJECT);
-    }
-
-    /**
-     * Call this method to get reference to Friends object on root database
-     *
-     * @return firebase database reference to Friends object
-     */
-    public static DatabaseReference getFriendsRef() {
-        return sFirebaseUtils.getMainObjectRef(IFirebaseConfig.FRIENDS_OBJECT);
-    }
-
-    /**
-     * Call this method to get reference of current user from Friends object in root ref
-     *
-     * @return database reference for current user in Friends object
-     */
-    public static DatabaseReference getCurrentUserFriendsRef() {
-        return sFirebaseUtils.getCurrentUserRefFromMainObject(IFirebaseConfig.FRIENDS_OBJECT);
-    }
-
-    /**
-     * Call this method to get reference to Interactions object on root database
-     *
-     * @return firebase database reference to Interactions object
-     */
-    public static DatabaseReference getInteractionsRef() {
-        return sFirebaseUtils.getMainObjectRef(IFirebaseConfig.INTERACTIONS_OBJECT);
-    }
-
-    /**
-     * Call this method to get reference of current user from Interaction object in root ref
-     *
-     * @return database reference for current user in interaction object
-     */
-    public static DatabaseReference getCurrentUserInteractionRef() {
-        return sFirebaseUtils.getCurrentUserRefFromMainObject(IFirebaseConfig.INTERACTIONS_OBJECT);
-    }
-
-    /**
-     * Call this method to get reference to Notification object on root database
-     *
-     * @return firebase database reference to Notification object
-     */
-    public static DatabaseReference getNotificationRef() {
-        return sFirebaseUtils.getMainObjectRef(IFirebaseConfig.NOTIFICATION_OBJECT);
-    }
-
-    /**
-     * Call this method to get reference to Message object on root database
-     *
-     * @return firebase database reference to Message object
-     */
-    public static DatabaseReference getMessageRef() {
-        return sFirebaseUtils.getMainObjectRef(IFirebaseConfig.MESSAGE_OBJECT);
-    }
-
-    /**
-     * Call this method to get reference of current user from Message object in root ref
-     *
-     * @return database reference for current user in Message object
-     */
-    public static DatabaseReference getCurrentUserMessageRef() {
-        return sFirebaseUtils.getCurrentUserRefFromMainObject(IFirebaseConfig.MESSAGE_OBJECT);
-    }
-
-    /**
-     * Call this method to get firebase storage reference to store user's avatar
-     *
-     * @return user's avatar storage reference
-     */
-    public static StorageReference getAvatarStorageRef() {
-        return sFirebaseUtils.getAvatarStorageRef();
-    }
-
-    /**
-     * Call this method to get firebase storage reference to store user's avatar thumbnail
-     *
-     * @return user's avatar thumbnail storage reference
-     */
-    public static StorageReference getAvatarThumbStorageRef() {
-        return sFirebaseUtils.getAvatarThumbnailStorageRef();
+    @Override
+    public DatabaseReference getCurrentUsersRef() {
+        return mFirebaseUtils.getCurrentUserRefFromMainObject(IFirebaseConfig.USERS_OBJECT);
     }
 
     /**
      * Use this method to sign out current user
      */
-    public static void signOutUser() {
-        sFirebaseUtils.signOut();
+    @Override
+    public void signOutUser() {
+        mFirebaseUtils.signOut();
     }
 
     /**
@@ -234,8 +98,9 @@ public class DataManager implements DataContract {
      *
      * @return true if the current user is available/ false if it's not resent
      */
-    public static boolean isCurrentUserAvailable() {
-        return sFirebaseUtils.isCurrentUserAvailable();
+    @Override
+    public boolean isCurrentUserAvailable() {
+        return mFirebaseUtils.isCurrentUserAvailable();
     }
 
     /**
@@ -249,7 +114,7 @@ public class DataManager implements DataContract {
     public void loginUser(@NonNull String email,
                           @NonNull String password,
                           @NonNull OnTaskCompletion callback) {
-        sAccountUtils.signInUser(email, password, callback);
+        mAccountUtils.signInUser(email, password, callback);
     }
 
     /**
@@ -265,7 +130,7 @@ public class DataManager implements DataContract {
                            @NonNull String email,
                            @NonNull String password,
                            @NonNull OnTaskCompletion callback) {
-        sAccountUtils.signUpUser(displayName, email, password, callback);
+        mAccountUtils.signUpUser(displayName, email, password, callback);
     }
 
     /**
@@ -277,7 +142,7 @@ public class DataManager implements DataContract {
     @Override
     public void saveUserStatus(@NonNull String status,
                                @NonNull OnTaskCompletion callback) {
-        sAccountUtils.saveUserStatus(status, callback);
+        mAccountUtils.saveUserStatus(status, callback);
     }
 
     /**
@@ -287,7 +152,7 @@ public class DataManager implements DataContract {
      */
     @Override
     public void getAllRegisteredUsers(@NonNull OnUsersList callback) {
-        sFirebaseUtils.getAllRegisteredUsers(callback);
+        mFirebaseUtils.getAllRegisteredUsers(callback);
     }
 
     /**
@@ -298,7 +163,7 @@ public class DataManager implements DataContract {
      */
     @Override
     public void getCurrentUserInfo(@NonNull final OnUsersData callback) {
-        sFirebaseUtils.getUsersObject(getCurrentUserId(), callback);
+        mFirebaseUtils.getUsersObject(mFirebaseUtils.getCurrentUserId(), callback);
     }
 
     /**
@@ -311,7 +176,7 @@ public class DataManager implements DataContract {
     public void storeAvatar(Uri avatarUri,
                             final byte[] thumbnailByte,
                             final @NonNull OnTaskCompletion callback) {
-        sSettingsUtils.storeAvatarToFirebaseDatabase(avatarUri, thumbnailByte, callback);
+        mSettingsUtils.storeAvatarToFirebaseDatabase(avatarUri, thumbnailByte, callback);
     }
 
     /**
@@ -323,7 +188,7 @@ public class DataManager implements DataContract {
      */
     @Override
     public void getChatList(@NonNull final OnUsersList callback) {
-        sChatUtils.getUsersInteraction(callback);
+        mChatUtils.getUsersInteraction(callback);
     }
 
     /**
@@ -333,7 +198,7 @@ public class DataManager implements DataContract {
      */
     @Override
     public void fetchFriends(@NonNull final OnUsersList callback) {
-        sFriendsUtils.getAllFriends(callback);
+        mFriendsUtils.getAllFriends(callback);
     }
 
     /**
@@ -345,7 +210,7 @@ public class DataManager implements DataContract {
      */
     @Override
     public void findUser(@NonNull String searchString, int limit, @NonNull OnUsersList callback) {
-        sSearchUtils.findUser(searchString, limit, callback);
+        mSearchUtils.findUser(searchString, limit, callback);
     }
 
     /**
@@ -356,7 +221,7 @@ public class DataManager implements DataContract {
      */
     @Override
     public void getFriendRequests(@NonNull OnUsersList callback) {
-        sRequestsUtils.getCurrentUsersFriendReq(callback);
+        mRequestsUtils.getCurrentUsersFriendReq(callback);
     }
 
     /**
@@ -367,7 +232,7 @@ public class DataManager implements DataContract {
      */
     @Override
     public void acceptFriendRequest(@NonNull String userId, @NonNull OnTaskCompletion callback) {
-        sRequestsUtils.acceptFriendRequest(userId, callback);
+        mRequestsUtils.acceptFriendRequest(userId, callback);
     }
 
     /**
@@ -378,7 +243,7 @@ public class DataManager implements DataContract {
      */
     @Override
     public void ignoreFriendRequest(@NonNull String userId, @NonNull OnTaskCompletion callback) {
-        sRequestsUtils.ignoreFriendRequest(userId, callback);
+        mRequestsUtils.ignoreFriendRequest(userId, callback);
     }
 
     /**
@@ -389,7 +254,7 @@ public class DataManager implements DataContract {
      */
     @Override
     public void unfriendUser(String userId, @NonNull OnTaskCompletion callback) {
-        sRequestsUtils.unfriendUser(userId, callback);
+        mRequestsUtils.unfriendUser(userId, callback);
     }
 
     /**
@@ -400,7 +265,7 @@ public class DataManager implements DataContract {
      */
     @Override
     public void sendFriendRequest(String userId, @NonNull OnTaskCompletion callback) {
-        sRequestsUtils.sendFriendRequest(userId, callback);
+        mRequestsUtils.sendFriendRequest(userId, callback);
     }
 
     /**
@@ -412,7 +277,7 @@ public class DataManager implements DataContract {
      */
     @Override
     public void getUserProfile(String userId, @NonNull OnUserProfile callback) {
-        sProfileUtils.getUserProfile(userId, callback);
+        mProfileUtils.getUserProfile(userId, callback);
     }
 
 
@@ -425,7 +290,7 @@ public class DataManager implements DataContract {
      */
     @Override
     public void getMessageList(@NonNull String interactionUserId, @NonNull OnInteraction callback) {
-        sInteractionUtils.getMessageList(interactionUserId, callback);
+        mInteractionUtils.getMessageList(interactionUserId, callback);
     }
 
     /**
@@ -439,7 +304,7 @@ public class DataManager implements DataContract {
     public void onInteraction(@NonNull String interactionUserId,
                               @NonNull String message,
                               @NonNull OnTaskCompletion callback) {
-        sInteractionUtils.onInteraction(interactionUserId, message, callback);
+        mInteractionUtils.onInteraction(interactionUserId, message, callback);
     }
 
     /**
@@ -452,7 +317,7 @@ public class DataManager implements DataContract {
      */
     @Override
     public void loadMoreMessages(@NonNull String interactionUserId, @NonNull OnInteraction callback) {
-        sInteractionUtils.loadMoreMessages(interactionUserId, callback);
+        mInteractionUtils.loadMoreMessages(interactionUserId, callback);
     }
 
     /**
@@ -463,6 +328,6 @@ public class DataManager implements DataContract {
      */
     @Override
     public void getUserInfoFromId(String userId, @NonNull OnUsersData callback) {
-        sFirebaseUtils.getUsersObject(userId, callback);
+        mFirebaseUtils.getUsersObject(userId, callback);
     }
 }

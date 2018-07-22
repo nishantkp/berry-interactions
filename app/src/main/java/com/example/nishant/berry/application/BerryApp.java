@@ -55,8 +55,8 @@ public class BerryApp extends Application {
         // Adds firebase offline functionality
         FirebaseDatabase.getInstance().setPersistenceEnabled(true);
 
-        // Data manager instance
-        DataManager.getInstance();
+        // Initiate Data manager
+        DataManager dataManager = DataManager.getInstance();
 
         // Picasso with OkHttp3 to download user avatar
         Picasso.Builder builder = new Picasso.Builder(this);
@@ -69,7 +69,7 @@ public class BerryApp extends Application {
         if (FirebaseAuth.getInstance().getCurrentUser() == null) return;
 
         // Current Users database reference
-        final DatabaseReference usersDatabaseReference = DataManager.getCurrentUsersRef();
+        final DatabaseReference usersDatabaseReference = dataManager.getCurrentUsersRef();
 
         usersDatabaseReference.addValueEventListener(new ValueEventListener() {
             @Override

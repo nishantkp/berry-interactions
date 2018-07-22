@@ -33,6 +33,7 @@ import com.example.nishant.berry.data.callbacks.OnTaskCompletion;
 import com.example.nishant.berry.data.callbacks.OnUserProfile;
 import com.example.nishant.berry.data.callbacks.OnUsersData;
 import com.example.nishant.berry.data.callbacks.OnUsersList;
+import com.google.firebase.database.DatabaseReference;
 
 /**
  * DataManager contract class
@@ -84,4 +85,10 @@ interface DataContract {
     void loadMoreMessages(@NonNull final String interactionUserId, @NonNull final OnInteraction callback);
 
     void getUserInfoFromId(String userId, @NonNull final OnUsersData callback);
+
+    void signOutUser();
+
+    DatabaseReference getCurrentUsersRef();
+
+    boolean isCurrentUserAvailable();
 }

@@ -55,10 +55,10 @@ import io.reactivex.schedulers.Schedulers;
  * with the help of FirebaseRecyclerAdapter
  */
 final class FriendsUtils {
-    private static FirebaseUtils sFirebaseUtils;
+    private FirebaseUtils mFirebaseUtils;
 
-    FriendsUtils() {
-        sFirebaseUtils = new FirebaseUtils();
+    FriendsUtils(FirebaseUtils firebaseUtils) {
+        mFirebaseUtils = firebaseUtils;
     }
 
     //--------------------------------------------------------------------------------------------//
@@ -113,7 +113,7 @@ final class FriendsUtils {
         return Observable.create(new ObservableOnSubscribe<List<String>>() {
             @Override
             public void subscribe(final ObservableEmitter<List<String>> emitter) {
-                Query query = DataManager.getCurrentUserFriendsRef();
+                Query query = mFirebaseUtils.getCurrentUserFriendsRef();
                 query.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -150,7 +150,7 @@ final class FriendsUtils {
         return Observable.create(new ObservableOnSubscribe<AllUsers>() {
             @Override
             public void subscribe(final ObservableEmitter<AllUsers> emitter) throws Exception {
-                sFirebaseUtils.getUsersObject(id, new OnUsersData() {
+                mFirebaseUtils.getUsersObject(id, new OnUsersData() {
                     @Override
                     public void onData(AllUsers model, String userId) {
                         // Getting all users here
@@ -178,7 +178,7 @@ final class FriendsUtils {
      * @param callback DataCallback for list of friends and error
      */
     void getAllFriends(@NonNull final OnUsersList callback) {
-        Query query = DataManager.getCurrentUserFriendsRef();
+        Query query = mFirebaseUtils.getCurrentUserFriendsRef();
         query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -203,7 +203,7 @@ final class FriendsUtils {
      * @param callback DataCallback for list of friends and error
      */
     private void getInfoFromId(final String userId, final List<AllUsers> list, @NonNull final OnUsersList callback) {
-        sFirebaseUtils.getUsersObject(userId, new OnUsersData() {
+        mFirebaseUtils.getUsersObject(userId, new OnUsersData() {
             @Override
             public void onData(AllUsers model, String userId) {
                 model.setId(userId);

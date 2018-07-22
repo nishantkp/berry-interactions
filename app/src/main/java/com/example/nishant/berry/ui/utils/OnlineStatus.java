@@ -48,10 +48,12 @@ public class OnlineStatus implements LoginStats {
         if (mAuth.getCurrentUser() == null) return;
 
         // Database reference pointing to online_status of current user
-        mUsersDatabaseOnlineReference = DataManager.getCurrentUsersRef().child(IFirebaseConfig.ONLINE);
+        mUsersDatabaseOnlineReference = DataManager.getInstance().
+                getCurrentUsersRef().child(IFirebaseConfig.ONLINE);
 
         // Database reference pointing to last_seen of current user
-        mUsersDatabaseLastSeenReference = DataManager.getCurrentUsersRef().child(IFirebaseConfig.LAST_SEEN);
+        mUsersDatabaseLastSeenReference = DataManager.getInstance().
+                getCurrentUsersRef().child(IFirebaseConfig.LAST_SEEN);
     }
 
     /**

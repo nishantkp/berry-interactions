@@ -45,13 +45,12 @@ import java.util.List;
  * ChatUtility class to display chat list
  */
 final class ChatUtils {
-
     // TODO: Use stack instead linkedList to store interaction data : <<<FUTURE UPDATE>>>
     private static List<AllUsers> mData = new LinkedList<>();
-    private static FirebaseUtils sFirebaseUtils;
+    private FirebaseUtils mFirebaseUtils;
 
-    ChatUtils() {
-        sFirebaseUtils = new FirebaseUtils();
+    ChatUtils(FirebaseUtils firebaseUtils) {
+        mFirebaseUtils = firebaseUtils;
     }
 
     /**
@@ -62,7 +61,7 @@ final class ChatUtils {
      */
     void getUsersInteraction(@NonNull final OnUsersList callback) {
         // Query for Interactions database
-        Query query = DataManager.getCurrentUserInteractionRef()
+        Query query = mFirebaseUtils.getCurrentUserInteractionRef()
                 .orderByChild(IFirebaseConfig.TIMESTAMP);
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -90,7 +89,7 @@ final class ChatUtils {
     private void getUsersInfo(final String id,
                               @NonNull final OnUsersList callback) {
         // Use FirebaseUtils method to get information about particular user
-        sFirebaseUtils.getUsersObject(id, new OnUsersData() {
+        mFirebaseUtils.getUsersObject(id, new OnUsersData() {
             @Override
             public void onData(AllUsers model, String userId) {
                 model.setId(id);
@@ -116,7 +115,7 @@ final class ChatUtils {
     private void getLastMessage(final AllUsers users,
                                 @NonNull final OnUsersList callback) {
         // Query for Message object to get the last message for particular user
-        final Query lastMessageQuery = DataManager.getCurrentUserMessageRef()
+        final Query lastMessageQuery = mFirebaseUtils.getCurrentUserMessageRef()
                 .child(users.getId())
                 .limitToLast(1);
 

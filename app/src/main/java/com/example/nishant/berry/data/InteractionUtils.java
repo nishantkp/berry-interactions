@@ -51,6 +51,7 @@ import java.util.Map;
  */
 final class InteractionUtils {
     private static final int DEFAULT_NUMBER_OF_MESSAGES_PER_PAGE = 20;
+    private FirebaseUtils mFirebaseUtils;
     private String mLastMessageKey = "";
     private String mPreviousMessageKey = "";
     private int mCurrentPage = 1;
@@ -59,8 +60,9 @@ final class InteractionUtils {
     private DatabaseReference mRootRef;
     private List<Message> mMessageList = new ArrayList<>();
 
-    InteractionUtils() {
-        mRootRef = DataManager.getRootRef();
+    InteractionUtils(FirebaseUtils firebaseUtils) {
+        mFirebaseUtils = firebaseUtils;
+        mRootRef = mFirebaseUtils.getRootRef();
     }
 
     /**
@@ -75,10 +77,11 @@ final class InteractionUtils {
         initInteractionDatabase(interactionUserId, callback);
 
         mNumberOfMessagesPerPage = callback.numOfMessagePerPage();
-        if (mNumberOfMessagesPerPage == 0) mNumberOfMessagesPerPage = DEFAULT_NUMBER_OF_MESSAGES_PER_PAGE;
+        if (mNumberOfMessagesPerPage == 0)
+            mNumberOfMessagesPerPage = DEFAULT_NUMBER_OF_MESSAGES_PER_PAGE;
 
-        Query query = DataManager.getMessageRef()
-                .child(DataManager.getCurrentUserId())
+        Query query = mFirebaseUtils.getMessageRef()
+                .child(mFirebaseUtils.getCurrentUserId())
                 .child(interactionUserId)
                 .limitToLast(mCurrentPage * mNumberOfMessagesPerPage);
 
@@ -124,8 +127,8 @@ final class InteractionUtils {
     private void updateMessageSeenStatus(String key, String interactionUserId) {
         if (key == null) return;
         DatabaseReference seenMessageRef =
-                DataManager.getMessageRef()
-                        .child(DataManager.getCurrentUserId())
+                mFirebaseUtils.getMessageRef()
+                        .child(mFirebaseUtils.getCurrentUserId())
                         .child(interactionUserId)
                         .child(key)
                         .child(IFirebaseConfig.MESSAGE_SEEN);
@@ -143,12 +146,12 @@ final class InteractionUtils {
                        @NonNull final String message,
                        @NonNull final OnTaskCompletion callback) {
 
-        String currentUserId = DataManager.getCurrentUserId();
+        String currentUserId = mFirebaseUtils.getCurrentUserId();
         String currentUserRef = IFirebaseConfig.MESSAGE_OBJECT + "/" + currentUserId + "/" + interactionUserId;
         String interactionUserRef = IFirebaseConfig.MESSAGE_OBJECT + "/" + interactionUserId + "/" + currentUserId;
 
         // Get the push ID
-        DatabaseReference messagePushRef = DataManager.getMessageRef()
+        DatabaseReference messagePushRef = mFirebaseUtils.getMessageRef()
                 .child(currentUserId)
                 .child(interactionUserId)
                 .push();
@@ -193,8 +196,8 @@ final class InteractionUtils {
      */
     private void initInteractionDatabase(@NonNull final String interactionUserId,
                                          @NonNull final OnInteraction callback) {
-        final String currentUserId = DataManager.getCurrentUserId();
-        DataManager.getInteractionsRef().child(DataManager.getCurrentUserId())
+        final String currentUserId = mFirebaseUtils.getCurrentUserId();
+        mFirebaseUtils.getInteractionsRef().child(mFirebaseUtils.getCurrentUserId())
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -252,11 +255,12 @@ final class InteractionUtils {
     private void updateMoreMessageToList(@NonNull final String interactionUserId,
                                          @NonNull final OnInteraction callback) {
         DatabaseReference messageRef = mRootRef.child(IFirebaseConfig.MESSAGE_OBJECT)
-                .child(DataManager.getCurrentUserId())
+                .child(mFirebaseUtils.getCurrentUserId())
                 .child(interactionUserId);
 
         mNumberOfMessagesPerPage = callback.numOfMessagePerPage();
-        if (mNumberOfMessagesPerPage == 0) mNumberOfMessagesPerPage = DEFAULT_NUMBER_OF_MESSAGES_PER_PAGE;
+        if (mNumberOfMessagesPerPage == 0)
+            mNumberOfMessagesPerPage = DEFAULT_NUMBER_OF_MESSAGES_PER_PAGE;
 
         Query query = messageRef.orderByKey()
                 .endAt(mLastMessageKey)

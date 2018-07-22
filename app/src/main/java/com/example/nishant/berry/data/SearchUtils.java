@@ -42,8 +42,10 @@ import java.util.List;
  * Utility class the deals with finding user from User's database in Firebase Database
  */
 final class SearchUtils {
+    private FirebaseUtils mFirebaseUtils;
 
-    SearchUtils() {
+    SearchUtils(FirebaseUtils firebaseUtils) {
+        mFirebaseUtils = firebaseUtils;
     }
 
     /**
@@ -55,7 +57,7 @@ final class SearchUtils {
      */
     void findUser(String searchString, int limit, @NonNull final OnUsersList callback) {
         // Firebase database Query of Users object
-        Query databaseQuery = DataManager.getUsersRef()
+        Query databaseQuery = mFirebaseUtils.getUsersRef()
                 .orderByChild(IFirebaseConfig.NAME)
                 .startAt(searchString.toUpperCase())
                 .endAt(searchString.toLowerCase() + "\uf8ff")
