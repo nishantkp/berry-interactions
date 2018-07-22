@@ -32,8 +32,9 @@ import com.example.nishant.berry.config.IFirebaseConfig;
 import java.util.Objects;
 
 /**
- * Users object for FirebaseRecyclerAdapter
+ * Model represents users object from Firebase database
  * This object should contain variable names exactly the same as Firebase Database
+ * There are also helper fields and methods for Users object
  */
 public class AllUsers {
     private String id;

@@ -25,6 +25,9 @@
 
 package com.example.nishant.berry.ui.model;
 
+/**
+ * Model represents fields of Friends object from Firebase database
+ */
 public class Friends {
     private String date;
 

@@ -25,6 +25,9 @@
 
 package com.example.nishant.berry.ui.model;
 
+/**
+ * Model represents interactions object from Firebase database
+ */
 public class FriendsInteraction {
     private boolean message_seen;
     private long timestamp;

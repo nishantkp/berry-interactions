@@ -30,6 +30,9 @@ import com.example.nishant.berry.data.DataManager;
 import com.example.nishant.berry.data.callbacks.OnTaskCompletion;
 import com.example.nishant.berry.ui.model.User;
 
+/**
+ * Presenter that deals with user registration
+ */
 public class SignUpPresenter
         extends BasePresenter<SignUpContract.View>
         implements SignUpContract.Presenter {

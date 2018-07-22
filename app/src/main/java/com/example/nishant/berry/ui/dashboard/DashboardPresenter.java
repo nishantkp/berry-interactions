@@ -28,6 +28,10 @@ package com.example.nishant.berry.ui.dashboard;
 import com.example.nishant.berry.base.BasePresenter;
 import com.example.nishant.berry.data.DataManager;
 
+/**
+ * Presenter that redirects navigation according to availability if user
+ * Also responsible for sign out
+ */
 public class DashboardPresenter
         extends BasePresenter<DashboardContract.View>
         implements DashboardContract.Presenter {

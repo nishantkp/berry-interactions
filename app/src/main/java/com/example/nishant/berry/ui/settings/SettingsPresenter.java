@@ -40,6 +40,10 @@ import java.io.IOException;
 
 import id.zelory.compressor.Compressor;
 
+/**
+ * Presenter that deals with displaying current user's profile as well as
+ * updating user's avatar and status
+ */
 public class SettingsPresenter
         extends BasePresenter<SettingsContract.View>
         implements SettingsContract.Presenter {

@@ -35,6 +35,10 @@ import com.example.nishant.berry.databinding.ActivityStartBinding;
 import com.example.nishant.berry.ui.signin.SignInActivity;
 import com.example.nishant.berry.ui.signup.SignUpActivity;
 
+/**
+ * Start activity responsible for start page and navigates user to sign-in or sign-up page
+ * depending on user's preference
+ */
 public class StartActivity extends AppCompatActivity {
 
     private ActivityStartBinding mBinding;
