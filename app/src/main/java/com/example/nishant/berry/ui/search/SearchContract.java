@@ -37,10 +37,14 @@ public interface SearchContract {
     interface View extends MvpView {
         void onData(List<AllUsers> data);
 
+        void onCreateUserProfileActivity(String id, String name);
+
         void onError(String error);
     }
 
     interface Presenter {
         void findUserFromQuery(String query);
+
+        void onItemClick(String id, String name);
     }
 }

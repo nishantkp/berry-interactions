@@ -121,6 +121,19 @@ public class SearchActivity
     }
 
     /**
+     * {@link SearchPresenter} callback to start {@link UserProfileActivity} when user clicks
+     * on list item from list
+     *
+     * @param id   user id
+     * @param name user name
+     */
+    @Override
+    public void onCreateUserProfileActivity(String id, String name) {
+        startActivity(UserProfileActivity.getStarterIntent(this)
+                .putExtra(IConstants.KEY_USER_ID, id));
+    }
+
+    /**
      * {@link SearchPresenter} callback for error while retrieving data from database
      *
      * @param error error message
@@ -131,15 +144,14 @@ public class SearchActivity
     }
 
     /**
-     * Implement this functionality to set behavior when user clicks on list item from
+     * Implement this functionality for what to do when user clicks on list item from
      * search users list
      *
      * @param id   id of a user on which click event occurred
-     * @param name name of a user on which click event occured
+     * @param name name of a user on which click event occurred
      */
     @Override
     public void onItemClick(String id, String name) {
-        startActivity(UserProfileActivity.getStarterIntent(this)
-                .putExtra(IConstants.KEY_USER_ID, id));
+        mPresenter.onItemClick(id, name);
     }
 }

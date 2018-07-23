@@ -79,4 +79,15 @@ public class SearchPresenter
             }
         });
     }
+
+    /**
+     * Call this method when user clicks on list item
+     *
+     * @param id   user id
+     * @param name user name
+     */
+    @Override
+    public void onItemClick(String id, String name) {
+        getView().onCreateUserProfileActivity(id, name);
+    }
 }
