@@ -95,16 +95,6 @@ public class AllUsersActivity
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
-    @Override
     public void onAllUsersData(List<AllUsers> data) {
         mFriendsAdapter.updateData(data, IConstants.DIFF_ALL);
     }

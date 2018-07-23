@@ -86,16 +86,6 @@ public class StatusActivity
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
-    @Override
     public void showProgressDialog() {
         mProgressDialog = new ProgressDialog(this);
         mProgressDialog.setMessage("Saving changes...");

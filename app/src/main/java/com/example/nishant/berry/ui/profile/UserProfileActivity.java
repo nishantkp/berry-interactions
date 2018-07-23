@@ -73,16 +73,6 @@ public class UserProfileActivity
         mBinding.setPresenter(mPresenter);
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
     /**
      * Implement this method to deal with error message
      *

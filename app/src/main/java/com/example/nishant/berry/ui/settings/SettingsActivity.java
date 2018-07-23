@@ -74,16 +74,6 @@ public class SettingsActivity
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
-    @Override
     public void setUserInfo(AllUsers model) {
         mBinding.setUser(model);
     }

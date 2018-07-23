@@ -84,16 +84,6 @@ public class DashboardActivity
         mPresenter.checkCurrentUser();
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
     /**
      * If there isn't any active users start {@link StartActivity}
      */

@@ -100,16 +100,6 @@ public class SearchActivity
         mBinding.searchRv.addItemDecoration(itemDecor);
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
     /**
      * {@link SearchPresenter} callback for list of users
      *
