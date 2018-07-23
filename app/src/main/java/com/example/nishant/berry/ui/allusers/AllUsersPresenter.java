@@ -69,4 +69,9 @@ public class AllUsersPresenter
             }
         });
     }
+
+    @Override
+    public void onItemClick(String id, String name) {
+        getView().onCreateProfileActivity(id);
+    }
 }

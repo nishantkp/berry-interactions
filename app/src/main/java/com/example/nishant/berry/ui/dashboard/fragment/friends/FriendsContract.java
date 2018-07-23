@@ -34,10 +34,18 @@ public interface FriendsContract {
     interface View extends MvpView {
         void onFriendsList(List<AllUsers> friendsList);
 
+        void onCreateInteractionActivity(String id, String name);
+
+        void onCreateUserProfileActivity(String id, String name);
+
         void onError(String error);
     }
 
     interface Presenter {
         void getAllFriends();
+
+        void onInteraction(String id, String name);
+
+        void onUserProfile(String id, String name);
     }
 }

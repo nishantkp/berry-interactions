@@ -28,6 +28,7 @@ package com.example.nishant.berry.ui.dashboard.fragment.chat;
 import com.example.nishant.berry.base.BasePresenter;
 import com.example.nishant.berry.data.DataManager;
 import com.example.nishant.berry.data.callbacks.OnUsersList;
+import com.example.nishant.berry.ui.interaction.InteractionActivity;
 import com.example.nishant.berry.ui.model.AllUsers;
 
 import java.util.List;
@@ -70,5 +71,16 @@ public class ChatPresenter
                 getView().onError(error);
             }
         });
+    }
+
+    /**
+     * Provide implementation of this method to start {@link InteractionActivity}
+     *
+     * @param userId      user id
+     * @param displayName user name
+     */
+    @Override
+    public void onItemClick(String userId, String displayName) {
+        getView().onCreateInteractionActivity(userId, displayName);
     }
 }

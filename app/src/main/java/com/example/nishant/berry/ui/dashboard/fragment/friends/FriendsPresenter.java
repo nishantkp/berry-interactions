@@ -71,4 +71,14 @@ public class FriendsPresenter
             }
         });
     }
+
+    @Override
+    public void onInteraction(String id, String name) {
+        getView().onCreateInteractionActivity(id, name);
+    }
+
+    @Override
+    public void onUserProfile(String id, String name) {
+        getView().onCreateUserProfileActivity(id, name);
+    }
 }

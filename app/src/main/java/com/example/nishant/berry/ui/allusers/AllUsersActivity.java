@@ -115,6 +115,18 @@ public class AllUsersActivity
     }
 
     /**
+     * Start {@link UserProfileActivity}
+     *
+     * @param id user id
+     */
+    @Override
+    public void onCreateProfileActivity(String id) {
+        startActivity(UserProfileActivity.getStarterIntent(this)
+                .putExtra(IConstants.KEY_USER_ID, id)
+        );
+    }
+
+    /**
      * Implement this functionality to set behavior when user clicks on list item from
      * all users list
      *
@@ -123,8 +135,6 @@ public class AllUsersActivity
      */
     @Override
     public void onItemClick(String id, String name) {
-        startActivity(UserProfileActivity.getStarterIntent(this)
-                .putExtra(IConstants.KEY_USER_ID, id)
-        );
+        mPresenter.onItemClick(id, name);
     }
 }

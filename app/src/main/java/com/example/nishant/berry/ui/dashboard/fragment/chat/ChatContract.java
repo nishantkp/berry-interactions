@@ -34,10 +34,14 @@ public interface ChatContract {
     interface View extends MvpView {
         void onInteractionData(List<AllUsers> data);
 
+        void onCreateInteractionActivity(String userId, String displayName);
+
         void onError(String error);
     }
 
     interface Presenter {
         void getCurrentUsersChatList();
+
+        void onItemClick(String userId, String displayName);
     }
 }

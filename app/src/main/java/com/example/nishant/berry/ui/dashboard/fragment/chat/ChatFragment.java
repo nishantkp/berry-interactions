@@ -102,6 +102,14 @@ public class ChatFragment
         mInteractionAdapter.updateData(data);
     }
 
+    @Override
+    public void onCreateInteractionActivity(String userId, String displayName) {
+        startActivity(InteractionActivity.getStarterIntent(getContext())
+                .putExtra(IConstants.KEY_USER_ID, userId)
+                .putExtra(IConstants.KEY_USER_DISPLAY_NAME, displayName)
+        );
+    }
+
     /**
      * Error while getting data from firebase database for user's interactions
      *
@@ -113,7 +121,7 @@ public class ChatFragment
     }
 
     /**
-     * Implement this method to open {@link InteractionActivity} when user clicks on
+     * Implement this method for what to do when user clicks on
      * list item
      *
      * @param userId      id of user with whom current user want to chat
@@ -121,10 +129,6 @@ public class ChatFragment
      */
     @Override
     public void onItemClick(String userId, String displayName) {
-        startActivity(
-                InteractionActivity.getStarterIntent(getContext())
-                        .putExtra(IConstants.KEY_USER_ID, userId)
-                        .putExtra(IConstants.KEY_USER_DISPLAY_NAME, displayName)
-        );
+        mPresenter.onItemClick(userId, displayName);
     }
 }

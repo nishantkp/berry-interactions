@@ -35,9 +35,13 @@ public interface AllUsersContract {
         void onAllUsersData(List<AllUsers> data);
 
         void onError(String error);
+
+        void onCreateProfileActivity(String id);
     }
 
     interface Presenter {
         void getAllUsers();
+
+        void onItemClick(String id, String name);
     }
 }

@@ -101,6 +101,37 @@ public class FriendsFragment
         mFriendsAdapter.updateData(friendsList, IConstants.DIFF_ONLINE_STATUS);
     }
 
+    /**
+     * Implement this method to start {@link InteractionActivity} when use click on
+     * "send message" option from alert dialog
+     *
+     * @param id   user id
+     * @param name user name
+     */
+    @Override
+    public void onCreateInteractionActivity(String id, String name) {
+        startActivity(
+                InteractionActivity.getStarterIntent(getContext())
+                        .putExtra(IConstants.KEY_USER_ID, id)
+                        .putExtra(IConstants.KEY_USER_DISPLAY_NAME, name)
+        );
+    }
+
+    /**
+     * Implement this method to start {@link UserProfileActivity} when use click on
+     * "view profile" option from alert dialog
+     *
+     * @param id   user id
+     * @param name user name
+     */
+    @Override
+    public void onCreateUserProfileActivity(String id, String name) {
+        startActivity(
+                UserProfileActivity.getStarterIntent(getContext())
+                        .putExtra(IConstants.KEY_USER_ID, id)
+        );
+    }
+
     @Override
     public void onError(String error) {
         // Error handling
@@ -129,11 +160,7 @@ public class FriendsFragment
             @Override
             public void onClick(View v) {
                 dialog.dismiss();
-                startActivity(
-                        InteractionActivity.getStarterIntent(getContext())
-                                .putExtra(IConstants.KEY_USER_ID, id)
-                                .putExtra(IConstants.KEY_USER_DISPLAY_NAME, name)
-                );
+                mPresenter.onInteraction(id, name);
             }
         });
 
@@ -142,10 +169,7 @@ public class FriendsFragment
             @Override
             public void onClick(View v) {
                 dialog.dismiss();
-                startActivity(
-                        UserProfileActivity.getStarterIntent(getContext())
-                                .putExtra(IConstants.KEY_USER_ID, id)
-                );
+                mPresenter.onUserProfile(id, name);
             }
         });
     }
