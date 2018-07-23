@@ -38,6 +38,7 @@ import com.example.nishant.berry.config.IConstants;
 import com.example.nishant.berry.databinding.FriendRequestListItemBinding;
 import com.example.nishant.berry.ui.dashboard.DashboardActivity;
 import com.example.nishant.berry.ui.dashboard.fragment.request.RequestFragment;
+import com.example.nishant.berry.ui.dashboard.fragment.request.RequestPresenter;
 import com.example.nishant.berry.ui.model.AllUsers;
 import com.example.nishant.berry.ui.utils.ImageLoad;
 
@@ -48,16 +49,16 @@ import java.util.List;
  * Custom recyclerView adapter that deals with displaying list of friend requests
  * in {@link DashboardActivity}'s {@link RequestFragment}
  * <p>
- * This adapter also sets callback for button click on list item for accept/cancel/decline
+ * This adapter use data binding for button click on list item for accept/cancel/decline
  * friend request
  */
 public class FriendRequestAdapter
         extends RecyclerView.Adapter<FriendRequestAdapter.FriendRequestViewHolder> {
-    private OnClick mCallback;
-    private List<AllUsers> mReqList = new ArrayList<>();
+    private final RequestPresenter mPresenter;
+    private final List<AllUsers> mReqList = new ArrayList<>();
 
-    public FriendRequestAdapter(OnClick callback) {
-        mCallback = callback;
+    public FriendRequestAdapter(RequestPresenter presenter) {
+        mPresenter = presenter;
     }
 
     @NonNull
@@ -97,7 +98,7 @@ public class FriendRequestAdapter
 
     @Override
     public int getItemCount() {
-        return mReqList == null || mReqList.isEmpty() ? 0 : mReqList.size();
+        return mReqList.isEmpty() ? 0 : mReqList.size();
     }
 
     public void updateData(List<AllUsers> data) {
@@ -118,19 +119,6 @@ public class FriendRequestAdapter
     }
 
     /**
-     * OnClick callbacks for positive and negative button clicks
-     * <p>
-     * i.e,
-     * onPositiveClick : when user clicks on accept friend request button
-     * onNegativeClick : when user clicks on cancel or decline friend request button
-     */
-    public interface OnClick {
-        void onPositiveClick(String userId);
-
-        void onNegativeClick(String userId);
-    }
-
-    /**
      * ViewHolder class
      */
     class FriendRequestViewHolder extends RecyclerView.ViewHolder {
@@ -148,18 +136,7 @@ public class FriendRequestAdapter
          */
         void bind(AllUsers model) {
             mBinding.setUser(model);
-            mBinding.friendReqListItemAccept.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    mCallback.onPositiveClick(mReqList.get(getAdapterPosition()).getId());
-                }
-            });
-            mBinding.friendReqListItemCancel.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    mCallback.onNegativeClick(mReqList.get(getAdapterPosition()).getId());
-                }
-            });
+            mBinding.setPresenter(mPresenter);
         }
     }
 }

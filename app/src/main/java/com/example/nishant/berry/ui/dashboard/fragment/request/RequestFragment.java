@@ -49,7 +49,7 @@ import static android.support.v7.widget.LinearLayoutManager.VERTICAL;
  */
 public class RequestFragment
         extends Fragment
-        implements RequestContract.View, FriendRequestAdapter.OnClick {
+        implements RequestContract.View {
 
     // Log tag
     private static final String LOG_TAG = RequestFragment.class.getSimpleName();
@@ -75,11 +75,11 @@ public class RequestFragment
         View view = inflater.inflate(R.layout.fragment_request, container, false);
         mBinding = FragmentRequestBinding.bind(view);
 
-        mFriendRequestAdapter = new FriendRequestAdapter(this);
-        mBinding.requestRv.setAdapter(mFriendRequestAdapter);
-
         mPresenter = new RequestPresenter();
         mPresenter.attachView(this);
+
+        mFriendRequestAdapter = new FriendRequestAdapter(mPresenter);
+        mBinding.requestRv.setAdapter(mFriendRequestAdapter);
 
         // Setup recycler view
         mBinding.requestRv.setLayoutManager(
@@ -124,27 +124,5 @@ public class RequestFragment
     @Override
     public void onFriendReq(List<AllUsers> requests) {
         mFriendRequestAdapter.updateData(requests);
-    }
-
-    /**
-     * Implement this {@link FriendRequestAdapter} callback when user clicks on accept friend
-     * request button from the list
-     *
-     * @param userId user id
-     */
-    @Override
-    public void onPositiveClick(String userId) {
-        mPresenter.onPositiveClick(userId);
-    }
-
-    /**
-     * Implement this {@link FriendRequestAdapter} callback when user clicks on cancel/ decline
-     * friend request button from the list
-     *
-     * @param userId user id
-     */
-    @Override
-    public void onNegativeClick(String userId) {
-        mPresenter.onNegativeClick(userId);
     }
 }
