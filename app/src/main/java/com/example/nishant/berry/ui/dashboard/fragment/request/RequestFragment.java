@@ -95,16 +95,6 @@ public class RequestFragment
         return mBinding.getRoot();
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-    }
-
     /**
      * Provide implementation of this method either to Log error message or notify user about error
      * by means of toast, snack bar or so on...
