@@ -25,6 +25,8 @@
 
 package com.example.nishant.berry.ui.interaction;
 
+import android.content.Context;
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -37,7 +39,6 @@ import com.example.nishant.berry.R;
 import com.example.nishant.berry.base.BaseActivity;
 import com.example.nishant.berry.databinding.ActivityInteractionBinding;
 import com.example.nishant.berry.databinding.InteractionCustomBarBinding;
-import com.example.nishant.berry.ui.adapter.InteractionAdapter;
 import com.example.nishant.berry.ui.adapter.MessageAdapter;
 import com.example.nishant.berry.ui.model.Interaction;
 import com.example.nishant.berry.ui.model.InteractionActionBar;
@@ -57,6 +58,16 @@ public class InteractionActivity
     private ActivityInteractionBinding mBinding;
     private MessageAdapter mAdapter;
     private LinearLayoutManager mLinearLayoutManager;
+
+    /**
+     * Use this method get the intent to start {@link InteractionActivity}
+     *
+     * @param context Context of activity from which intent is started
+     * @return Intent to start {@link InteractionActivity}
+     */
+    public static Intent getStarterIntent(Context context) {
+        return new Intent(context, InteractionActivity.class);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -26,6 +26,7 @@
 package com.example.nishant.berry.ui.signup;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.support.v7.app.AppCompatActivity;
@@ -46,6 +47,16 @@ public class SignUpActivity
     private ActivitySignUpBinding mBinding;
     private SignUpPresenter mPresenter;
     private ProgressDialog mProgressDialog;
+
+    /**
+     * Use this method get the intent to start {@link SignUpActivity}
+     *
+     * @param context Context of activity from which intent is started
+     * @return Intent to start {@link SignUpActivity}
+     */
+    public static Intent getStarterIntent(Context context) {
+        return new Intent(context, SignUpActivity.class);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,9 +79,8 @@ public class SignUpActivity
 
     @Override
     public void signUpSuccess() {
-        startActivity(
-                new Intent(SignUpActivity.this, DashboardActivity.class)
-                        .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK)
+        startActivity(DashboardActivity.getStarterIntent(this)
+                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK)
         );
     }
 

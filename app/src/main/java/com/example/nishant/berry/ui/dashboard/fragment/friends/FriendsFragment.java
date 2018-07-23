@@ -128,7 +128,7 @@ public class FriendsFragment
             public void onClick(View v) {
                 dialog.dismiss();
                 startActivity(
-                        new Intent(getContext(), InteractionActivity.class)
+                        InteractionActivity.getStarterIntent(getContext())
                                 .putExtra(IConstants.KEY_USER_ID, id)
                                 .putExtra(IConstants.KEY_USER_DISPLAY_NAME, name)
                 );
@@ -141,7 +141,7 @@ public class FriendsFragment
             public void onClick(View v) {
                 dialog.dismiss();
                 startActivity(
-                        new Intent(getContext(), UserProfileActivity.class)
+                        UserProfileActivity.getStarterIntent(getContext())
                                 .putExtra(IConstants.KEY_USER_ID, id)
                 );
             }

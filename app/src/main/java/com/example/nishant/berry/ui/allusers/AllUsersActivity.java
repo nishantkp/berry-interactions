@@ -25,6 +25,7 @@
 
 package com.example.nishant.berry.ui.allusers;
 
+import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
@@ -54,6 +55,16 @@ public class AllUsersActivity
     private ActivityAllUsersBinding mBinding;
     private AllUsersPresenter mPresenter;
     private FriendsAdapter mFriendsAdapter;
+
+    /**
+     * Use this method get the intent to start {@link AllUsersActivity}
+     *
+     * @param context Context of activity from which intent is started
+     * @return Intent to start {@link AllUsersActivity}
+     */
+    public static Intent getStarterIntent(Context context) {
+        return new Intent(context, AllUsersActivity.class);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,8 +123,8 @@ public class AllUsersActivity
      */
     @Override
     public void onItemClick(String id, String name) {
-        startActivity(
-                new Intent(this, UserProfileActivity.class)
-                        .putExtra(IConstants.KEY_USER_ID, id));
+        startActivity(UserProfileActivity.getStarterIntent(this)
+                .putExtra(IConstants.KEY_USER_ID, id)
+        );
     }
 }

@@ -26,6 +26,7 @@
 package com.example.nishant.berry.ui.signin;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.support.v7.app.AppCompatActivity;
@@ -36,7 +37,6 @@ import com.example.nishant.berry.R;
 import com.example.nishant.berry.databinding.ActivitySignInBinding;
 import com.example.nishant.berry.ui.dashboard.DashboardActivity;
 import com.example.nishant.berry.ui.model.User;
-import com.example.nishant.berry.ui.signup.SignUpActivity;
 
 import java.util.Objects;
 
@@ -47,6 +47,16 @@ public class SignInActivity
     private ActivitySignInBinding mBinding;
     private SignInPresenter mPresenter;
     private ProgressDialog mProgressDialog;
+
+    /**
+     * Use this method get the intent to start {@link SignInActivity}
+     *
+     * @param context Context of activity from which intent is started
+     * @return Intent to start {@link SignInActivity}
+     */
+    public static Intent getStarterIntent(Context context) {
+        return new Intent(context, SignInActivity.class);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,9 +78,8 @@ public class SignInActivity
 
     @Override
     public void signInSuccess() {
-        startActivity(
-                new Intent(SignInActivity.this, DashboardActivity.class)
-                        .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK)
+        startActivity(DashboardActivity.getStarterIntent(this)
+                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK)
         );
     }
 

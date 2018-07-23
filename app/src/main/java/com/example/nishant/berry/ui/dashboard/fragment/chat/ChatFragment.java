@@ -119,7 +119,7 @@ public class ChatFragment
     @Override
     public void onItemClick(String userId, String displayName) {
         startActivity(
-                new Intent(getContext(), InteractionActivity.class)
+                InteractionActivity.getStarterIntent(getContext())
                         .putExtra(IConstants.KEY_USER_ID, userId)
                         .putExtra(IConstants.KEY_USER_DISPLAY_NAME, displayName)
         );
