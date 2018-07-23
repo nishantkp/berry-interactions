@@ -25,7 +25,6 @@
 
 package com.example.nishant.berry.ui.dashboard.fragment.request;
 
-
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -52,12 +51,11 @@ public class RequestFragment
         extends Fragment
         implements RequestContract.View, FriendRequestAdapter.OnClick {
 
+    // Log tag
+    private static final String LOG_TAG = RequestFragment.class.getSimpleName();
     private FragmentRequestBinding mBinding;
     private RequestPresenter mPresenter;
     private FriendRequestAdapter mFriendRequestAdapter;
-
-    // Log tag
-    private static final String LOG_TAG = RequestFragment.class.getSimpleName();
 
     public RequestFragment() {
         // Required empty public constructor

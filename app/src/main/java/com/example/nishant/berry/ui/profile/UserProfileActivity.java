@@ -25,6 +25,8 @@
 
 package com.example.nishant.berry.ui.profile;
 
+import android.content.Context;
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.widget.Toast;
@@ -41,6 +43,16 @@ public class UserProfileActivity
 
     private UserProfilePresenter mPresenter;
     private ActivityUserProfileBinding mBinding;
+
+    /**
+     * Use this method get the intent to start {@link UserProfileActivity}
+     *
+     * @param context Context of activity from which intent is started
+     * @return Intent to start {@link UserProfileActivity}
+     */
+    public static Intent getStarterIntent(Context context) {
+        return new Intent(context, UserProfileActivity.class);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

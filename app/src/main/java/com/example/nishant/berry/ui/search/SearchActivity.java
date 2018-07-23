@@ -25,6 +25,7 @@
 
 package com.example.nishant.berry.ui.search;
 
+import android.content.Context;
 import android.content.Intent;
 import android.databinding.BindingAdapter;
 import android.databinding.DataBindingUtil;
@@ -66,6 +67,16 @@ public class SearchActivity
     @BindingAdapter({"app:performSearchPerQuery"})
     public static void searchUser(EditText view, String searchQuery) {
         mPresenter.findUserFromQuery(searchQuery);
+    }
+
+    /**
+     * Use this method get the intent to start {@link SearchActivity}
+     *
+     * @param context Context of activity from which intent is started
+     * @return Intent to start {@link SearchActivity}
+     */
+    public static Intent getStarterIntent(Context context) {
+        return new Intent(context, SearchActivity.class);
     }
 
     @Override
@@ -128,8 +139,7 @@ public class SearchActivity
      */
     @Override
     public void onItemClick(String id, String name) {
-        startActivity(
-                new Intent(this, UserProfileActivity.class)
-                        .putExtra(IConstants.KEY_USER_ID, id));
+        startActivity(UserProfileActivity.getStarterIntent(this)
+                .putExtra(IConstants.KEY_USER_ID, id));
     }
 }
