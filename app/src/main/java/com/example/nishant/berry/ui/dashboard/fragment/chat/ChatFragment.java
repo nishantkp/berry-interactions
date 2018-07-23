@@ -25,7 +25,6 @@
 
 package com.example.nishant.berry.ui.dashboard.fragment.chat;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -38,8 +37,6 @@ import android.view.ViewGroup;
 
 import com.example.nishant.berry.config.IConstants;
 import com.example.nishant.berry.databinding.FragmentChatBinding;
-
-
 import com.example.nishant.berry.R;
 import com.example.nishant.berry.ui.adapter.InteractionAdapter;
 import com.example.nishant.berry.ui.interaction.InteractionActivity;
@@ -56,15 +53,21 @@ import static android.support.v7.widget.LinearLayoutManager.VERTICAL;
 public class ChatFragment
         extends Fragment
         implements ChatContract.View, InteractionAdapter.OnClick {
+    // Tag for logs
+    private static final String LOG_TAG = ChatFragment.class.getSimpleName();
     private FragmentChatBinding mBinding;
     private ChatPresenter mPresenter;
     private InteractionAdapter mInteractionAdapter;
 
-    // Tag for logs
-    private static final String LOG_TAG = ChatFragment.class.getSimpleName();
-
     public ChatFragment() {
         // Required empty public constructor
+    }
+
+    public static ChatFragment newInstance() {
+        Bundle args = new Bundle();
+        ChatFragment fragment = new ChatFragment();
+        fragment.setArguments(args);
+        return fragment;
     }
 
     @Override

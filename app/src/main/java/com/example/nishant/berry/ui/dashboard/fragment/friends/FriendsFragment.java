@@ -26,9 +26,6 @@
 package com.example.nishant.berry.ui.dashboard.fragment.friends;
 
 import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -45,9 +42,7 @@ import com.example.nishant.berry.databinding.FragmentFriendsBinding;
 import com.example.nishant.berry.ui.adapter.FriendsAdapter;
 import com.example.nishant.berry.ui.interaction.InteractionActivity;
 import com.example.nishant.berry.ui.model.AllUsers;
-import com.example.nishant.berry.ui.model.UserProfile;
 import com.example.nishant.berry.ui.profile.UserProfileActivity;
-import com.firebase.ui.database.FirebaseRecyclerAdapter;
 
 import java.util.List;
 
@@ -66,6 +61,13 @@ public class FriendsFragment
 
     public FriendsFragment() {
         // Required empty public constructor
+    }
+
+    public static FriendsFragment newInstance() {
+        Bundle args = new Bundle();
+        FriendsFragment fragment = new FriendsFragment();
+        fragment.setArguments(args);
+        return fragment;
     }
 
     @Override

@@ -61,6 +61,13 @@ public class RequestFragment
         // Required empty public constructor
     }
 
+    public static RequestFragment newInstance() {
+        Bundle args = new Bundle();
+        RequestFragment fragment = new RequestFragment();
+        fragment.setArguments(args);
+        return fragment;
+    }
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
