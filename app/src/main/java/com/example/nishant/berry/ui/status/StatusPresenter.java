@@ -25,31 +25,24 @@
 
 package com.example.nishant.berry.ui.status;
 
-import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
 import com.example.nishant.berry.base.BasePresenter;
-import com.example.nishant.berry.config.IFirebaseConfig;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
+import com.example.nishant.berry.data.DataManager;
+import com.example.nishant.berry.data.callbacks.OnTaskCompletion;
+import com.example.nishant.berry.ui.settings.SettingsActivity;
 
+/**
+ * Presenter which deals with saving current user's status
+ */
 public class StatusPresenter
         extends BasePresenter<StatusContract.View>
         implements StatusContract.Presenter {
 
-    private DatabaseReference mDatabaseReference;
+    private DataManager mDataManager;
 
     StatusPresenter() {
-        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        mDatabaseReference =
-                FirebaseDatabase.getInstance()
-                        .getReference()
-                        .child(IFirebaseConfig.USERS_OBJECT)
-                        .child(userId)
-                        .child(IFirebaseConfig.STATUS);
+        mDataManager = DataManager.getInstance();
     }
 
     @Override
@@ -63,8 +56,8 @@ public class StatusPresenter
     }
 
     /**
-     * When user click on save button from {@link com.example.nishant.berry.ui.settings.SettingsActivity}
-     * layout save the status and set callbacks for progress dialog and error message
+     * When user click on save button from {@link SettingsActivity}
+     * layout, save the status
      *
      * @param status user status from EditText field
      */
@@ -75,18 +68,18 @@ public class StatusPresenter
             status = "Welcome to berry!";
         }
 
-        // Save status to Firebase database
-        mDatabaseReference.setValue(status)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()) {
-                            getView().cancelProgressDialog();
-                        } else {
-                            getView().cancelProgressDialog();
-                            getView().onError("Error while saving changes!");
-                        }
-                    }
-                });
+        // Save user's status
+        mDataManager.saveUserStatus(status, new OnTaskCompletion() {
+            @Override
+            public void onSuccess() {
+                getView().cancelProgressDialog();
+            }
+
+            @Override
+            public void onError(String error) {
+                getView().cancelProgressDialog();
+                getView().onError(error);
+            }
+        });
     }
 }

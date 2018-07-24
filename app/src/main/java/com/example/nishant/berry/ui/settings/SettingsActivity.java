@@ -26,14 +26,10 @@
 package com.example.nishant.berry.ui.settings;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
-import android.graphics.Bitmap;
-import android.icu.text.UnicodeSetSpanner;
 import android.net.Uri;
-import android.provider.ContactsContract;
-import android.support.v4.widget.CircularProgressDrawable;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.Toast;
 
@@ -41,17 +37,9 @@ import com.example.nishant.berry.R;
 import com.example.nishant.berry.base.BaseActivity;
 import com.example.nishant.berry.config.IConstants;
 import com.example.nishant.berry.databinding.ActivitySettingsBinding;
+import com.example.nishant.berry.ui.model.AllUsers;
 import com.example.nishant.berry.ui.status.StatusActivity;
-import com.example.nishant.berry.ui.utils.ImageLoad;
-import com.squareup.picasso.Callback;
-import com.squareup.picasso.NetworkPolicy;
-import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
-import com.theartofdev.edmodo.cropper.CropImageView;
-
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
 
 import id.zelory.compressor.Compressor;
 
@@ -59,11 +47,21 @@ public class SettingsActivity
         extends BaseActivity
         implements SettingsContract.View {
 
+    private static final int GALLERY_INTENT_REQUEST_CODE = 100;
     private ActivitySettingsBinding mBinding;
     private SettingsPresenter mPresenter;
     private String mStatus;
-    private static final int GALLERY_INTENT_REQUEST_CODE = 100;
     private ProgressDialog mProgressDialog;
+
+    /**
+     * Use this method get the intent to start {@link SettingsActivity}
+     *
+     * @param context Context of activity from which intent is started
+     * @return Intent to start {@link SettingsActivity}
+     */
+    public static Intent getStarterIntent(Context context) {
+        return new Intent(context, SettingsActivity.class);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,30 +74,13 @@ public class SettingsActivity
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
+    public void setUserInfo(AllUsers model) {
+        mBinding.setUser(model);
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
-    @Override
-    public void setName(String name) {
-        mBinding.settingsDisplayName.setText(name);
-    }
-
-    @Override
-    public void setStatus(String status) {
-        mBinding.settingsStatus.setText(status);
+    public void onStatus(String status) {
         mStatus = status;
-    }
-
-    @Override
-    public void setImage(final String imageUri) {
-        if (imageUri == null) return;
-        ImageLoad.load(imageUri, mBinding.settingsAvatar);
     }
 
     @Override
@@ -130,9 +111,8 @@ public class SettingsActivity
      * When user press status change button start {@link StatusActivity}
      */
     public void onStatusButtonClick() {
-        startActivity(
-                new Intent(this, StatusActivity.class)
-                        .putExtra(IConstants.KEY_STATUS_INTENT, mStatus)
+        startActivity(StatusActivity.getStarterIntent(this)
+                .putExtra(IConstants.KEY_STATUS_INTENT, mStatus)
         );
     }
 

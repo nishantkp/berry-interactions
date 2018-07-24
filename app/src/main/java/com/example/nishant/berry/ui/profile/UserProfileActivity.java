@@ -25,8 +25,9 @@
 
 package com.example.nishant.berry.ui.profile;
 
+import android.content.Context;
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.Toast;
 
@@ -35,10 +36,6 @@ import com.example.nishant.berry.base.BaseActivity;
 import com.example.nishant.berry.config.IConstants;
 import com.example.nishant.berry.databinding.ActivityUserProfileBinding;
 import com.example.nishant.berry.ui.model.UserProfile;
-import com.example.nishant.berry.ui.utils.ImageLoad;
-import com.squareup.picasso.Callback;
-import com.squareup.picasso.NetworkPolicy;
-import com.squareup.picasso.Picasso;
 
 public class UserProfileActivity
         extends BaseActivity
@@ -46,6 +43,16 @@ public class UserProfileActivity
 
     private UserProfilePresenter mPresenter;
     private ActivityUserProfileBinding mBinding;
+
+    /**
+     * Use this method get the intent to start {@link UserProfileActivity}
+     *
+     * @param context Context of activity from which intent is started
+     * @return Intent to start {@link UserProfileActivity}
+     */
+    public static Intent getStarterIntent(Context context) {
+        return new Intent(context, UserProfileActivity.class);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,16 +73,6 @@ public class UserProfileActivity
         mBinding.setPresenter(mPresenter);
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
     /**
      * Implement this method to deal with error message
      *
@@ -94,16 +91,6 @@ public class UserProfileActivity
     @Override
     public void updateProfile(UserProfile profile) {
         mBinding.setProfile(profile);
-    }
-
-    /**
-     * Use this method to update user avatar
-     *
-     * @param url url of user avatar
-     */
-    @Override
-    public void updateUserProfileAvatar(final String url) {
-        ImageLoad.load(url, mBinding.profileAvatar);
     }
 
     /**

@@ -51,7 +51,5 @@ public interface SignUpContract {
                         String email,
                         String password,
                         SignUpContract.View.SignUpCallback callback);
-
-        void storeDataToFirebaseDatabase(String displayName);
     }
 }

@@ -29,11 +29,15 @@ import android.view.View;
 
 import com.example.nishant.berry.config.IFirebaseConfig;
 
+import java.util.Objects;
+
 /**
- * Users object for FirebaseRecyclerAdapter
+ * Model represents users object from Firebase database
  * This object should contain variable names exactly the same as Firebase Database
+ * There are also helper fields and methods for Users object
  */
 public class AllUsers {
+    private String id;
     private String name;
     private String image;
     private String status;
@@ -44,16 +48,18 @@ public class AllUsers {
     private boolean online;
     private boolean messageSeen;
     private int onlineStatus;
+    private long last_seen;
 
     public AllUsers() {
     }
 
-    public AllUsers(String name, String image, String status, String thumbnail, boolean online) {
+    public AllUsers(String name, String image, String status, String thumbnail, boolean online, long last_seen) {
         this.name = name;
         this.image = image;
         this.status = status;
         this.thumbnail = thumbnail;
         this.online = online;
+        this.last_seen = last_seen;
     }
 
     public String getName() {
@@ -145,5 +151,27 @@ public class AllUsers {
 
     public void setAcceptButtonVisibility(int acceptButtonVisibility) {
         this.acceptButtonVisibility = acceptButtonVisibility;
+    }
+
+    public long getLast_seen() {
+        return last_seen;
+    }
+
+    public void setLast_seen(long last_seen) {
+        this.last_seen = last_seen;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof AllUsers) return Objects.equals(((AllUsers) obj).id, this.id);
+        return super.equals(obj);
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }

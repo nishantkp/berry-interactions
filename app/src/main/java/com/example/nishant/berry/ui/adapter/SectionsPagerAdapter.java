@@ -44,11 +44,11 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
         switch (position) {
             case 0:
-                return new RequestFragment();
+                return RequestFragment.newInstance();
             case 1:
-                return new ChatFragment();
+                return ChatFragment.newInstance();
             case 2:
-                return new FriendsFragment();
+                return FriendsFragment.newInstance();
             default:
                 return null;
         }

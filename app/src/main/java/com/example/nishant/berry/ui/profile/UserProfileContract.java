@@ -34,8 +34,6 @@ public interface UserProfileContract {
 
         void updateProfile(UserProfile profile);
 
-        void updateUserProfileAvatar(String url);
-
         void friendRequestSentSuccessfully(String message);
     }
 
@@ -50,14 +48,8 @@ public interface UserProfileContract {
 
         void acceptRequest();
 
-        void updateButtonTextToAcceptFriendRequest();
-
-        void updateButtonTextToUnfriend();
-
         void removeFriend();
 
         void onDeclineFriendRequestBtnClick();
-
-        void unableToSendFriendRequestError();
     }
 }

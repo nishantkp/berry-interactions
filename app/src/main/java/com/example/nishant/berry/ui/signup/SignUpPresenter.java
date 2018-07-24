@@ -25,31 +25,22 @@
 
 package com.example.nishant.berry.ui.signup;
 
-import android.support.annotation.NonNull;
-
 import com.example.nishant.berry.base.BasePresenter;
-import com.example.nishant.berry.config.IFirebaseConfig;
+import com.example.nishant.berry.data.DataManager;
+import com.example.nishant.berry.data.callbacks.OnTaskCompletion;
 import com.example.nishant.berry.ui.model.User;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.iid.FirebaseInstanceId;
 
-import java.util.HashMap;
-import java.util.Map;
-
+/**
+ * Presenter that deals with user registration
+ */
 public class SignUpPresenter
         extends BasePresenter<SignUpContract.View>
         implements SignUpContract.Presenter {
 
-    private FirebaseAuth mAuth;
+    private DataManager mDataManager;
 
     SignUpPresenter() {
-        mAuth = FirebaseAuth.getInstance();
+        mDataManager = DataManager.getInstance();
     }
 
     @Override
@@ -72,7 +63,7 @@ public class SignUpPresenter
      * @param callback    callback for invalid display name, password and email
      */
     @Override
-    public void signUpUser(final String displayName, final String email, String password, SignUpContract.View.SignUpCallback callback) {
+    public void signUpUser(String displayName, String email, String password, SignUpContract.View.SignUpCallback callback) {
 
         // Validation check
         if (!User.isDisplayNameValid(displayName)) {
@@ -90,62 +81,18 @@ public class SignUpPresenter
 
         // Show progress dialog
         getView().showProgressDialog();
+        mDataManager.signUpUser(displayName, email, password, new OnTaskCompletion() {
+            @Override
+            public void onSuccess() {
+                getView().cancelProgressDialog();
+                getView().signUpSuccess();
+            }
 
-        // Register user with email, password and cancel progress dialog
-        mAuth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isComplete() && task.isSuccessful()) {
-
-                            //Store data
-                            storeDataToFirebaseDatabase(displayName);
-                        } else {
-                            getView().cancelProgressDialog();
-                            getView().signUpError("Error creating account!");
-                        }
-                    }
-                });
-    }
-
-    /**
-     * Store user data to database and sets callbacks to display/cancel progress dialog
-     *
-     * @param displayName display name
-     */
-    @Override
-    public void storeDataToFirebaseDatabase(String displayName) {
-        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        String deviceToken = FirebaseInstanceId.getInstance().getToken();
-        // Setup Firebase database reference
-        DatabaseReference mDatabaseReference =
-                FirebaseDatabase.getInstance()
-                        .getReference()
-                        .child(IFirebaseConfig.USERS_OBJECT)
-                        .child(userId);
-
-        // Value Map for Firebase database
-        Map<String, Object> userMap = new HashMap<>();
-        userMap.put(IFirebaseConfig.NAME, displayName);
-        userMap.put(IFirebaseConfig.STATUS, IFirebaseConfig.DEFAULT_STATUS);
-        userMap.put(IFirebaseConfig.IMAGE, IFirebaseConfig.DEFAULT_VALUE);
-        userMap.put(IFirebaseConfig.THUMBNAIL, IFirebaseConfig.DEFAULT_VALUE);
-        userMap.put(IFirebaseConfig.DEVICE_TOKEN_ID, deviceToken);
-        userMap.put(IFirebaseConfig.ONLINE, true);
-
-        // Set the values to Firebase database
-        mDatabaseReference.setValue(userMap)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isComplete() && task.isSuccessful()) {
-                            getView().cancelProgressDialog();
-                            getView().signUpSuccess();
-                        } else {
-                            getView().cancelProgressDialog();
-                            getView().signUpError("Error creating account!");
-                        }
-                    }
-                });
+            @Override
+            public void onError(String error) {
+                getView().cancelProgressDialog();
+                getView().signUpError(error);
+            }
+        });
     }
 }

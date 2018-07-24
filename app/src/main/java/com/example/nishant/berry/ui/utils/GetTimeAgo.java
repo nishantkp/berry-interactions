@@ -19,14 +19,10 @@
 
 package com.example.nishant.berry.ui.utils;
 
-import android.annotation.SuppressLint;
-import android.app.Application;
-
 /**
  * Class that converts timestamp in milliseconds time into more human readable format
  */
-@SuppressLint("Registered")
-public class GetTimeAgo extends Application {
+public class GetTimeAgo {
     private static final int SECOND_MILLIS = 1000;
     private static final int MINUTE_MILLIS = 60 * SECOND_MILLIS;
     private static final int HOUR_MILLIS = 60 * MINUTE_MILLIS;

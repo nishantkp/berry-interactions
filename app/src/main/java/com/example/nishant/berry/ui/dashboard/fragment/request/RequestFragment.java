@@ -25,8 +25,8 @@
 
 package com.example.nishant.berry.ui.dashboard.fragment.request;
 
-
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -36,9 +36,11 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.nishant.berry.R;
-import com.example.nishant.berry.databinding.FragmentChatBinding;
 import com.example.nishant.berry.databinding.FragmentRequestBinding;
-import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.example.nishant.berry.ui.adapter.FriendRequestAdapter;
+import com.example.nishant.berry.ui.model.AllUsers;
+
+import java.util.List;
 
 import static android.support.v7.widget.LinearLayoutManager.VERTICAL;
 
@@ -49,19 +51,25 @@ public class RequestFragment
         extends Fragment
         implements RequestContract.View {
 
-    private FragmentRequestBinding mBinding;
-    private RequestPresenter mPresenter;
-    private FirebaseRecyclerAdapter mAdapter;
-
     // Log tag
     private static final String LOG_TAG = RequestFragment.class.getSimpleName();
+    private FragmentRequestBinding mBinding;
+    private RequestPresenter mPresenter;
+    private FriendRequestAdapter mFriendRequestAdapter;
 
     public RequestFragment() {
         // Required empty public constructor
     }
 
+    public static RequestFragment newInstance() {
+        Bundle args = new Bundle();
+        RequestFragment fragment = new RequestFragment();
+        fragment.setArguments(args);
+        return fragment;
+    }
+
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_request, container, false);
@@ -69,6 +77,9 @@ public class RequestFragment
 
         mPresenter = new RequestPresenter();
         mPresenter.attachView(this);
+
+        mFriendRequestAdapter = new FriendRequestAdapter(mPresenter);
+        mBinding.requestRv.setAdapter(mFriendRequestAdapter);
 
         // Setup recycler view
         mBinding.requestRv.setLayoutManager(
@@ -84,32 +95,6 @@ public class RequestFragment
         return mBinding.getRoot();
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        // start listening to firebase adapter
-        mAdapter.startListening();
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        // onPause() method will surely be called every time, but onStop() may not get call all the time
-        // so stop listening to firebase adapter on onPause() method instead
-        mAdapter.stopListening();
-    }
-
-    /**
-     * Implement this method to set firebase adapter on recycler view
-     *
-     * @param adapter Firebase recycler adapter
-     */
-    @Override
-    public void setFirebaseAdapterWithRecyclerView(FirebaseRecyclerAdapter adapter) {
-        mAdapter = adapter;
-        mBinding.requestRv.setAdapter(adapter);
-    }
-
     /**
      * Provide implementation of this method either to Log error message or notify user about error
      * by means of toast, snack bar or so on...
@@ -119,5 +104,15 @@ public class RequestFragment
     @Override
     public void onError(String error) {
         Log.d(LOG_TAG, error);
+    }
+
+    /**
+     * Provide implementation of this method for what to do with all friend requests
+     *
+     * @param requests List of friend requests in form of List<AllUsers>
+     */
+    @Override
+    public void onFriendReq(List<AllUsers> requests) {
+        mFriendRequestAdapter.updateData(requests);
     }
 }

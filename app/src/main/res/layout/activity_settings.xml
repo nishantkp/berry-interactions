@@ -29,6 +29,10 @@
     <data>
 
         <variable
+            name="user"
+            type="com.example.nishant.berry.ui.model.AllUsers" />
+
+        <variable
             name="activity"
             type="com.example.nishant.berry.ui.settings.SettingsActivity" />
     </data>
@@ -49,7 +53,8 @@
             android:src="@drawable/user_default_avatar"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:loadImageFromUrl="@{user.image}" />
 
         <TextView
             android:id="@+id/settings_display_name"
@@ -57,7 +62,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:fontFamily="sans-serif-medium"
-            android:text="John Wick"
+            android:text="@{user.name}"
             android:textAppearance="@style/TextAppearance.AppCompat.Display1"
             android:textColor="@color/colorSecondary"
             app:layout_constraintEnd_toEndOf="@+id/settings_avatar"
@@ -70,9 +75,9 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:gravity="center"
-            android:paddingEnd="16sp"
-            android:paddingStart="16sp"
-            android:text="No one kills John Wick's dog!"
+            android:paddingEnd="16dp"
+            android:paddingStart="16dp"
+            android:text="@{user.status}"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
             android:textColor="@color/primaryTextColor"
             app:layout_constraintEnd_toEndOf="@+id/settings_display_name"
@@ -101,8 +106,8 @@
             android:layout_marginBottom="24dp"
             android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
-            android:text="@string/change_avatar_label"
             android:onClick="@{()->activity.onChangeAvatarButtonClick()}"
+            android:text="@string/change_avatar_label"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />

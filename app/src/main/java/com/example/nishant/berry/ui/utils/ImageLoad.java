@@ -44,7 +44,7 @@ public class ImageLoad {
      * @param url  url of image
      * @param view ImageView in which we want to display image
      */
-    public static void load(final String url, final ImageView view) {
+    private static void load(final String url, final ImageView view) {
         // Download and load image into ImageView
         Picasso.get()
                 .load(url)

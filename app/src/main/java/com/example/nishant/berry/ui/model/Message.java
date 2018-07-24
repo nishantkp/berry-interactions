@@ -25,6 +25,9 @@
 
 package com.example.nishant.berry.ui.model;
 
+/**
+ * Model represents message object from Firebase database
+ */
 public class Message {
     private String data;
     private String type;

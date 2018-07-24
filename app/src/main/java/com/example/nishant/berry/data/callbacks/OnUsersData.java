@@ -19,33 +19,21 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  *
- * File Created on 10/06/18 7:39 PM by nishant
- * Last Modified on 10/06/18 6:36 PM
+ * File Created on 15/07/18 2:05 PM by nishant
+ * Last Modified on 15/07/18 2:05 PM
  */
 
-package com.example.nishant.berry.ui.adapter;
+package com.example.nishant.berry.data.callbacks;
 
-import android.support.v7.widget.RecyclerView;
-
-import com.example.nishant.berry.databinding.AllUsersListItemBinding;
-import com.example.nishant.berry.ui.allusers.AllUsersActivity;
-import com.example.nishant.berry.ui.dashboard.fragment.friends.FriendsFragment;
 import com.example.nishant.berry.ui.model.AllUsers;
 
 /**
- * View Holder for displaying each users in {@link AllUsersActivity} and {@link FriendsFragment}
- * This view holder is used in conjunction with FirebaseRecyclerAdapter
+ * Users data callback when dealing with user's object from firebase
+ * <p>
+ * Interface for interacting(i.e getting results from) with DataManager Class
  */
-public class AllUsersViewHolder extends RecyclerView.ViewHolder {
-    private AllUsersListItemBinding mBinding;
+public interface OnUsersData {
+    void onData(AllUsers model, String userId);
 
-    public AllUsersViewHolder(AllUsersListItemBinding binding) {
-        super(binding.getRoot());
-        mBinding = binding;
-    }
-
-    // Bind data to list-item view
-    public void bind(final AllUsers users) {
-        mBinding.setUsers(users);
-    }
+    void onError(String error);
 }

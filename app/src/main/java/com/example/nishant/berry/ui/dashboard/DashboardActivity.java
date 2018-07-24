@@ -25,9 +25,9 @@
 
 package com.example.nishant.berry.ui.dashboard;
 
+import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -49,6 +49,16 @@ public class DashboardActivity
 
     private DashboardPresenter mPresenter;
     private ActivityDashboardBinding mBinding;
+
+    /**
+     * Use this method get the intent to start {@link DashboardActivity}
+     *
+     * @param context Context of activity from which intent is started
+     * @return Intent to start {@link DashboardActivity}
+     */
+    public static Intent getStarterIntent(Context context) {
+        return new Intent(context, DashboardActivity.class);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,16 +84,6 @@ public class DashboardActivity
         mPresenter.checkCurrentUser();
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
     /**
      * If there isn't any active users start {@link StartActivity}
      */
@@ -107,13 +107,13 @@ public class DashboardActivity
                 sendToStartActivity();
                 return true;
             case R.id.action_account_settings:
-                startActivity(new Intent(this, SettingsActivity.class));
+                startActivity(SettingsActivity.getStarterIntent(this));
                 return true;
             case R.id.action_all_users:
-                startActivity(new Intent(this, AllUsersActivity.class));
+                startActivity(AllUsersActivity.getStarterIntent(this));
                 return true;
             case R.id.action_search:
-                startActivity(new Intent(this, SearchActivity.class));
+                startActivity(SearchActivity.getStarterIntent(this));
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -123,7 +123,7 @@ public class DashboardActivity
      * Intent to send user to start activity
      */
     private void sendToStartActivity() {
-        startActivity(new Intent(DashboardActivity.this, StartActivity.class));
+        startActivity(StartActivity.getStarterIntent(this));
         finish();
     }
 }

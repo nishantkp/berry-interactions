@@ -46,21 +46,17 @@ public interface InteractionContract {
         void interactionUserAvatar(String url);
 
         void setLayoutManagerOffset(int position);
+
+        void onError(String error);
     }
 
     interface Presenter {
         void extractBasicInfoDatabase();
 
-        void initInteractionDatabase();
-
         void onInteractions(String message);
 
         void updateMessageList();
 
-        void updateMoreMessageToList();
-
         void swipeMessageRefresh();
-
-        void updateMessageSeenStatus(String key);
     }
 }

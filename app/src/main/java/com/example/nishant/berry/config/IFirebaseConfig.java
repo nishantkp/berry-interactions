@@ -25,6 +25,10 @@
 
 package com.example.nishant.berry.config;
 
+/**
+ * Specific data related to firebase database
+ * i.e, Keys and Constants
+ */
 public interface IFirebaseConfig {
     String USERS_OBJECT = "users";
     String FRIEND_REQUEST_OBJECT = "friend_requests";

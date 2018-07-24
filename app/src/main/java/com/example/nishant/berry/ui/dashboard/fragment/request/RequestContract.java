@@ -26,17 +26,22 @@
 package com.example.nishant.berry.ui.dashboard.fragment.request;
 
 import com.example.nishant.berry.base.MvpView;
-import com.firebase.ui.database.FirebaseRecyclerAdapter;
-import com.google.firebase.database.Query;
+import com.example.nishant.berry.ui.model.AllUsers;
 
-public class RequestContract {
+import java.util.List;
+
+class RequestContract {
     interface View extends MvpView {
-        void setFirebaseAdapterWithRecyclerView(FirebaseRecyclerAdapter adapter);
-
         void onError(String error);
+
+        void onFriendReq(List<AllUsers> requests);
     }
 
     interface Presenter {
-        void setupFirebaseRecyclerAdapter(Query query);
+        void getFriendRequestList();
+
+        void onPositiveClick(String id);
+
+        void onNegativeClick(String id);
     }
 }

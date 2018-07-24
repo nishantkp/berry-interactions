@@ -25,37 +25,66 @@
 
 package com.example.nishant.berry.ui.search;
 
+import android.content.Context;
 import android.content.Intent;
 import android.databinding.BindingAdapter;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
-import android.view.View;
+import android.util.Log;
 import android.widget.EditText;
 
 import com.example.nishant.berry.R;
 import com.example.nishant.berry.base.BaseActivity;
 import com.example.nishant.berry.config.IConstants;
 import com.example.nishant.berry.databinding.ActivitySearchBinding;
+import com.example.nishant.berry.ui.adapter.FriendsAdapter;
+import com.example.nishant.berry.ui.model.AllUsers;
 import com.example.nishant.berry.ui.model.SearchUser;
 import com.example.nishant.berry.ui.profile.UserProfileActivity;
-import com.firebase.ui.database.FirebaseRecyclerAdapter;
+
+import java.util.List;
 
 import static android.support.v7.widget.LinearLayoutManager.VERTICAL;
 
 public class SearchActivity
         extends BaseActivity
-        implements SearchContract.View {
+        implements SearchContract.View, FriendsAdapter.OnClick {
 
+    /* Tag for log messages */
+    private static final String LOG_TAG = SearchActivity.class.getSimpleName();
     private static SearchPresenter mPresenter;
     private ActivitySearchBinding mBinding;
-    private FirebaseRecyclerAdapter mAdapter;
+    private FriendsAdapter mFriendsAdapter;
+
+    /**
+     * Binding adapter for {@link SearchActivity} EditText field
+     *
+     * @param view        EditText view
+     * @param searchQuery Text entered by user
+     */
+    @BindingAdapter({"app:performSearchPerQuery"})
+    public static void searchUser(EditText view, String searchQuery) {
+        mPresenter.findUserFromQuery(searchQuery);
+    }
+
+    /**
+     * Use this method get the intent to start {@link SearchActivity}
+     *
+     * @param context Context of activity from which intent is started
+     * @return Intent to start {@link SearchActivity}
+     */
+    public static Intent getStarterIntent(Context context) {
+        return new Intent(context, SearchActivity.class);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_search);
+        mFriendsAdapter = new FriendsAdapter(this);
+        mBinding.searchRv.setAdapter(mFriendsAdapter);
 
         // set presenter
         mPresenter = new SearchPresenter();
@@ -71,61 +100,48 @@ public class SearchActivity
         mBinding.searchRv.addItemDecoration(itemDecor);
     }
 
+    /**
+     * {@link SearchPresenter} callback for list of users
+     *
+     * @param data User's list from search query entered by user
+     */
     @Override
-    protected void onPause() {
-        super.onPause();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        mAdapter.stopListening();
-    }
-
-    @Override
-    public void setRecyclerView(FirebaseRecyclerAdapter adapter) {
-        // If adapter is null, hide recycler view
-        if (adapter == null) {
-            mBinding.searchRv.setVisibility(View.INVISIBLE);
-            return;
-        }
-        mAdapter = adapter;
-        mAdapter.startListening();
-        mBinding.searchRv.setVisibility(View.VISIBLE);
-        mBinding.searchRv.setAdapter(adapter);
+    public void onData(List<AllUsers> data) {
+        mFriendsAdapter.updateData(data, IConstants.DIFF_ALL);
     }
 
     /**
-     * Implement this functionality to set behavior when user clicks on list item from
+     * {@link SearchPresenter} callback to start {@link UserProfileActivity} when user clicks
+     * on list item from list
+     *
+     * @param id   user id
+     * @param name user name
+     */
+    @Override
+    public void onCreateUserProfileActivity(String id, String name) {
+        startActivity(UserProfileActivity.getStarterIntent(this)
+                .putExtra(IConstants.KEY_USER_ID, id));
+    }
+
+    /**
+     * {@link SearchPresenter} callback for error while retrieving data from database
+     *
+     * @param error error message
+     */
+    @Override
+    public void onError(String error) {
+        Log.d(LOG_TAG, error);
+    }
+
+    /**
+     * Implement this functionality for what to do when user clicks on list item from
      * search users list
      *
-     * @param userId Id of a user on which click event occurred
+     * @param id   id of a user on which click event occurred
+     * @param name name of a user on which click event occurred
      */
     @Override
-    public void onListItemSelected(String userId) {
-        startActivity(
-                new Intent(this, UserProfileActivity.class)
-                        .putExtra(IConstants.KEY_USER_ID, userId));
-    }
-
-    /**
-     * Binding adapter for {@link SearchActivity} EditText field
-     *
-     * @param view        EditText view
-     * @param searchQuery Text entered by user
-     */
-    @BindingAdapter({"app:performSearchPerQuery"})
-    public static void searchUser(EditText view, String searchQuery) {
-        mPresenter.setFirebaseAdapter(searchQuery);
+    public void onItemClick(String id, String name) {
+        mPresenter.onItemClick(id, name);
     }
 }

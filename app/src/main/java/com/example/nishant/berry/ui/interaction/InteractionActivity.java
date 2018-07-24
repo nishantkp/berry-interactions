@@ -25,11 +25,14 @@
 
 package com.example.nishant.berry.ui.interaction;
 
+import android.content.Context;
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.LinearLayoutManager;
+import android.util.Log;
 import android.view.View;
 
 import com.example.nishant.berry.R;
@@ -50,10 +53,21 @@ public class InteractionActivity
         extends BaseActivity
         implements InteractionContract.View {
 
+    private static final String LOG_TAG = InteractionActivity.class.getSimpleName();
     private InteractionPresenter mPresenter;
     private ActivityInteractionBinding mBinding;
     private MessageAdapter mAdapter;
     private LinearLayoutManager mLinearLayoutManager;
+
+    /**
+     * Use this method get the intent to start {@link InteractionActivity}
+     *
+     * @param context Context of activity from which intent is started
+     * @return Intent to start {@link InteractionActivity}
+     */
+    public static Intent getStarterIntent(Context context) {
+        return new Intent(context, InteractionActivity.class);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,16 +82,6 @@ public class InteractionActivity
         mPresenter = new InteractionPresenter(getIntent());
         mPresenter.attachView(this);
         mBinding.interactionsBottomBar.setPresenter(mPresenter);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
     }
 
     /**
@@ -165,5 +169,11 @@ public class InteractionActivity
     @Override
     public void setLayoutManagerOffset(int position) {
         mLinearLayoutManager.scrollToPositionWithOffset(position, 0);
+    }
+
+    @Override
+    public void onError(String error) {
+        // Just log errors
+        Log.d(LOG_TAG, error);
     }
 }

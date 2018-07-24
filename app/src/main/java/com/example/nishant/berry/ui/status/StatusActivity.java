@@ -26,8 +26,9 @@
 package com.example.nishant.berry.ui.status;
 
 import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.Toast;
 
@@ -46,6 +47,16 @@ public class StatusActivity
     private ActivityStatusBinding mBinding;
     private StatusPresenter mPresenter;
     private ProgressDialog mProgressDialog;
+
+    /**
+     * Use this method get the intent to start {@link StatusActivity}
+     *
+     * @param context Context of activity from which intent is started
+     * @return Intent to start {@link StatusActivity}
+     */
+    public static Intent getStarterIntent(Context context) {
+        return new Intent(context, StatusActivity.class);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,16 +83,6 @@ public class StatusActivity
         mPresenter = new StatusPresenter();
         mPresenter.attachView(this);
         mBinding.setPresenter(mPresenter);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
     }
 
     @Override

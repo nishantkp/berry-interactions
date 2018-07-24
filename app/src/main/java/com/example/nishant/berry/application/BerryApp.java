@@ -27,8 +27,10 @@ package com.example.nishant.berry.application;
 
 import android.app.Application;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.example.nishant.berry.config.IFirebaseConfig;
+import com.example.nishant.berry.data.DataManager;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -53,6 +55,9 @@ public class BerryApp extends Application {
         // Adds firebase offline functionality
         FirebaseDatabase.getInstance().setPersistenceEnabled(true);
 
+        // Initiate Data manager
+        DataManager dataManager = DataManager.getInstance();
+
         // Picasso with OkHttp3 to download user avatar
         Picasso.Builder builder = new Picasso.Builder(this);
         builder.downloader(new OkHttp3Downloader(this, Integer.MAX_VALUE));
@@ -62,12 +67,9 @@ public class BerryApp extends Application {
         Picasso.setSingletonInstance(picasso);
 
         if (FirebaseAuth.getInstance().getCurrentUser() == null) return;
-        // Current user id
-        String userId = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
-        // Users database reference
-        final DatabaseReference usersDatabaseReference = FirebaseDatabase.getInstance().getReference()
-                .child(IFirebaseConfig.USERS_OBJECT)
-                .child(userId);
+
+        // Current Users database reference
+        final DatabaseReference usersDatabaseReference = dataManager.getCurrentUsersRef();
 
         usersDatabaseReference.addValueEventListener(new ValueEventListener() {
             @Override

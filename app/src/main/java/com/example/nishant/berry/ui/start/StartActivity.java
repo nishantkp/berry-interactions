@@ -25,6 +25,7 @@
 
 package com.example.nishant.berry.ui.start;
 
+import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.support.v7.app.AppCompatActivity;
@@ -35,9 +36,23 @@ import com.example.nishant.berry.databinding.ActivityStartBinding;
 import com.example.nishant.berry.ui.signin.SignInActivity;
 import com.example.nishant.berry.ui.signup.SignUpActivity;
 
+/**
+ * Start activity responsible for start page and navigates user to sign-in or sign-up page
+ * depending on user's preference
+ */
 public class StartActivity extends AppCompatActivity {
 
     private ActivityStartBinding mBinding;
+
+    /**
+     * Use this method get the intent to start {@link StartActivity}
+     *
+     * @param context Context of activity from which intent is started
+     * @return Intent to start {@link StartActivity}
+     */
+    public static Intent getStarterIntent(Context context) {
+        return new Intent(context, StartActivity.class);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,13 +65,13 @@ public class StartActivity extends AppCompatActivity {
      * When user clicks on account registration button, start {@link SignUpActivity}
      */
     public void onRegistrationButtonClick() {
-        startActivity(new Intent(StartActivity.this, SignUpActivity.class));
+        startActivity(SignUpActivity.getStarterIntent(this));
     }
 
     /**
      * When user click on Sign In button, start {@link SignInActivity}
      */
     public void onSignInButtonClick() {
-        startActivity(new Intent(StartActivity.this, SignInActivity.class));
+        startActivity(SignInActivity.getStarterIntent(this));
     }
 }
