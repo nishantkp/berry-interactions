@@ -90,5 +90,9 @@ interface DataContract {
 
     DatabaseReference getCurrentUsersRef();
 
+    void markUserOnline(@NonNull final OnTaskCompletion callback);
+
+    void markUserOffline(@NonNull final OnTaskCompletion callback);
+
     boolean isCurrentUserAvailable();
 }
