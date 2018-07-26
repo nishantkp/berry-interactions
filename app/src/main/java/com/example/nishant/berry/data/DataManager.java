@@ -86,6 +86,22 @@ public class DataManager implements DataContract {
     }
 
     /**
+     * Call this method to mark user online (i.e if the user is currently on app screen)
+     */
+    @Override
+    public void markUserOnline(@NonNull final OnTaskCompletion callback) {
+        mFbUsersUseCase.markUserOnline(callback);
+    }
+
+    /**
+     * Call this method to mark user offline (i.e if the user is away from app screen)
+     */
+    @Override
+    public void markUserOffline(@NonNull final OnTaskCompletion callback) {
+        mFbUsersUseCase.markUserOffline(callback);
+    }
+
+    /**
      * Use this method to sign out current user
      */
     @Override
