@@ -88,8 +88,6 @@ interface DataContract {
 
     void signOutUser();
 
-    DatabaseReference getCurrentUsersRef();
-
     void markUserOnline(@NonNull final OnTaskCompletion callback);
 
     void markUserOffline(@NonNull final OnTaskCompletion callback);

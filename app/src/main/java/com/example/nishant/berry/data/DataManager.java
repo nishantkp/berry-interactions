@@ -76,16 +76,6 @@ public class DataManager implements DataContract {
     }
 
     /**
-     * Call this method to get reference of current user from Users object in root ref
-     *
-     * @return database reference for current user in users object
-     */
-    @Override
-    public DatabaseReference getCurrentUsersRef() {
-        return mFbUsersUseCase.getCurrentUserRefFromMainObject(IFirebaseConfig.USERS_OBJECT);
-    }
-
-    /**
      * Call this method to mark user online (i.e if the user is currently on app screen)
      */
     @Override
