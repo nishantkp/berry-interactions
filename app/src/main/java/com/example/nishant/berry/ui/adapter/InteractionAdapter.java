@@ -52,8 +52,8 @@ import java.util.List;
  */
 public class InteractionAdapter
         extends RecyclerView.Adapter<InteractionAdapter.InteractionViewHolder> {
-    private List<AllUsers> mData;
-    private OnClick mCallback;
+    private final List<AllUsers> mData;
+    private final OnClick mCallback;
 
     /**
      * Click callbacks when user clicks on recyclerView item

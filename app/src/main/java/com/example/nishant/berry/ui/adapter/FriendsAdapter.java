@@ -49,10 +49,10 @@ import java.util.List;
  * Custom RecyclerViewAdapter to display current user's friends
  * in {@link DashboardActivity}'s {@link FriendsFragment} and in {@link AllUsersActivity}
  */
-public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.FriendsViewHolder> {
-
-    private OnClick mCallback;
-    private List<AllUsers> mData = new ArrayList<>();
+public class FriendsAdapter
+        extends RecyclerView.Adapter<FriendsAdapter.FriendsViewHolder> {
+    private final OnClick mCallback;
+    private final List<AllUsers> mData;
 
     /**
      * Click callback when use clicks on recycler view item
@@ -63,6 +63,7 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.FriendsV
 
     public FriendsAdapter(OnClick onClickCallback) {
         mCallback = onClickCallback;
+        mData = new ArrayList<>();
     }
 
     @NonNull
