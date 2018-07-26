@@ -28,14 +28,12 @@ package com.example.nishant.berry.data;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 
-import com.example.nishant.berry.config.IFirebaseConfig;
 import com.example.nishant.berry.data.callbacks.OnInteraction;
 import com.example.nishant.berry.data.callbacks.OnTaskCompletion;
 import com.example.nishant.berry.data.callbacks.OnUserProfile;
 import com.example.nishant.berry.data.callbacks.OnUsersData;
 import com.example.nishant.berry.data.callbacks.OnUsersList;
 import com.example.nishant.berry.ui.model.AllUsers;
-import com.google.firebase.database.DatabaseReference;
 
 /**
  * Data Manager class, that deals with business logic
