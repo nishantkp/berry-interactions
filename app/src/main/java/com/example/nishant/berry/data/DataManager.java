@@ -28,28 +28,26 @@ package com.example.nishant.berry.data;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 
-import com.example.nishant.berry.config.IFirebaseConfig;
 import com.example.nishant.berry.data.callbacks.OnInteraction;
 import com.example.nishant.berry.data.callbacks.OnTaskCompletion;
 import com.example.nishant.berry.data.callbacks.OnUserProfile;
 import com.example.nishant.berry.data.callbacks.OnUsersData;
 import com.example.nishant.berry.data.callbacks.OnUsersList;
 import com.example.nishant.berry.ui.model.AllUsers;
-import com.google.firebase.database.DatabaseReference;
 
 /**
  * Data Manager class, that deals with business logic
  */
 public class DataManager implements DataContract {
-    private FbUsersUseCase mFbUsersUseCase;
-    private FriendsUseCase mFriendsUseCase;
-    private RequestsUseCase mRequestsUseCase;
-    private SettingsUseCase mSettingsUseCase;
-    private ChatUseCase mChatUseCase;
-    private AccountUseCase mAccountUseCase;
-    private SearchUseCase mSearchUseCase;
-    private ProfileUseCase mProfileUseCase;
-    private InteractionUseCase mInteractionUseCase;
+    private final FbUsersUseCase mFbUsersUseCase;
+    private final FriendsUseCase mFriendsUseCase;
+    private final RequestsUseCase mRequestsUseCase;
+    private final SettingsUseCase mSettingsUseCase;
+    private final ChatUseCase mChatUseCase;
+    private final AccountUseCase mAccountUseCase;
+    private final SearchUseCase mSearchUseCase;
+    private final ProfileUseCase mProfileUseCase;
+    private final InteractionUseCase mInteractionUseCase;
 
     // Lazy Initialization pattern
     private static class StaticHolder {
