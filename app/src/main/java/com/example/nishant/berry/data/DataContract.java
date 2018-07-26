@@ -92,5 +92,5 @@ interface DataContract {
 
     void markUserOffline(@NonNull final OnTaskCompletion callback);
 
-    boolean isCurrentUserAvailable();
+    void checkCurrentUserAvailability(@NonNull final OnTaskCompletion callback);
 }

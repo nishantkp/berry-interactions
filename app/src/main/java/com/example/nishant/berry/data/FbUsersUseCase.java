@@ -324,10 +324,14 @@ final class FbUsersUseCase {
     /**
      * Call this method to check whether current user is available or not
      *
-     * @return true or false depending upon current user availability
+     * @param callback Success/Failure callbacks
      */
-    boolean isCurrentUserAvailable() {
-        return getFirebaseAuth().getCurrentUser() != null;
+    void checkCurrentUserAvailability(@NonNull final OnTaskCompletion callback) {
+        if (getFirebaseAuth().getCurrentUser() != null) {
+            callback.onSuccess();
+        } else {
+            callback.onError("User Unavailable");
+        }
     }
 
     /**

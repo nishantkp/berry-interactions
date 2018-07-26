@@ -27,6 +27,7 @@ package com.example.nishant.berry.ui.dashboard;
 
 import com.example.nishant.berry.base.BasePresenter;
 import com.example.nishant.berry.data.DataManager;
+import com.example.nishant.berry.data.callbacks.OnTaskCompletion;
 
 /**
  * Presenter that redirects navigation according to availability if user
@@ -52,9 +53,18 @@ public class DashboardPresenter
     @Override
     public void checkCurrentUser() {
         // If current user is not available set call back for no active user
-        if (!DataManager.getInstance().isCurrentUserAvailable()) {
-            getView().noActiveUser();
-        }
+        DataManager.getInstance().checkCurrentUserAvailability(new OnTaskCompletion() {
+            @Override
+            public void onSuccess() {
+                // Current user is available
+            }
+
+            @Override
+            public void onError(String error) {
+                // Error handling
+                getView().noActiveUser();
+            }
+        });
     }
 
     /**

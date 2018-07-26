@@ -102,11 +102,11 @@ public class DataManager implements DataContract {
     /**
      * Call this method to check whether current user is available or not
      *
-     * @return true if the current user is available/ false if it's not resent
+     * @param callback callbacks for success and failure
      */
     @Override
-    public boolean isCurrentUserAvailable() {
-        return mFbUsersUseCase.isCurrentUserAvailable();
+    public void checkCurrentUserAvailability(@NonNull OnTaskCompletion callback) {
+        mFbUsersUseCase.checkCurrentUserAvailability(callback);
     }
 
     /**
