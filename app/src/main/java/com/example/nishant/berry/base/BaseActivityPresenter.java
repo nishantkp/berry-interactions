@@ -19,59 +19,63 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  *
- * File Created on 02/06/18 12:55 AM by nishant
- * Last Modified on 01/06/18 10:35 PM
+ * File Created on 25/07/18 7:33 PM by nishant
+ * Last Modified on 25/07/18 7:33 PM
  */
 
-package com.example.nishant.berry.ui.dashboard;
+package com.example.nishant.berry.base;
 
-import com.example.nishant.berry.base.BasePresenter;
+import android.util.Log;
+
 import com.example.nishant.berry.data.DataManager;
 import com.example.nishant.berry.data.callbacks.OnTaskCompletion;
 
 /**
- * Presenter that redirects navigation according to availability if user
- * Also responsible for sign out
+ * Presenter for {@link BaseActivity} to mark user online/ offline
  */
-public class DashboardPresenter
-        extends BasePresenter<DashboardContract.View>
-        implements DashboardContract.Presenter {
+class BaseActivityPresenter {
+    private DataManager mDataManager;
+    private static final String LOG_TAG = BaseActivityPresenter.class.getSimpleName();
 
-    DashboardPresenter() {
+    BaseActivityPresenter() {
+        mDataManager = DataManager.getInstance();
     }
 
-    @Override
-    public DashboardContract.View getView() {
-        return super.getView();
-    }
-
-    @Override
-    public void attachView(DashboardContract.View view) {
-        super.attachView(view);
-    }
-
-    @Override
-    public void checkCurrentUser() {
-        // If current user is not available set call back for no active user
-        DataManager.getInstance().checkCurrentUserAvailability(new OnTaskCompletion() {
+    /**
+     * This method will mark user online in Firebase database
+     * Advise : Call this method on onResume() method of activity because onResume() method will
+     * always be called
+     */
+    void markUserOnline() {
+        mDataManager.markUserOnline(new OnTaskCompletion() {
             @Override
             public void onSuccess() {
-                // Current user is available
+                // Task successful
             }
 
             @Override
             public void onError(String error) {
-                // Error handling
-                getView().noActiveUser();
+                Log.d(LOG_TAG, error);
             }
         });
     }
 
     /**
-     * Sign out current user
+     * This method will mark user offline in Firebase database
+     * Advise : Call this method on onPause() method of activity because onPause() method will
+     * always be called
      */
-    @Override
-    public void signOutUser() {
-        DataManager.getInstance().signOutUser();
+    void markUserOffline() {
+        mDataManager.markUserOffline(new OnTaskCompletion() {
+            @Override
+            public void onSuccess() {
+                // Task successful
+            }
+
+            @Override
+            public void onError(String error) {
+                Log.d(LOG_TAG, error);
+            }
+        });
     }
 }

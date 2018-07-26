@@ -76,13 +76,19 @@ public class DataManager implements DataContract {
     }
 
     /**
-     * Call this method to get reference of current user from Users object in root ref
-     *
-     * @return database reference for current user in users object
+     * Call this method to mark user online (i.e if the user is currently on app screen)
      */
     @Override
-    public DatabaseReference getCurrentUsersRef() {
-        return mFbUsersUseCase.getCurrentUserRefFromMainObject(IFirebaseConfig.USERS_OBJECT);
+    public void markUserOnline(@NonNull final OnTaskCompletion callback) {
+        mFbUsersUseCase.markUserOnline(callback);
+    }
+
+    /**
+     * Call this method to mark user offline (i.e if the user is away from app screen)
+     */
+    @Override
+    public void markUserOffline(@NonNull final OnTaskCompletion callback) {
+        mFbUsersUseCase.markUserOffline(callback);
     }
 
     /**
@@ -96,11 +102,11 @@ public class DataManager implements DataContract {
     /**
      * Call this method to check whether current user is available or not
      *
-     * @return true if the current user is available/ false if it's not resent
+     * @param callback callbacks for success and failure
      */
     @Override
-    public boolean isCurrentUserAvailable() {
-        return mFbUsersUseCase.isCurrentUserAvailable();
+    public void checkCurrentUserAvailability(@NonNull OnTaskCompletion callback) {
+        mFbUsersUseCase.checkCurrentUserAvailability(callback);
     }
 
     /**

@@ -56,7 +56,7 @@ public class BerryApp extends Application {
         FirebaseDatabase.getInstance().setPersistenceEnabled(true);
 
         // Initiate Data manager
-        DataManager dataManager = DataManager.getInstance();
+        DataManager.getInstance();
 
         // Picasso with OkHttp3 to download user avatar
         Picasso.Builder builder = new Picasso.Builder(this);
@@ -69,7 +69,8 @@ public class BerryApp extends Application {
         if (FirebaseAuth.getInstance().getCurrentUser() == null) return;
 
         // Current Users database reference
-        final DatabaseReference usersDatabaseReference = dataManager.getCurrentUsersRef();
+        final DatabaseReference usersDatabaseReference =
+                FirebaseDatabase.getInstance().getReference().child(IFirebaseConfig.USERS_OBJECT);
 
         usersDatabaseReference.addValueEventListener(new ValueEventListener() {
             @Override

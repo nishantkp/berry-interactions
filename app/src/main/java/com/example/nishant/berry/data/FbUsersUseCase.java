@@ -28,9 +28,12 @@ package com.example.nishant.berry.data;
 import android.support.annotation.NonNull;
 
 import com.example.nishant.berry.config.IFirebaseConfig;
+import com.example.nishant.berry.data.callbacks.OnTaskCompletion;
 import com.example.nishant.berry.data.callbacks.OnUsersData;
 import com.example.nishant.berry.data.callbacks.OnUsersList;
 import com.example.nishant.berry.ui.model.AllUsers;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -269,12 +272,66 @@ final class FbUsersUseCase {
     }
 
     /**
+     * Call this method to mark user online in Firebase Database's users object
+     */
+    void markUserOnline(@NonNull final OnTaskCompletion callback) {
+        if (FirebaseAuth.getInstance().getCurrentUser() == null) {
+            callback.onError("User Unavailable");
+            return;
+        }
+
+        // Update current user's database with online value to true
+        getCurrentUsersRef().child(IFirebaseConfig.ONLINE).setValue(true)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) callback.onSuccess();
+                        else callback.onError("Error updating user online status");
+                    }
+                });
+    }
+
+    /**
+     * Call this method to mark user offline in Firebase Database'e users object
+     */
+    void markUserOffline(@NonNull final OnTaskCompletion callback) {
+        if (FirebaseAuth.getInstance().getCurrentUser() == null) {
+            callback.onError("User Unavailable");
+            return;
+        }
+
+        // Update current user's database with online value to false
+        getCurrentUsersRef().child(IFirebaseConfig.ONLINE).setValue(false)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) callback.onSuccess();
+                        else callback.onError("Error updating user online status");
+                    }
+                });
+
+        // Update current user's database with last_seen value to Firebase server's timestamp
+        getCurrentUsersRef().child(IFirebaseConfig.LAST_SEEN).setValue(ServerValue.TIMESTAMP)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) callback.onSuccess();
+                        else callback.onError("Error updating user online status");
+                    }
+                });
+    }
+
+    /**
      * Call this method to check whether current user is available or not
      *
-     * @return true or false depending upon current user availability
+     * @param callback Success/Failure callbacks
      */
-    boolean isCurrentUserAvailable() {
-        return getFirebaseAuth().getCurrentUser() != null;
+    void checkCurrentUserAvailability(@NonNull final OnTaskCompletion callback) {
+        if (getFirebaseAuth().getCurrentUser() != null) {
+            callback.onSuccess();
+        } else {
+            callback.onError("User Unavailable");
+        }
     }
 
     /**

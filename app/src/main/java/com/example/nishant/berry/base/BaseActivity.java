@@ -28,33 +28,29 @@ package com.example.nishant.berry.base;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
-import com.example.nishant.berry.ui.utils.OnlineStatus;
-import com.google.firebase.auth.FirebaseAuth;
-
 /**
  * BaseActivity
  */
 public class BaseActivity extends AppCompatActivity {
-    // OnlineStatus object to update database with users online_status
-    private OnlineStatus mOnlineStatus;
+    private BaseActivityPresenter mPresenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mOnlineStatus = new OnlineStatus();
+        mPresenter = new BaseActivityPresenter();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         // When user is away from the screen, mark user offline
-        mOnlineStatus.offlineUser();
+        mPresenter.markUserOffline();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         // When user is on the app screen, mark user online
-        mOnlineStatus.onlineUser();
+        mPresenter.markUserOnline();
     }
 }
