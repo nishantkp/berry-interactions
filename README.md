@@ -1,5 +1,7 @@
 # berry-interactions
 
+[![Build Status](https://travis-ci.com/nishantkp/berry-interactions.svg?token=2FXfJV7LpgiJJ6nPFCCt&branch=master)](https://travis-ci.com/nishantkp/berry-interactions)
+
 Chat app with firebase.
 
 #### Helpers :smiley:
