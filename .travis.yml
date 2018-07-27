@@ -10,6 +10,8 @@ android:
                 - extra-android-m2repository
 before_install:
         - yes | sdkmanager "platforms;android-27"
+script:
+   - ./gradlew build connectedCheck
 branches:
         only:
                 - master
