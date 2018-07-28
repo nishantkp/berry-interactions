@@ -52,7 +52,7 @@ import java.util.List;
  */
 public class InteractionAdapter
         extends RecyclerView.Adapter<InteractionAdapter.InteractionViewHolder> {
-    private final List<AllUsers> mData;
+    private List<AllUsers> mData;
     private final OnClick mCallback;
 
     /**

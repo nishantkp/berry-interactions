@@ -32,6 +32,7 @@ import android.util.Log;
 import com.example.nishant.berry.config.IFirebaseConfig;
 import com.example.nishant.berry.data.DataManager;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -66,11 +67,13 @@ public class BerryApp extends Application {
         picasso.setLoggingEnabled(true);
         Picasso.setSingletonInstance(picasso);
 
-        if (FirebaseAuth.getInstance().getCurrentUser() == null) return;
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser == null) return;
 
         // Current Users database reference
         final DatabaseReference usersDatabaseReference =
-                FirebaseDatabase.getInstance().getReference().child(IFirebaseConfig.USERS_OBJECT);
+                FirebaseDatabase.getInstance().getReference()
+                        .child(IFirebaseConfig.USERS_OBJECT).child(currentUser.getUid());
 
         usersDatabaseReference.addValueEventListener(new ValueEventListener() {
             @Override
