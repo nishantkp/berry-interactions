@@ -71,7 +71,7 @@ public void updateData(List<AllUsers> data) {
 ![berry-model](/ux/berry-model.jpg)
 
 #### UX design
-
+###### * Users are just for fun :smiley:
 <img src="/ux/start_screen.png" width="200"> <img src="/ux/sign_in.png" width="200"> <img src="/ux/sign_up.png" width="200"> <img src="/ux/interactions_4.png" width="200"> <img src="/ux/user_search_1.png" width="200"> <img src="/ux/account_settings.png" width="200">
 
 #### License 
