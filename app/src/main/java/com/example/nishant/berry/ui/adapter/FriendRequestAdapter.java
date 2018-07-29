@@ -55,10 +55,11 @@ import java.util.List;
 public class FriendRequestAdapter
         extends RecyclerView.Adapter<FriendRequestAdapter.FriendRequestViewHolder> {
     private final RequestPresenter mPresenter;
-    private final List<AllUsers> mReqList = new ArrayList<>();
+    private final List<AllUsers> mReqList;
 
     public FriendRequestAdapter(RequestPresenter presenter) {
         mPresenter = presenter;
+        mReqList = new ArrayList<>();
     }
 
     @NonNull
