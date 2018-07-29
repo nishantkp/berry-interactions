@@ -1,6 +1,7 @@
 # Berry Interactions
 
 [![Build Status](https://travis-ci.com/nishantkp/berry-interactions.svg?token=2FXfJV7LpgiJJ6nPFCCt&branch=master)](https://travis-ci.com/nishantkp/berry-interactions)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/c21766684d4145bc97c8ee1d0669dd3f)](https://www.codacy.com/project/nishantkp/berry-interactions/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=nishantkp/berry-interactions&amp;utm_campaign=Badge_Grade_Dashboard)
 
 A chat app with firebase. 
 <br>Search user, send a friend request, and start chatting.</br>
