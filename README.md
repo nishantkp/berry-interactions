@@ -1,8 +1,9 @@
-# berry-interactions
+# Berry Interactions
 
 [![Build Status](https://travis-ci.com/nishantkp/berry-interactions.svg?token=2FXfJV7LpgiJJ6nPFCCt&branch=master)](https://travis-ci.com/nishantkp/berry-interactions)
 
-Chat app with firebase.
+A chat app with firebase. 
+<br>Search user, send a friend request, and start chatting.</br>
 
 #### Helpers :smiley:
 
