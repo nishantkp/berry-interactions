@@ -25,9 +25,10 @@
 
 package com.example.nishant.berry;
 
-import android.support.test.rule.ActivityTestRule;
+import android.support.test.espresso.intent.rule.IntentsTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
+import com.example.nishant.berry.ui.dashboard.DashboardActivity;
 import com.example.nishant.berry.ui.signin.SignInActivity;
 
 import org.junit.Rule;
@@ -38,6 +39,8 @@ import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.typeText;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
+import static android.support.test.espresso.intent.Intents.intended;
+import static android.support.test.espresso.intent.matcher.IntentMatchers.hasComponent;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
@@ -45,17 +48,17 @@ import static android.support.test.espresso.matcher.ViewMatchers.withText;
 /**
  * {@link SignInActivity} test
  * Write email address and password
- * perform click login button and check for the dialog pops up or not
+ * perform click login button and check if {@link DashboardActivity} opens or not
  */
 @RunWith(AndroidJUnit4.class)
 public class SignInActivityBasicTest {
 
     @Rule
-    public ActivityTestRule<SignInActivity> mActivityTestRule
-            = new ActivityTestRule<>(SignInActivity.class);
+    public IntentsTestRule<SignInActivity> mActivityTestRule
+            = new IntentsTestRule<>(SignInActivity.class);
 
     @Test
-    public void writeEmailPassword_checkDialogPopsUp() {
+    public void writeEmailPassword_openDashboardActivity() {
         // write email address
         onView(withId(R.id.sign_in_email_text)).perform(typeText("nishant@nishant.com"));
 
@@ -67,5 +70,24 @@ public class SignInActivityBasicTest {
 
         // Check dialog pops up or not
         onView(withText("Authenticating...")).check(matches(isDisplayed()));
+
+        // Wait for 1000 millis
+        waitTime(1000);
+
+        // Check if the DashboardActivity opens up or not
+        intended(hasComponent(DashboardActivity.class.getName()));
+    }
+
+    /**
+     * Put Main thread to sleep
+     *
+     * @param i time in millis
+     */
+    public void waitTime(int i) {
+        try {
+            Thread.sleep(i);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }
