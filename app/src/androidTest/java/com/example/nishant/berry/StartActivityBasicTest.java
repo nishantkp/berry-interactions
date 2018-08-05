@@ -26,7 +26,6 @@
 package com.example.nishant.berry;
 
 import android.support.test.espresso.intent.rule.IntentsTestRule;
-import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.example.nishant.berry.ui.signin.SignInActivity;
