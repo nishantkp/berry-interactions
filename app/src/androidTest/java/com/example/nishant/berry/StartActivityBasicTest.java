@@ -25,9 +25,12 @@
 
 package com.example.nishant.berry;
 
+import android.support.test.espresso.intent.rule.IntentsTestRule;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
+import com.example.nishant.berry.ui.signin.SignInActivity;
+import com.example.nishant.berry.ui.signup.SignUpActivity;
 import com.example.nishant.berry.ui.start.StartActivity;
 
 import org.junit.Rule;
@@ -36,9 +39,9 @@ import org.junit.runner.RunWith;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
-import static android.support.test.espresso.assertion.ViewAssertions.matches;
+import static android.support.test.espresso.intent.Intents.intended;
+import static android.support.test.espresso.intent.matcher.IntentMatchers.hasComponent;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
-import static android.support.test.espresso.matcher.ViewMatchers.withText;
 
 /**
  * {@link com.example.nishant.berry.ui.start.StartActivity} basic test
@@ -48,8 +51,8 @@ import static android.support.test.espresso.matcher.ViewMatchers.withText;
 public class StartActivityBasicTest {
 
     @Rule
-    public ActivityTestRule<StartActivity> mActivityTestRule
-            = new ActivityTestRule<>(StartActivity.class);
+    public IntentsTestRule<StartActivity> mActivityTestRule
+            = new IntentsTestRule<>(StartActivity.class);
 
     @Test
     public void clickRegisterButton_openSignUpActivity() {
@@ -57,17 +60,17 @@ public class StartActivityBasicTest {
         // Find the view and perform click
         onView(withId(R.id.start_registration_btn)).perform(click());
 
-        // Check Id on SignUpActivity
-        onView(withId(R.id.sign_up_heading)).check(matches(withText("Create a new account")));
+        // Check SignUpActivity
+        intended(hasComponent(SignUpActivity.class.getName()));
     }
 
     @Test
     public void clickSignInButton_openSignInActivity() {
 
-        // FInd the view and perform click
+        // Find the view and perform click
         onView(withId(R.id.start_sign_in_button)).perform(click());
 
-        // Check Id on SignInActivity
-        onView(withId(R.id.sign_in_heading)).check(matches(withText("Sign in to existing account")));
+        // Check SignInActivity
+        intended(hasComponent(SignInActivity.class.getName()));
     }
 }
