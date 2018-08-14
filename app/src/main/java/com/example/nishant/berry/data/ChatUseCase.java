@@ -44,7 +44,7 @@ import java.util.List;
 /**
  * ChatUtility class to display chat list
  */
-final class ChatUseCase {
+public final class ChatUseCase {
     // TODO: Use stack instead linkedList to store interaction data : <<<FUTURE UPDATE>>>
     private static List<AllUsers> mData = new LinkedList<>();
     private FbUsersUseCase mFbUsersUseCase;

@@ -41,7 +41,7 @@ import java.util.List;
 /**
  * Utility class the deals with finding user from User's database in Firebase Database
  */
-final class SearchUseCase {
+public final class SearchUseCase {
     private FbUsersUseCase mFbUsersUseCase;
 
     SearchUseCase(FbUsersUseCase fbUsersUseCase) {

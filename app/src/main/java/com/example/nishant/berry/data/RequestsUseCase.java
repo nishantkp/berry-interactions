@@ -52,7 +52,7 @@ import java.util.Map;
  * Utility class which deals with displaying friend request and performing action when
  * accept/cancel/decline button is pressed
  */
-final class RequestsUseCase {
+public final class RequestsUseCase {
     // Log tag
     private static final String LOG_TAG = RequestsUseCase.class.getSimpleName();
     private FbUsersUseCase mFbUsersUseCase;

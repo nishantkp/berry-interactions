@@ -52,7 +52,7 @@ import java.util.List;
 /**
  * Firebase Utility class
  */
-final class FbUsersUseCase {
+public final class FbUsersUseCase {
     private List<AllUsers> mAllUsersList = new LinkedList<>();
 
     FbUsersUseCase() {

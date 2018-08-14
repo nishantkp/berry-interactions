@@ -40,7 +40,7 @@ import com.google.firebase.storage.UploadTask;
  * Utility class that deals with storing user avatar and thumbnail to FirebaseStorage
  * i.e usually required for {@link SettingsActivity}, {@link SettingsPresenter}
  */
-final class SettingsUseCase {
+public final class SettingsUseCase {
     private FbUsersUseCase mFbUsersUseCase;
 
     SettingsUseCase(FbUsersUseCase fbUsersUseCase) {

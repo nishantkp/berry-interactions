@@ -41,7 +41,7 @@ import java.util.Objects;
  * Utility class that is responsible for getting user profile and friend request status from
  * firebase database
  */
-final class ProfileUseCase {
+public final class ProfileUseCase {
     private FbUsersUseCase mFbUsersUseCase;
 
     ProfileUseCase(FbUsersUseCase fbUsersUseCase) {

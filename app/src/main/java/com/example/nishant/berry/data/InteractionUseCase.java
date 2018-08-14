@@ -49,7 +49,7 @@ import java.util.Map;
  * Utility class that deals with getting chat between current user and user defined by
  * interactionUserId
  */
-final class InteractionUseCase {
+public final class InteractionUseCase {
     private static final int DEFAULT_NUMBER_OF_MESSAGES_PER_PAGE = 20;
     private FbUsersUseCase mFbUsersUseCase;
     private String mLastMessageKey = "";

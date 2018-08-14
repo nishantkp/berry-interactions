@@ -43,7 +43,7 @@ import java.util.Map;
 /**
  * Class that deals with login and signUp of user, saving status
  */
-final class AccountUseCase {
+public final class AccountUseCase {
     private FbUsersUseCase mFbUsersUseCase;
 
     AccountUseCase(FbUsersUseCase fbUsersUseCase) {
