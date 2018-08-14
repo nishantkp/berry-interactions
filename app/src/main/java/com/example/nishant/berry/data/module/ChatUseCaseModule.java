@@ -27,6 +27,7 @@ package com.example.nishant.berry.data.module;
 
 import com.example.nishant.berry.data.ChatUseCase;
 import com.example.nishant.berry.data.FbUsersUseCase;
+import com.example.nishant.berry.data.scope.DataManagerApplicationScope;
 
 import dagger.Module;
 import dagger.Provides;
@@ -35,6 +36,7 @@ import dagger.Provides;
 public class ChatUseCaseModule {
 
     @Provides
+    @DataManagerApplicationScope
     public ChatUseCase provideChatUseCase(FbUsersUseCase fbUsersUseCase) {
         return new ChatUseCase(fbUsersUseCase);
     }

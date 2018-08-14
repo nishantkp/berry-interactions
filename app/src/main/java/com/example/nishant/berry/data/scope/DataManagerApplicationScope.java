@@ -19,24 +19,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  *
- * File Created on 13/08/18 9:34 PM by nishant
- * Last Modified on 13/08/18 9:34 PM
+ * File Created on 13/08/18 9:45 PM by nishant
+ * Last Modified on 13/08/18 9:45 PM
  */
 
-package com.example.nishant.berry.data.module;
+package com.example.nishant.berry.data.scope;
 
-import com.example.nishant.berry.data.DataManager;
-import com.example.nishant.berry.data.scope.DataManagerApplicationScope;
-
-import dagger.Module;
-import dagger.Provides;
-
-@Module
-@DataManagerApplicationScope
-public class DataManagerModule {
-
-    @Provides
-    public DataManager provideDataManager() {
-        return new DataManager();
-    }
+public @interface DataManagerApplicationScope {
 }

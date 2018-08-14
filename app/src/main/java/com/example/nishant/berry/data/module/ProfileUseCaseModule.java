@@ -27,12 +27,16 @@ package com.example.nishant.berry.data.module;
 
 import com.example.nishant.berry.data.FbUsersUseCase;
 import com.example.nishant.berry.data.ProfileUseCase;
+import com.example.nishant.berry.data.scope.DataManagerApplicationScope;
 
 import dagger.Module;
+import dagger.Provides;
 
 @Module(includes = FbUsersUseCaseModule.class)
 public class ProfileUseCaseModule {
 
+    @Provides
+    @DataManagerApplicationScope
     public ProfileUseCase provideProfileUseCase(FbUsersUseCase fbUsersUseCase) {
         return new ProfileUseCase(fbUsersUseCase);
     }
