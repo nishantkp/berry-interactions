@@ -60,7 +60,7 @@ public final class InteractionUseCase {
     private DatabaseReference mRootRef;
     private List<Message> mMessageList = new ArrayList<>();
 
-    InteractionUseCase(FbUsersUseCase fbUsersUseCase) {
+    public InteractionUseCase(FbUsersUseCase fbUsersUseCase) {
         mFbUsersUseCase = fbUsersUseCase;
         mRootRef = mFbUsersUseCase.getRootRef();
     }

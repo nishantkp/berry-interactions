@@ -57,7 +57,7 @@ import io.reactivex.schedulers.Schedulers;
 public final class FriendsUseCase {
     private FbUsersUseCase mFbUsersUseCase;
 
-    FriendsUseCase(FbUsersUseCase fbUsersUseCase) {
+    public FriendsUseCase(FbUsersUseCase fbUsersUseCase) {
         mFbUsersUseCase = fbUsersUseCase;
     }
 

@@ -55,7 +55,7 @@ import java.util.List;
 public final class FbUsersUseCase {
     private List<AllUsers> mAllUsersList = new LinkedList<>();
 
-    FbUsersUseCase() {
+    public FbUsersUseCase() {
     }
 
     /**

@@ -46,7 +46,7 @@ import java.util.Map;
 public final class AccountUseCase {
     private FbUsersUseCase mFbUsersUseCase;
 
-    AccountUseCase(FbUsersUseCase fbUsersUseCase) {
+    public AccountUseCase(FbUsersUseCase fbUsersUseCase) {
         mFbUsersUseCase = fbUsersUseCase;
     }
 

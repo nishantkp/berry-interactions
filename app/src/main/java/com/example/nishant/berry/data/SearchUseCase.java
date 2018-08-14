@@ -44,7 +44,7 @@ import java.util.List;
 public final class SearchUseCase {
     private FbUsersUseCase mFbUsersUseCase;
 
-    SearchUseCase(FbUsersUseCase fbUsersUseCase) {
+    public SearchUseCase(FbUsersUseCase fbUsersUseCase) {
         mFbUsersUseCase = fbUsersUseCase;
     }
 

@@ -61,7 +61,7 @@ public class DataManager implements DataContract {
     /**
      * Private constructor so no one can make object of a data manager
      */
-    private DataManager() {
+    public DataManager() {
         mFbUsersUseCase = new FbUsersUseCase();
         mFriendsUseCase = new FriendsUseCase(mFbUsersUseCase);
         mRequestsUseCase = new RequestsUseCase(mFbUsersUseCase);

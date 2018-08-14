@@ -57,7 +57,7 @@ public final class RequestsUseCase {
     private static final String LOG_TAG = RequestsUseCase.class.getSimpleName();
     private FbUsersUseCase mFbUsersUseCase;
 
-    RequestsUseCase(FbUsersUseCase fbUsersUseCase) {
+    public RequestsUseCase(FbUsersUseCase fbUsersUseCase) {
         mFbUsersUseCase = fbUsersUseCase;
     }
 

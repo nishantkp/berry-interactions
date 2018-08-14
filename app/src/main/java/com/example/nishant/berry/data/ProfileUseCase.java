@@ -44,7 +44,7 @@ import java.util.Objects;
 public final class ProfileUseCase {
     private FbUsersUseCase mFbUsersUseCase;
 
-    ProfileUseCase(FbUsersUseCase fbUsersUseCase) {
+    public ProfileUseCase(FbUsersUseCase fbUsersUseCase) {
         mFbUsersUseCase = fbUsersUseCase;
     }
 

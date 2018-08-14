@@ -43,7 +43,7 @@ import com.google.firebase.storage.UploadTask;
 public final class SettingsUseCase {
     private FbUsersUseCase mFbUsersUseCase;
 
-    SettingsUseCase(FbUsersUseCase fbUsersUseCase) {
+    public SettingsUseCase(FbUsersUseCase fbUsersUseCase) {
         mFbUsersUseCase = fbUsersUseCase;
     }
 

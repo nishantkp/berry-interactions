@@ -49,7 +49,7 @@ public final class ChatUseCase {
     private static List<AllUsers> mData = new LinkedList<>();
     private FbUsersUseCase mFbUsersUseCase;
 
-    ChatUseCase(FbUsersUseCase fbUsersUseCase) {
+    public ChatUseCase(FbUsersUseCase fbUsersUseCase) {
         mFbUsersUseCase = fbUsersUseCase;
     }
 
