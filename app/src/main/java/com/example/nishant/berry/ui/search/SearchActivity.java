@@ -36,6 +36,7 @@ import android.util.Log;
 import android.widget.EditText;
 
 import com.example.nishant.berry.R;
+import com.example.nishant.berry.application.BerryApp;
 import com.example.nishant.berry.base.BaseActivity;
 import com.example.nishant.berry.config.IConstants;
 import com.example.nishant.berry.databinding.ActivitySearchBinding;
@@ -86,8 +87,12 @@ public class SearchActivity
         mFriendsAdapter = new FriendsAdapter(this);
         mBinding.searchRv.setAdapter(mFriendsAdapter);
 
-        // set presenter
-        mPresenter = new SearchPresenter();
+        // Get the presenter from dagger component
+        SearchComponent component = DaggerSearchComponent.builder()
+                .dataManagerComponent(BerryApp.get(this).getDataManagerApplicationComponent())
+                .searchModule(new SearchModule())
+                .build();
+        mPresenter = component.provideSearchPresenter();
         mPresenter.attachView(this);
         mBinding.setSearch(new SearchUser());
 

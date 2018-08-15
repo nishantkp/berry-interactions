@@ -41,7 +41,13 @@ public class SearchPresenter
         extends BasePresenter<SearchContract.View>
         implements SearchContract.Presenter {
 
+    private DataManager mDataManager;
+
     SearchPresenter() {
+    }
+
+    SearchPresenter(DataManager dataManager) {
+        mDataManager = dataManager;
     }
 
     @Override
