@@ -44,9 +44,11 @@ public class UserProfilePresenter
     private int mCurrentState;
     private String mNewUserId;
     private UserProfile mUserProfile;
+    private DataManager mDataManager;
 
-    UserProfilePresenter(String userId) {
+    UserProfilePresenter(String userId, DataManager dataManager) {
         if (userId == null) return;
+        mDataManager = dataManager;
         mNewUserId = userId;
         mUserProfile = new UserProfile();
 
@@ -69,7 +71,7 @@ public class UserProfilePresenter
      */
     @Override
     public void getDataFromFirebaseDatabase() {
-        DataManager.getInstance().getUserProfile(mNewUserId, new OnUserProfile() {
+        mDataManager.getUserProfile(mNewUserId, new OnUserProfile() {
             @Override
             public void onFriendRequestReceived() {
                 mCurrentState = IFirebaseConfig.REQ_RECEIVED;
@@ -148,7 +150,7 @@ public class UserProfilePresenter
 //        // firebase database
 //        mUserProfile.setFriendReqButtonEnabled(false);
 //        getView().updateProfile(mUserProfile);
-        DataManager.getInstance().sendFriendRequest(mNewUserId, new OnTaskCompletion() {
+        mDataManager.sendFriendRequest(mNewUserId, new OnTaskCompletion() {
             @Override
             public void onSuccess() {
                 mCurrentState = IFirebaseConfig.REQ_SENT;
@@ -169,7 +171,7 @@ public class UserProfilePresenter
      */
     @Override
     public void cancelRequest() {
-        DataManager.getInstance().ignoreFriendRequest(mNewUserId, new OnTaskCompletion() {
+        mDataManager.ignoreFriendRequest(mNewUserId, new OnTaskCompletion() {
             @Override
             public void onSuccess() {
                 mCurrentState = IFirebaseConfig.NOT_FRIEND;
@@ -190,7 +192,7 @@ public class UserProfilePresenter
      */
     @Override
     public void acceptRequest() {
-        DataManager.getInstance().acceptFriendRequest(mNewUserId, new OnTaskCompletion() {
+        mDataManager.acceptFriendRequest(mNewUserId, new OnTaskCompletion() {
             @Override
             public void onSuccess() {
                 mCurrentState = IFirebaseConfig.FRIENDS;
@@ -211,7 +213,7 @@ public class UserProfilePresenter
      */
     @Override
     public void removeFriend() {
-        DataManager.getInstance().unfriendUser(mNewUserId, new OnTaskCompletion() {
+        mDataManager.unfriendUser(mNewUserId, new OnTaskCompletion() {
             @Override
             public void onSuccess() {
                 mCurrentState = IFirebaseConfig.NOT_FRIEND;

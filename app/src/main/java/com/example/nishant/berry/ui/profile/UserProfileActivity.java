@@ -32,6 +32,7 @@ import android.os.Bundle;
 import android.widget.Toast;
 
 import com.example.nishant.berry.R;
+import com.example.nishant.berry.application.BerryApp;
 import com.example.nishant.berry.base.BaseActivity;
 import com.example.nishant.berry.config.IConstants;
 import com.example.nishant.berry.databinding.ActivityUserProfileBinding;
@@ -41,7 +42,6 @@ public class UserProfileActivity
         extends BaseActivity
         implements UserProfileContract.View {
 
-    private UserProfilePresenter mPresenter;
     private ActivityUserProfileBinding mBinding;
 
     /**
@@ -65,12 +65,16 @@ public class UserProfileActivity
             userId = getIntent().getStringExtra(IConstants.KEY_USER_ID);
         }
 
-        // Setup presenter
-        mPresenter = new UserProfilePresenter(userId);
-        mPresenter.attachView(this);
+        // Get the presenter form dagger component
+        UserProfileComponent component = DaggerUserProfileComponent.builder()
+                .dataManagerComponent(BerryApp.get(this).getDataManagerApplicationComponent())
+                .userProfileModule(new UserProfileModule(userId))
+                .build();
+        UserProfilePresenter presenter = component.provideUserProfilePresenter();
+        presenter.attachView(this);
 
         // Attach presenter to binding
-        mBinding.setPresenter(mPresenter);
+        mBinding.setPresenter(presenter);
     }
 
     /**
