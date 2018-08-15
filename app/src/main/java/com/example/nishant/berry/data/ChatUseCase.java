@@ -41,14 +41,19 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 /**
  * ChatUtility class to display chat list
  */
+@Singleton
 public final class ChatUseCase {
     // TODO: Use stack instead linkedList to store interaction data : <<<FUTURE UPDATE>>>
     private static List<AllUsers> mData = new LinkedList<>();
     private FbUsersUseCase mFbUsersUseCase;
 
+    @Inject
     public ChatUseCase(FbUsersUseCase fbUsersUseCase) {
         mFbUsersUseCase = fbUsersUseCase;
     }

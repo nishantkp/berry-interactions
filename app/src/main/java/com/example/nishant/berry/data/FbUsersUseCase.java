@@ -49,12 +49,17 @@ import com.google.firebase.storage.StorageReference;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 /**
  * Firebase Utility class
  */
+@Singleton
 public final class FbUsersUseCase {
     private List<AllUsers> mAllUsersList = new LinkedList<>();
 
+    @Inject
     public FbUsersUseCase() {
     }
 

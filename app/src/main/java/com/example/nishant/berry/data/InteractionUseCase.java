@@ -45,10 +45,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 /**
  * Utility class that deals with getting chat between current user and user defined by
  * interactionUserId
  */
+@Singleton
 public final class InteractionUseCase {
     private static final int DEFAULT_NUMBER_OF_MESSAGES_PER_PAGE = 20;
     private FbUsersUseCase mFbUsersUseCase;
@@ -60,6 +64,7 @@ public final class InteractionUseCase {
     private DatabaseReference mRootRef;
     private List<Message> mMessageList = new ArrayList<>();
 
+    @Inject
     public InteractionUseCase(FbUsersUseCase fbUsersUseCase) {
         mFbUsersUseCase = fbUsersUseCase;
         mRootRef = mFbUsersUseCase.getRootRef();

@@ -40,6 +40,9 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
@@ -54,9 +57,11 @@ import io.reactivex.schedulers.Schedulers;
  * FriendsUtility class to get the friends list of current user in {@link FriendsFragment}
  * with the help of FirebaseRecyclerAdapter
  */
+@Singleton
 public final class FriendsUseCase {
     private FbUsersUseCase mFbUsersUseCase;
 
+    @Inject
     public FriendsUseCase(FbUsersUseCase fbUsersUseCase) {
         mFbUsersUseCase = fbUsersUseCase;
     }

@@ -48,15 +48,20 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 /**
  * Utility class which deals with displaying friend request and performing action when
  * accept/cancel/decline button is pressed
  */
+@Singleton
 public final class RequestsUseCase {
     // Log tag
     private static final String LOG_TAG = RequestsUseCase.class.getSimpleName();
     private FbUsersUseCase mFbUsersUseCase;
 
+    @Inject
     public RequestsUseCase(FbUsersUseCase fbUsersUseCase) {
         mFbUsersUseCase = fbUsersUseCase;
     }

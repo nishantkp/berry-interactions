@@ -37,13 +37,18 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.Objects;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 /**
  * Utility class that is responsible for getting user profile and friend request status from
  * firebase database
  */
+@Singleton
 public final class ProfileUseCase {
     private FbUsersUseCase mFbUsersUseCase;
 
+    @Inject
     public ProfileUseCase(FbUsersUseCase fbUsersUseCase) {
         mFbUsersUseCase = fbUsersUseCase;
     }

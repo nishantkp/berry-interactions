@@ -38,12 +38,17 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 /**
  * Utility class the deals with finding user from User's database in Firebase Database
  */
+@Singleton
 public final class SearchUseCase {
     private FbUsersUseCase mFbUsersUseCase;
 
+    @Inject
     public SearchUseCase(FbUsersUseCase fbUsersUseCase) {
         mFbUsersUseCase = fbUsersUseCase;
     }

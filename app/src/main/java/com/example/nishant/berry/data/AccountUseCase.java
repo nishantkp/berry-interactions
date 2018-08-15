@@ -40,12 +40,17 @@ import com.google.firebase.iid.FirebaseInstanceId;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 /**
  * Class that deals with login and signUp of user, saving status
  */
+@Singleton
 public final class AccountUseCase {
     private FbUsersUseCase mFbUsersUseCase;
 
+    @Inject
     public AccountUseCase(FbUsersUseCase fbUsersUseCase) {
         mFbUsersUseCase = fbUsersUseCase;
     }

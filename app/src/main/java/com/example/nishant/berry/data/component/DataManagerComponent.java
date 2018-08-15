@@ -25,7 +25,15 @@
 
 package com.example.nishant.berry.data.component;
 
+import com.example.nishant.berry.data.AccountUseCase;
+import com.example.nishant.berry.data.ChatUseCase;
 import com.example.nishant.berry.data.DataManager;
+import com.example.nishant.berry.data.FriendsUseCase;
+import com.example.nishant.berry.data.InteractionUseCase;
+import com.example.nishant.berry.data.ProfileUseCase;
+import com.example.nishant.berry.data.RequestsUseCase;
+import com.example.nishant.berry.data.SearchUseCase;
+import com.example.nishant.berry.data.SettingsUseCase;
 import com.example.nishant.berry.data.module.AccountUseCaseModule;
 import com.example.nishant.berry.data.module.ChatUseCaseModule;
 import com.example.nishant.berry.data.module.DataManagerModule;
@@ -35,19 +43,37 @@ import com.example.nishant.berry.data.module.ProfileUseCaseModule;
 import com.example.nishant.berry.data.module.RequestUseCaseModule;
 import com.example.nishant.berry.data.module.SearchUseCaseModule;
 import com.example.nishant.berry.data.module.SettingsUseCaseModule;
+import com.example.nishant.berry.data.scope.DataManagerApplicationScope;
 
 import dagger.Component;
 
-@Component(modules = {
-        DataManagerModule.class,
-        AccountUseCaseModule.class,
-        ChatUseCaseModule.class,
-        FriendsUseCaseModule.class,
-        InteractionUseCaseModule.class,
-        ProfileUseCaseModule.class,
-        RequestUseCaseModule.class,
-        SearchUseCaseModule.class,
-        SettingsUseCaseModule.class})
+//@Component(modules = {
+//        DataManagerModule.class,
+//        AccountUseCaseModule.class,
+//        ChatUseCaseModule.class,
+//        FriendsUseCaseModule.class,
+//        InteractionUseCaseModule.class,
+//        ProfileUseCaseModule.class,
+//        RequestUseCaseModule.class,
+//        SearchUseCaseModule.class,
+//        SettingsUseCaseModule.class})
+//@DataManagerApplicationScope
 public interface DataManagerComponent {
-    DataManager getDataManager();
+//    DataManager getDataManager();
+//
+//    AccountUseCase accountUseCase();
+//
+//    ChatUseCase chatUseCase();
+//
+//    FriendsUseCase friendsUseCase();
+//
+//    InteractionUseCase interactionUseCase();
+//
+//    ProfileUseCase profileUseCaseModule();
+//
+//    RequestsUseCase requestsUseCase();
+//
+//    SearchUseCase searchUseCase();
+//
+//    SettingsUseCase settingsUseCase();
 }
