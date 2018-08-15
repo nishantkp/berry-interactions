@@ -37,10 +37,12 @@ import com.example.nishant.berry.data.component.DaggerUseCaseComponent;
 import com.example.nishant.berry.ui.model.AllUsers;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 /**
  * Data Manager class, that deals with business logic
  */
+@Singleton
 public class DataManager implements DataContract {
     @Inject
     FbUsersUseCase mFbUsersUseCase;
@@ -73,6 +75,7 @@ public class DataManager implements DataContract {
     /**
      * Private constructor so no one can make object of a data manager
      */
+    @Inject
     public DataManager() {
         DaggerUseCaseComponent.create().inject(this);
     }
