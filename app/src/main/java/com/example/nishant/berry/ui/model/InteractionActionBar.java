@@ -19,8 +19,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  *
- * File Created on 20/06/18 8:04 PM by nishant
- * Last Modified on 20/06/18 8:04 PM
+ * File Created on 15/08/18 7:03 PM by nishant
+ * Last Modified on 20/06/18 8:27 PM
  */
 
 package com.example.nishant.berry.ui.model;
