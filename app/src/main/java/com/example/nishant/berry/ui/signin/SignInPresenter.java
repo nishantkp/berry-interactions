@@ -40,8 +40,8 @@ public class SignInPresenter
     // Data Manager
     private DataManager mDataManager;
 
-    SignInPresenter() {
-        mDataManager = DataManager.getInstance();
+    SignInPresenter(DataManager dataManager) {
+        mDataManager = dataManager;
     }
 
     @Override
