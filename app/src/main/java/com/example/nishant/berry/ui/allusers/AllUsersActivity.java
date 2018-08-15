@@ -33,8 +33,10 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 
 import com.example.nishant.berry.R;
+import com.example.nishant.berry.application.BerryApp;
 import com.example.nishant.berry.base.BaseActivity;
 import com.example.nishant.berry.config.IConstants;
+import com.example.nishant.berry.data.DataManager;
 import com.example.nishant.berry.databinding.ActivityAllUsersBinding;
 import com.example.nishant.berry.ui.adapter.FriendsAdapter;
 import com.example.nishant.berry.ui.model.AllUsers;
@@ -42,6 +44,8 @@ import com.example.nishant.berry.ui.profile.UserProfileActivity;
 
 import java.util.List;
 import java.util.Objects;
+
+import javax.inject.Inject;
 
 import static android.support.v7.widget.LinearLayoutManager.VERTICAL;
 
@@ -71,6 +75,13 @@ public class AllUsersActivity
         super.onCreate(savedInstanceState);
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_all_users);
 
+        // Dagger component to get the presenter
+        AllUsersComponent component = DaggerAllUsersComponent.builder()
+                .dataManagerComponent(BerryApp.get(this).getDataManagerApplicationComponent())
+                .allUsersModule(new AllUsersModule())
+                .build();
+        mPresenter = component.provideAllUsersPresenter();
+
         // Setup app bar
         setSupportActionBar(mBinding.allUsersAppBar.mainAppBar);
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
@@ -81,7 +92,7 @@ public class AllUsersActivity
         mBinding.allUsersRv.setAdapter(mFriendsAdapter);
 
         // Setup presenter
-        mPresenter = new AllUsersPresenter();
+        // mPresenter = new AllUsersPresenter(DataManager.getInstance());
         mPresenter.attachView(this);
 
         // Setup recycler view

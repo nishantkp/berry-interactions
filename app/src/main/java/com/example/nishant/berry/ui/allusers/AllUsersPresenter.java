@@ -32,6 +32,8 @@ import com.example.nishant.berry.ui.model.AllUsers;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 /**
  * Presenter to display all users in database
  */
@@ -39,7 +41,10 @@ public class AllUsersPresenter
         extends BasePresenter<AllUsersContract.View>
         implements AllUsersContract.Presenter {
 
-    AllUsersPresenter() {
+    private DataManager mDataManager;
+
+    AllUsersPresenter(DataManager dataManager) {
+        mDataManager = dataManager;
     }
 
     @Override
@@ -57,7 +62,7 @@ public class AllUsersPresenter
 
     @Override
     public void getAllUsers() {
-        DataManager.getInstance().getAllRegisteredUsers(new OnUsersList() {
+        mDataManager.getAllRegisteredUsers(new OnUsersList() {
             @Override
             public void onData(List<AllUsers> data) {
                 getView().onAllUsersData(data);
