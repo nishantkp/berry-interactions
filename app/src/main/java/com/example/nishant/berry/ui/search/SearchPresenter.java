@@ -43,9 +43,6 @@ public class SearchPresenter
 
     private DataManager mDataManager;
 
-    SearchPresenter() {
-    }
-
     SearchPresenter(DataManager dataManager) {
         mDataManager = dataManager;
     }
@@ -73,7 +70,7 @@ public class SearchPresenter
         }
 
         // Get the user's list which contains 15 users with the help of DataManager
-        DataManager.getInstance().findUser(searchQuery, 15, new OnUsersList() {
+        mDataManager.findUser(searchQuery, 15, new OnUsersList() {
             @Override
             public void onData(List<AllUsers> data) {
                 getView().onData(data);
