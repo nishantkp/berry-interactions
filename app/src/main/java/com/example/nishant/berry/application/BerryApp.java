@@ -27,10 +27,10 @@ package com.example.nishant.berry.application;
 
 import android.app.Application;
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import com.example.nishant.berry.config.IFirebaseConfig;
 import com.example.nishant.berry.data.DataManager;
+import com.example.nishant.berry.data.component.DaggerDataManagerComponent;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -42,12 +42,15 @@ import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.OkHttp3Downloader;
 import com.squareup.picasso.Picasso;
 
-import java.util.Objects;
+import javax.inject.Inject;
 
 /**
  * Application class
  */
 public class BerryApp extends Application {
+
+    @Inject
+    DataManager mDataManager;
 
     @Override
     public void onCreate() {
@@ -57,7 +60,7 @@ public class BerryApp extends Application {
         FirebaseDatabase.getInstance().setPersistenceEnabled(true);
 
         // Initiate Data manager
-        DataManager.getInstance();
+        DaggerDataManagerComponent.create().inject(this);
 
         // Picasso with OkHttp3 to download user avatar
         Picasso.Builder builder = new Picasso.Builder(this);
