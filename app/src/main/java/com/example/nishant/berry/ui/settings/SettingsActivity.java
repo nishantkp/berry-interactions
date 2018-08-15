@@ -34,10 +34,12 @@ import android.os.Bundle;
 import android.widget.Toast;
 
 import com.example.nishant.berry.R;
+import com.example.nishant.berry.application.BerryApp;
 import com.example.nishant.berry.base.BaseActivity;
 import com.example.nishant.berry.config.IConstants;
 import com.example.nishant.berry.databinding.ActivitySettingsBinding;
 import com.example.nishant.berry.ui.model.AllUsers;
+import com.example.nishant.berry.ui.search.DaggerSearchComponent;
 import com.example.nishant.berry.ui.status.StatusActivity;
 import com.theartofdev.edmodo.cropper.CropImage;
 
@@ -69,7 +71,11 @@ public class SettingsActivity
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_settings);
         mBinding.setActivity(this);
 
-        mPresenter = new SettingsPresenter();
+        SettingsComponent component = DaggerSettingsComponent.builder()
+                .dataManagerComponent(BerryApp.get(this).getDataManagerApplicationComponent())
+                .settingsModule(new SettingsModule())
+                .build();
+        mPresenter = component.provideSettingsPresenter();
         mPresenter.attachView(this);
     }
 

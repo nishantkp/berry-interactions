@@ -51,8 +51,8 @@ public class SettingsPresenter
     // DataManager
     private DataManager mDataManager;
 
-    SettingsPresenter() {
-        mDataManager = DataManager.getInstance();
+    SettingsPresenter(DataManager dataManager) {
+        mDataManager = dataManager;
     }
 
     @Override
