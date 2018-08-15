@@ -36,6 +36,7 @@ import android.util.Log;
 import android.view.View;
 
 import com.example.nishant.berry.R;
+import com.example.nishant.berry.application.BerryApp;
 import com.example.nishant.berry.base.BaseActivity;
 import com.example.nishant.berry.databinding.ActivityInteractionBinding;
 import com.example.nishant.berry.databinding.InteractionCustomBarBinding;
@@ -75,11 +76,17 @@ public class InteractionActivity
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_interaction);
         mBinding.interactionsBottomBar.setData(new Interaction());
 
+        // Get presenter from dagger component
+        InteractionComponent component = DaggerInteractionComponent.builder()
+                .dataManagerComponent(BerryApp.get(this).getDataManagerApplicationComponent())
+                .interactionModule(new InteractionModule(getIntent()))
+                .build();
+        mPresenter = component.provideInteractionPresenter();
+
         // Setup support action bar
         setSupportActionBar(mBinding.interactionsAppBar.mainAppBar);
 
         // Attach view to presenter
-        mPresenter = new InteractionPresenter(getIntent());
         mPresenter.attachView(this);
         mBinding.interactionsBottomBar.setPresenter(mPresenter);
     }

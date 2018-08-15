@@ -52,7 +52,7 @@ public class InteractionPresenter
     private String mInteractionUserId;
     private DataManager mDataManager;
 
-    InteractionPresenter(Intent receivedIntent) {
+    InteractionPresenter(Intent receivedIntent, DataManager dataManager) {
         // Extract the userId and user displayName from intent
         mInteractionUserId = receivedIntent.hasExtra(IConstants.KEY_USER_ID) ?
                 receivedIntent.getStringExtra(IConstants.KEY_USER_ID) : null;
@@ -61,7 +61,7 @@ public class InteractionPresenter
                 receivedIntent.getStringExtra(IConstants.KEY_USER_DISPLAY_NAME) : null;
         */
         if (mInteractionUserId == null) return;
-        mDataManager = DataManager.getInstance();
+        mDataManager = dataManager;
     }
 
     @Override
