@@ -19,24 +19,23 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  *
- * File Created on 13/08/18 9:34 PM by nishant
- * Last Modified on 13/08/18 9:34 PM
+ * File Created on 15/08/18 1:47 PM by nishant
+ * Last Modified on 15/08/18 1:47 PM
  */
 
-package com.example.nishant.berry.data.module;
+package com.example.nishant.berry.data.component;
 
 import com.example.nishant.berry.data.DataManager;
-import com.example.nishant.berry.data.scope.DataManagerApplicationScope;
 
-import dagger.Module;
-import dagger.Provides;
+import javax.inject.Singleton;
 
-@Module
-@DataManagerApplicationScope
-public class DataManagerModule {
+import dagger.Component;
 
-    @Provides
-    public DataManager provideDataManager() {
-        return new DataManager();
-    }
+/**
+ * DataManager UseCases component for Dagger
+ */
+@Singleton
+@Component
+public interface UseCaseComponent {
+    void inject(DataManager dataManager);
 }

@@ -33,21 +33,33 @@ import com.example.nishant.berry.data.callbacks.OnTaskCompletion;
 import com.example.nishant.berry.data.callbacks.OnUserProfile;
 import com.example.nishant.berry.data.callbacks.OnUsersData;
 import com.example.nishant.berry.data.callbacks.OnUsersList;
+import com.example.nishant.berry.data.component.DaggerUseCaseComponent;
 import com.example.nishant.berry.ui.model.AllUsers;
+
+import javax.inject.Inject;
 
 /**
  * Data Manager class, that deals with business logic
  */
 public class DataManager implements DataContract {
-    private final FbUsersUseCase mFbUsersUseCase;
-    private final FriendsUseCase mFriendsUseCase;
-    private final RequestsUseCase mRequestsUseCase;
-    private final SettingsUseCase mSettingsUseCase;
-    private final ChatUseCase mChatUseCase;
-    private final AccountUseCase mAccountUseCase;
-    private final SearchUseCase mSearchUseCase;
-    private final ProfileUseCase mProfileUseCase;
-    private final InteractionUseCase mInteractionUseCase;
+    @Inject
+    FbUsersUseCase mFbUsersUseCase;
+    @Inject
+    FriendsUseCase mFriendsUseCase;
+    @Inject
+    RequestsUseCase mRequestsUseCase;
+    @Inject
+    SettingsUseCase mSettingsUseCase;
+    @Inject
+    ChatUseCase mChatUseCase;
+    @Inject
+    AccountUseCase mAccountUseCase;
+    @Inject
+    SearchUseCase mSearchUseCase;
+    @Inject
+    ProfileUseCase mProfileUseCase;
+    @Inject
+    InteractionUseCase mInteractionUseCase;
 
     // Lazy Initialization pattern
     private static class StaticHolder {
@@ -62,15 +74,7 @@ public class DataManager implements DataContract {
      * Private constructor so no one can make object of a data manager
      */
     public DataManager() {
-        mFbUsersUseCase = new FbUsersUseCase();
-        mFriendsUseCase = new FriendsUseCase(mFbUsersUseCase);
-        mRequestsUseCase = new RequestsUseCase(mFbUsersUseCase);
-        mSettingsUseCase = new SettingsUseCase(mFbUsersUseCase);
-        mChatUseCase = new ChatUseCase(mFbUsersUseCase);
-        mAccountUseCase = new AccountUseCase(mFbUsersUseCase);
-        mSearchUseCase = new SearchUseCase(mFbUsersUseCase);
-        mProfileUseCase = new ProfileUseCase(mFbUsersUseCase);
-        mInteractionUseCase = new InteractionUseCase(mFbUsersUseCase);
+        DaggerUseCaseComponent.create().inject(this);
     }
 
     /**
