@@ -31,6 +31,9 @@ import android.content.Context;
 import dagger.Module;
 import dagger.Provides;
 
+/**
+ * Module which uses Activity module for context and provides progress dialog
+ */
 @Module(includes = ActivityModule.class)
 public class ProgressDialogModule {
 
