@@ -38,15 +38,24 @@ import com.example.nishant.berry.application.BerryApp;
 import com.example.nishant.berry.databinding.ActivitySignInBinding;
 import com.example.nishant.berry.ui.dashboard.DashboardActivity;
 import com.example.nishant.berry.ui.model.User;
+import com.example.nishant.berry.ui.module.ActivityModule;
+import com.example.nishant.berry.ui.module.ProgressDialogModule;
 
 import java.util.Objects;
+
+import javax.inject.Inject;
 
 public class SignInActivity
         extends AppCompatActivity
         implements SignInContract.View, SignInContract.View.SignInCallback {
 
     private ActivitySignInBinding mBinding;
-    private ProgressDialog mProgressDialog;
+
+    @Inject
+    ProgressDialog mProgressDialog;
+
+    @Inject
+    SignInPresenter mPresenter;
 
     /**
      * Use this method get the intent to start {@link SignInActivity}
@@ -63,22 +72,24 @@ public class SignInActivity
         super.onCreate(savedInstanceState);
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_sign_in);
 
+        // Inject Dagger
+        DaggerSignInComponent.builder()
+                .dataManagerComponent(BerryApp.get(this).getDataManagerApplicationComponent())
+                .activityModule(new ActivityModule(this))
+                .progressDialogModule(new ProgressDialogModule("Authenticating..."))
+                .build()
+                .inject(this);
+
         // Setup app bar
         setSupportActionBar(mBinding.signInToolBar.mainAppBar);
         Objects.requireNonNull(getSupportActionBar()).setTitle("Sign In");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setElevation(0f);
 
-        // Get the presenter from dagger component
-        SignInComponent component = DaggerSignInComponent.builder()
-                .dataManagerComponent(BerryApp.get(this).getDataManagerApplicationComponent())
-                .signInModule(new SignInModule())
-                .build();
-        SignInPresenter presenter = component.provideSignInPresenter();
-        presenter.attachView(this);
+        mPresenter.attachView(this);
 
         mBinding.setUser(new User());
-        mBinding.setPresenter(presenter);
+        mBinding.setPresenter(mPresenter);
         mBinding.setCallback(this);
     }
 
@@ -96,9 +107,6 @@ public class SignInActivity
 
     @Override
     public void showProgressDialog() {
-        mProgressDialog = new ProgressDialog(this);
-        mProgressDialog.setMessage("Authenticating...");
-        mProgressDialog.setCanceledOnTouchOutside(false);
         mProgressDialog.show();
     }
 
