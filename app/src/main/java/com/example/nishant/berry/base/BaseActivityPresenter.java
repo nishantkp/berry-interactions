@@ -30,6 +30,8 @@ import android.util.Log;
 import com.example.nishant.berry.data.DataManager;
 import com.example.nishant.berry.data.callbacks.OnTaskCompletion;
 
+import javax.inject.Inject;
+
 /**
  * Presenter for {@link BaseActivity} to mark user online/ offline
  */
@@ -37,8 +39,9 @@ class BaseActivityPresenter {
     private DataManager mDataManager;
     private static final String LOG_TAG = BaseActivityPresenter.class.getSimpleName();
 
-    BaseActivityPresenter() {
-        mDataManager = DataManager.getInstance();
+    @Inject
+    BaseActivityPresenter(DataManager dataManager) {
+        mDataManager = dataManager;
     }
 
     /**

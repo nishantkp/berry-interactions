@@ -28,16 +28,26 @@ package com.example.nishant.berry.base;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
+import com.example.nishant.berry.application.BerryApp;
+
+import javax.inject.Inject;
+
 /**
  * BaseActivity
  */
 public class BaseActivity extends AppCompatActivity {
-    private BaseActivityPresenter mPresenter;
+    @Inject
+    BaseActivityPresenter mPresenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mPresenter = new BaseActivityPresenter();
+
+        // Inject BaseActivityPresenter
+        DaggerBaseActivityComponent.builder()
+                .dataManagerComponent(BerryApp.get(this).getDataManagerApplicationComponent())
+                .build()
+                .inject(this);
     }
 
     @Override
