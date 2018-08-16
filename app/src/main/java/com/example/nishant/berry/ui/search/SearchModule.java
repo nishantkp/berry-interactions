@@ -25,20 +25,49 @@
 
 package com.example.nishant.berry.ui.search;
 
-import com.example.nishant.berry.data.DataManager;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
+
+import com.example.nishant.berry.ui.adapter.FriendsAdapter;
+import com.example.nishant.berry.ui.model.SearchUser;
 
 import dagger.Module;
 import dagger.Provides;
 
 /**
- * Dagger module which provides {@link SearchPresenter} to {@link SearchComponent}
+ * Dagger module which provides {@link SearchPresenter}, LinearLayoutManager, {@link SearchUser}
+ * and DividerItemDecoration objects to {@link SearchComponent}
  */
 @Module
 public class SearchModule {
 
+    private SearchActivity mSearchActivity;
+
+    SearchModule(SearchActivity searchActivity) {
+        mSearchActivity = searchActivity;
+    }
+
     @SearchActivityScope
     @Provides
-    public SearchPresenter getSearchPresenter(DataManager dataManager) {
-        return new SearchPresenter(dataManager);
+    public FriendsAdapter getFriendsAdapter() {
+        return new FriendsAdapter(mSearchActivity);
+    }
+
+    @SearchActivityScope
+    @Provides
+    public LinearLayoutManager getLinearLayoutManager() {
+        return new LinearLayoutManager(mSearchActivity);
+    }
+
+    @SearchActivityScope
+    @Provides
+    public DividerItemDecoration getDividerItemDecoration() {
+        return new DividerItemDecoration(mSearchActivity, DividerItemDecoration.VERTICAL);
+    }
+
+    @SearchActivityScope
+    @Provides
+    public SearchUser getSearchUser() {
+        return new SearchUser();
     }
 }

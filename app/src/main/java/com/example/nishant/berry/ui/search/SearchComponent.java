@@ -26,11 +26,13 @@
 package com.example.nishant.berry.ui.search;
 
 import com.example.nishant.berry.data.component.DataManagerComponent;
+import com.example.nishant.berry.ui.model.SearchUser;
 
 import dagger.Component;
 
 /**
- * Dagger component which provides {@link SearchPresenter} object to {@link SearchActivity}
+ * Dagger component which provides {@link SearchPresenter},
+ * LinearLayoutManager, {@link SearchUser} and DividerItemDecoration objects to {@link SearchActivity}
  */
 @SearchActivityScope
 @Component(modules = SearchModule.class, dependencies = DataManagerComponent.class)

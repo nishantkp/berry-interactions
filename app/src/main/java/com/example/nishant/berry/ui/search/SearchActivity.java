@@ -47,7 +47,7 @@ import com.example.nishant.berry.ui.profile.UserProfileActivity;
 
 import java.util.List;
 
-import static android.support.v7.widget.LinearLayoutManager.VERTICAL;
+import javax.inject.Inject;
 
 public class SearchActivity
         extends BaseActivity
@@ -56,8 +56,18 @@ public class SearchActivity
     /* Tag for log messages */
     private static final String LOG_TAG = SearchActivity.class.getSimpleName();
     private static SearchPresenter mPresenter;
+
+    /* Dagger Injection */
+    @Inject
+    FriendsAdapter mFriendsAdapter;
+    @Inject
+    DividerItemDecoration mItemDecor;
+    @Inject
+    LinearLayoutManager mLinearLayoutManager;
+    @Inject
+    SearchUser mSearchUser;
+
     private ActivitySearchBinding mBinding;
-    private FriendsAdapter mFriendsAdapter;
 
     /**
      * Binding adapter for {@link SearchActivity} EditText field
@@ -84,25 +94,24 @@ public class SearchActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_search);
-        mFriendsAdapter = new FriendsAdapter(this);
-        mBinding.searchRv.setAdapter(mFriendsAdapter);
 
-        // Get the presenter from dagger component
+        // Inject presenter through dagger
         SearchComponent component = DaggerSearchComponent.builder()
                 .dataManagerComponent(BerryApp.get(this).getDataManagerApplicationComponent())
-                .searchModule(new SearchModule())
+                .searchModule(new SearchModule(this))
                 .build();
+        component.inject(this);
         mPresenter = component.provideSearchPresenter();
         mPresenter.attachView(this);
-        mBinding.setSearch(new SearchUser());
+
+        mBinding.searchRv.setAdapter(mFriendsAdapter);
+        mBinding.setSearch(mSearchUser);
 
         // set layout manager on recycler view
-        mBinding.searchRv.setLayoutManager(new LinearLayoutManager(this));
+        mBinding.searchRv.setLayoutManager(mLinearLayoutManager);
 
         // Add divider between two items
-        DividerItemDecoration itemDecor =
-                new DividerItemDecoration(mBinding.searchRv.getContext(), VERTICAL);
-        mBinding.searchRv.addItemDecoration(itemDecor);
+        mBinding.searchRv.addItemDecoration(mItemDecor);
     }
 
     /**

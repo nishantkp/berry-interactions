@@ -34,6 +34,8 @@ import com.example.nishant.berry.ui.model.AllUsers;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 /**
  * Presenter responsible for querying database as per user search query
  */
@@ -43,6 +45,7 @@ public class SearchPresenter
 
     private DataManager mDataManager;
 
+    @Inject
     SearchPresenter(DataManager dataManager) {
         mDataManager = dataManager;
     }
