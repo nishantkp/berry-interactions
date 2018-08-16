@@ -34,6 +34,7 @@ import android.os.Bundle;
 import android.widget.Toast;
 
 import com.example.nishant.berry.R;
+import com.example.nishant.berry.application.BerryApp;
 import com.example.nishant.berry.databinding.ActivitySignUpBinding;
 import com.example.nishant.berry.ui.dashboard.DashboardActivity;
 import com.example.nishant.berry.ui.model.User;
@@ -45,7 +46,6 @@ public class SignUpActivity
         implements SignUpContract.View, SignUpContract.View.SignUpCallback {
 
     private ActivitySignUpBinding mBinding;
-    private SignUpPresenter mPresenter;
     private ProgressDialog mProgressDialog;
 
     /**
@@ -72,9 +72,14 @@ public class SignUpActivity
         mBinding.setUser(new User());
         mBinding.setCallback(this);
 
-        mPresenter = new SignUpPresenter();
-        mPresenter.attachView(this);
-        mBinding.setPresenter(mPresenter);
+        // Get the presenter from dagger component
+        SignUpComponent component = DaggerSignUpComponent.builder()
+                .dataManagerComponent(BerryApp.get(this).getDataManagerApplicationComponent())
+                .signUpModule(new SignUpModule())
+                .build();
+        SignUpPresenter presenter = component.provideSignUpPresenter();
+        presenter.attachView(this);
+        mBinding.setPresenter(presenter);
     }
 
     @Override

@@ -39,8 +39,8 @@ public class SignUpPresenter
 
     private DataManager mDataManager;
 
-    SignUpPresenter() {
-        mDataManager = DataManager.getInstance();
+    SignUpPresenter(DataManager dataManager) {
+        mDataManager = dataManager;
     }
 
     @Override
