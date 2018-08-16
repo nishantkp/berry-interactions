@@ -26,16 +26,19 @@
 package com.example.nishant.berry.ui.signup;
 
 import com.example.nishant.berry.data.component.DataManagerComponent;
+import com.example.nishant.berry.ui.module.ProgressDialogModule;
 
 import dagger.Component;
 
 /**
- * Dagger component which provides {@link SignUpPresenter} object to {@link SignUpActivity}
+ * Dagger component which provides {@link SignUpPresenter} object, progressDialog object to
+ * {@link SignUpActivity}
  */
 @SignUpActivityScope
-@Component(modules = SignUpModule.class, dependencies = DataManagerComponent.class)
+@Component(
+        modules = {SignUpModule.class, ProgressDialogModule.class},
+        dependencies = DataManagerComponent.class
+)
 public interface SignUpComponent {
     void inject(SignUpActivity signUpActivity);
-
-    SignUpPresenter provideSignUpPresenter();
 }

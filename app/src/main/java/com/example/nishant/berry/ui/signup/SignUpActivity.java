@@ -38,15 +38,24 @@ import com.example.nishant.berry.application.BerryApp;
 import com.example.nishant.berry.databinding.ActivitySignUpBinding;
 import com.example.nishant.berry.ui.dashboard.DashboardActivity;
 import com.example.nishant.berry.ui.model.User;
+import com.example.nishant.berry.ui.module.ActivityModule;
+import com.example.nishant.berry.ui.module.ProgressDialogModule;
 
 import java.util.Objects;
+
+import javax.inject.Inject;
 
 public class SignUpActivity
         extends AppCompatActivity
         implements SignUpContract.View, SignUpContract.View.SignUpCallback {
 
     private ActivitySignUpBinding mBinding;
-    private ProgressDialog mProgressDialog;
+
+    @Inject
+    SignUpPresenter mPresenter;
+
+    @Inject
+    ProgressDialog mProgressDialog;
 
     /**
      * Use this method get the intent to start {@link SignUpActivity}
@@ -63,6 +72,14 @@ public class SignUpActivity
         super.onCreate(savedInstanceState);
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_sign_up);
 
+        // Inject Dagger
+        DaggerSignUpComponent.builder()
+                .dataManagerComponent(BerryApp.get(this).getDataManagerApplicationComponent())
+                .activityModule(new ActivityModule(this))
+                .progressDialogModule(new ProgressDialogModule("Creating account..."))
+                .build()
+                .inject(this);
+
         // Setup app bar
         setSupportActionBar(mBinding.signUpToolBar.mainAppBar);
         Objects.requireNonNull(getSupportActionBar()).setTitle("Sign Up");
@@ -72,14 +89,8 @@ public class SignUpActivity
         mBinding.setUser(new User());
         mBinding.setCallback(this);
 
-        // Get the presenter from dagger component
-        SignUpComponent component = DaggerSignUpComponent.builder()
-                .dataManagerComponent(BerryApp.get(this).getDataManagerApplicationComponent())
-                .signUpModule(new SignUpModule())
-                .build();
-        SignUpPresenter presenter = component.provideSignUpPresenter();
-        presenter.attachView(this);
-        mBinding.setPresenter(presenter);
+        mPresenter.attachView(this);
+        mBinding.setPresenter(mPresenter);
     }
 
     @Override
@@ -96,9 +107,6 @@ public class SignUpActivity
 
     @Override
     public void showProgressDialog() {
-        mProgressDialog = new ProgressDialog(this);
-        mProgressDialog.setMessage("Creating account...");
-        mProgressDialog.setCanceledOnTouchOutside(false);
         mProgressDialog.show();
     }
 
