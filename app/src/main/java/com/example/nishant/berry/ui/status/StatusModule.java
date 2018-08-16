@@ -19,28 +19,32 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  *
- * File Created on 15/08/18 8:12 PM by nishant
- * Last Modified on 15/08/18 8:12 PM
+ * File Created on 15/08/18 8:27 PM by nishant
+ * Last Modified on 15/08/18 8:27 PM
  */
 
 package com.example.nishant.berry.ui.status;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 
-import com.example.nishant.berry.data.component.DataManagerComponent;
+import com.example.nishant.berry.ui.module.ActivityModule;
 
-import dagger.Component;
+import dagger.Module;
+import dagger.Provides;
 
 /**
- * Dagger component which provides ProgressDialog and {@link StatusPresenter} object to
- * {@link StatusActivity}
+ * Dagger module which provides ProgressDialog to {@link StatusComponent}
  */
-@StatusActivityScope
-@Component(modules = StatusModule.class, dependencies = DataManagerComponent.class)
-public interface StatusComponent {
-    void inject(StatusActivity statusActivity);
+@Module(includes = ActivityModule.class)
+public class StatusModule {
 
-    StatusPresenter provideStatusPresenter();
-
-    ProgressDialog provideDialog();
+    @StatusActivityScope
+    @Provides
+    public ProgressDialog getProgressDialog(Context context) {
+        ProgressDialog dialog = new ProgressDialog(context);
+        dialog.setMessage("Saving changes...");
+        dialog.setCanceledOnTouchOutside(false);
+        return dialog;
+    }
 }

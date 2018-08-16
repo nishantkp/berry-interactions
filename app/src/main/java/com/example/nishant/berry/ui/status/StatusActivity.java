@@ -38,7 +38,7 @@ import com.example.nishant.berry.base.BaseActivity;
 import com.example.nishant.berry.config.IConstants;
 import com.example.nishant.berry.databinding.ActivityStatusBinding;
 import com.example.nishant.berry.ui.model.User;
-import com.example.nishant.berry.ui.signup.DaggerSignUpComponent;
+import com.example.nishant.berry.ui.module.ActivityModule;
 
 import java.util.Objects;
 
@@ -84,17 +84,16 @@ public class StatusActivity
         // Get the presenter from dagger component
         StatusComponent component = DaggerStatusComponent.builder()
                 .dataManagerComponent(BerryApp.get(this).getDataManagerApplicationComponent())
+                .activityModule(new ActivityModule(this))
                 .build();
         StatusPresenter presenter = component.provideStatusPresenter();
+        mProgressDialog = component.provideDialog();
         presenter.attachView(this);
         mBinding.setPresenter(presenter);
     }
 
     @Override
     public void showProgressDialog() {
-        mProgressDialog = new ProgressDialog(this);
-        mProgressDialog.setMessage("Saving changes...");
-        mProgressDialog.setCanceledOnTouchOutside(false);
         mProgressDialog.show();
     }
 

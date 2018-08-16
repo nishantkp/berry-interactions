@@ -19,28 +19,32 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  *
- * File Created on 15/08/18 8:12 PM by nishant
- * Last Modified on 15/08/18 8:12 PM
+ * File Created on 15/08/18 8:23 PM by nishant
+ * Last Modified on 15/08/18 8:23 PM
  */
 
-package com.example.nishant.berry.ui.status;
+package com.example.nishant.berry.ui.module;
 
-import android.app.ProgressDialog;
+import android.app.Activity;
+import android.content.Context;
 
-import com.example.nishant.berry.data.component.DataManagerComponent;
-
-import dagger.Component;
+import dagger.Module;
+import dagger.Provides;
 
 /**
- * Dagger component which provides ProgressDialog and {@link StatusPresenter} object to
- * {@link StatusActivity}
+ * Module which gives activity context
  */
-@StatusActivityScope
-@Component(modules = StatusModule.class, dependencies = DataManagerComponent.class)
-public interface StatusComponent {
-    void inject(StatusActivity statusActivity);
+@Module
+public class ActivityModule {
 
-    StatusPresenter provideStatusPresenter();
+    private Context context;
 
-    ProgressDialog provideDialog();
+    public ActivityModule(Activity activity) {
+        context = activity;
+    }
+
+    @Provides
+    public Context getContext() {
+        return context;
+    }
 }
