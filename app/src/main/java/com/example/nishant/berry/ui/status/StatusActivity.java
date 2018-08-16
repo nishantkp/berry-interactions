@@ -39,6 +39,7 @@ import com.example.nishant.berry.config.IConstants;
 import com.example.nishant.berry.databinding.ActivityStatusBinding;
 import com.example.nishant.berry.ui.model.User;
 import com.example.nishant.berry.ui.module.ActivityModule;
+import com.example.nishant.berry.ui.module.ProgressDialogModule;
 
 import java.util.Objects;
 
@@ -85,6 +86,7 @@ public class StatusActivity
         StatusComponent component = DaggerStatusComponent.builder()
                 .dataManagerComponent(BerryApp.get(this).getDataManagerApplicationComponent())
                 .activityModule(new ActivityModule(this))
+                .progressDialogModule(new ProgressDialogModule("Saving changes..."))
                 .build();
         StatusPresenter presenter = component.provideStatusPresenter();
         mProgressDialog = component.provideDialog();

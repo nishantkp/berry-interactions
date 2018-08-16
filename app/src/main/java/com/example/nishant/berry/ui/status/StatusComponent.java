@@ -28,6 +28,7 @@ package com.example.nishant.berry.ui.status;
 import android.app.ProgressDialog;
 
 import com.example.nishant.berry.data.component.DataManagerComponent;
+import com.example.nishant.berry.ui.module.ProgressDialogModule;
 
 import dagger.Component;
 
@@ -36,7 +37,7 @@ import dagger.Component;
  * {@link StatusActivity}
  */
 @StatusActivityScope
-@Component(modules = StatusModule.class, dependencies = DataManagerComponent.class)
+@Component(modules = ProgressDialogModule.class, dependencies = DataManagerComponent.class)
 public interface StatusComponent {
     void inject(StatusActivity statusActivity);
 
