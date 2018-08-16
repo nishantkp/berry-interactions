@@ -56,9 +56,15 @@ public class AllUsersActivity
         extends BaseActivity
         implements AllUsersContract.View, FriendsAdapter.OnClick {
 
+    @Inject
+    AllUsersPresenter mPresenter;
+    @Inject
+    FriendsAdapter mFriendsAdapter;
+    @Inject
+    LinearLayoutManager mLinearLayoutManager;
+    @Inject
+    DividerItemDecoration mItemDecor;
     private ActivityAllUsersBinding mBinding;
-    private AllUsersPresenter mPresenter;
-    private FriendsAdapter mFriendsAdapter;
 
     /**
      * Use this method get the intent to start {@link AllUsersActivity}
@@ -75,12 +81,12 @@ public class AllUsersActivity
         super.onCreate(savedInstanceState);
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_all_users);
 
-        // Dagger component to get the presenter
-        AllUsersComponent component = DaggerAllUsersComponent.builder()
+        // Inject Dagger
+        DaggerAllUsersComponent.builder()
                 .dataManagerComponent(BerryApp.get(this).getDataManagerApplicationComponent())
-                .allUsersModule(new AllUsersModule())
-                .build();
-        mPresenter = component.provideAllUsersPresenter();
+                .allUsersModule(new AllUsersModule(this))
+                .build()
+                .inject(this);
 
         // Setup app bar
         setSupportActionBar(mBinding.allUsersAppBar.mainAppBar);
@@ -88,21 +94,17 @@ public class AllUsersActivity
         getSupportActionBar().setTitle("All users");
         Objects.requireNonNull(getSupportActionBar()).setElevation(0f);
 
-        mFriendsAdapter = new FriendsAdapter(this);
         mBinding.allUsersRv.setAdapter(mFriendsAdapter);
 
         // Setup presenter
-        // mPresenter = new AllUsersPresenter(DataManager.getInstance());
         mPresenter.attachView(this);
 
         // Setup recycler view
-        mBinding.allUsersRv.setLayoutManager(new LinearLayoutManager(this));
+        mBinding.allUsersRv.setLayoutManager(mLinearLayoutManager);
         mBinding.allUsersRv.setHasFixedSize(true);
 
         // Add divider between two items
-        DividerItemDecoration itemDecor =
-                new DividerItemDecoration(mBinding.allUsersRv.getContext(), VERTICAL);
-        mBinding.allUsersRv.addItemDecoration(itemDecor);
+        mBinding.allUsersRv.addItemDecoration(mItemDecor);
     }
 
     @Override

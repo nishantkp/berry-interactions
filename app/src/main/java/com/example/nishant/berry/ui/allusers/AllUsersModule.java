@@ -25,21 +25,50 @@
 
 package com.example.nishant.berry.ui.allusers;
 
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
+
 import com.example.nishant.berry.data.DataManager;
-import com.example.nishant.berry.data.component.DaggerDataManagerComponent;
+import com.example.nishant.berry.ui.adapter.FriendsAdapter;
 
 import dagger.Module;
 import dagger.Provides;
 
+import static android.support.v7.widget.LinearLayoutManager.VERTICAL;
+
 /**
- * Dagger module which provides {@link AllUsersPresenter} to {@link AllUsersComponent}
+ * Dagger module which provides {@link AllUsersPresenter}, {@link FriendsAdapter} and ItemDecoration
+ * object to {@link AllUsersComponent}
  */
 @Module
 public class AllUsersModule {
+    private AllUsersActivity mAllUsersActivity;
+
+    AllUsersModule(AllUsersActivity allUsersActivity) {
+        mAllUsersActivity = allUsersActivity;
+    }
 
     @AllUsersActivityScope
     @Provides
     public AllUsersPresenter getAllUsersPresenter(DataManager dataManager) {
         return new AllUsersPresenter(dataManager);
+    }
+
+    @AllUsersActivityScope
+    @Provides
+    public FriendsAdapter getFriendsAdapter() {
+        return new FriendsAdapter(mAllUsersActivity);
+    }
+
+    @AllUsersActivityScope
+    @Provides
+    public LinearLayoutManager getLinearLayoutManager() {
+        return new LinearLayoutManager(mAllUsersActivity);
+    }
+
+    @AllUsersActivityScope
+    @Provides
+    public DividerItemDecoration gerDecoration() {
+        return new DividerItemDecoration(mAllUsersActivity, VERTICAL);
     }
 }
