@@ -32,6 +32,8 @@ import com.example.nishant.berry.data.DataManager;
 import com.example.nishant.berry.data.callbacks.OnTaskCompletion;
 import com.example.nishant.berry.ui.settings.SettingsActivity;
 
+import javax.inject.Inject;
+
 /**
  * Presenter which deals with saving current user's status
  */
@@ -41,8 +43,9 @@ public class StatusPresenter
 
     private DataManager mDataManager;
 
-    StatusPresenter() {
-        mDataManager = DataManager.getInstance();
+    @Inject
+    StatusPresenter(DataManager dataManager) {
+        mDataManager = dataManager;
     }
 
     @Override

@@ -33,10 +33,12 @@ import android.os.Bundle;
 import android.widget.Toast;
 
 import com.example.nishant.berry.R;
+import com.example.nishant.berry.application.BerryApp;
 import com.example.nishant.berry.base.BaseActivity;
 import com.example.nishant.berry.config.IConstants;
 import com.example.nishant.berry.databinding.ActivityStatusBinding;
 import com.example.nishant.berry.ui.model.User;
+import com.example.nishant.berry.ui.signup.DaggerSignUpComponent;
 
 import java.util.Objects;
 
@@ -45,7 +47,6 @@ public class StatusActivity
         implements StatusContract.View {
 
     private ActivityStatusBinding mBinding;
-    private StatusPresenter mPresenter;
     private ProgressDialog mProgressDialog;
 
     /**
@@ -80,9 +81,13 @@ public class StatusActivity
         Objects.requireNonNull(getSupportActionBar()).setElevation(0f);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        mPresenter = new StatusPresenter();
-        mPresenter.attachView(this);
-        mBinding.setPresenter(mPresenter);
+        // Get the presenter from dagger component
+        StatusComponent component = DaggerStatusComponent.builder()
+                .dataManagerComponent(BerryApp.get(this).getDataManagerApplicationComponent())
+                .build();
+        StatusPresenter presenter = component.provideStatusPresenter();
+        presenter.attachView(this);
+        mBinding.setPresenter(presenter);
     }
 
     @Override
