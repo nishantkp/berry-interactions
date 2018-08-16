@@ -26,6 +26,7 @@
 package com.example.nishant.berry.ui.settings;
 
 import com.example.nishant.berry.data.component.DataManagerComponent;
+import com.example.nishant.berry.ui.module.ProgressDialogModule;
 
 import dagger.Component;
 
@@ -33,9 +34,10 @@ import dagger.Component;
  * Dagger component which provides {@link SettingsPresenter} object to {@link SettingsActivity}
  */
 @SettingsActivityScope
-@Component(modules = SettingsModule.class, dependencies = DataManagerComponent.class)
+@Component(
+        modules = {SettingsModule.class, ProgressDialogModule.class},
+        dependencies = DataManagerComponent.class
+)
 public interface SettingsComponent {
     void inject(SettingsActivity settingsActivity);
-
-    SettingsPresenter provideSettingsPresenter();
 }

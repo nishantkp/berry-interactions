@@ -39,9 +39,12 @@ import com.example.nishant.berry.base.BaseActivity;
 import com.example.nishant.berry.config.IConstants;
 import com.example.nishant.berry.databinding.ActivitySettingsBinding;
 import com.example.nishant.berry.ui.model.AllUsers;
-import com.example.nishant.berry.ui.search.DaggerSearchComponent;
+import com.example.nishant.berry.ui.module.ActivityModule;
+import com.example.nishant.berry.ui.module.ProgressDialogModule;
 import com.example.nishant.berry.ui.status.StatusActivity;
 import com.theartofdev.edmodo.cropper.CropImage;
+
+import javax.inject.Inject;
 
 import id.zelory.compressor.Compressor;
 
@@ -50,10 +53,12 @@ public class SettingsActivity
         implements SettingsContract.View {
 
     private static final int GALLERY_INTENT_REQUEST_CODE = 100;
+    @Inject
+    SettingsPresenter mPresenter;
+    @Inject
+    ProgressDialog mProgressDialog;
     private ActivitySettingsBinding mBinding;
-    private SettingsPresenter mPresenter;
     private String mStatus;
-    private ProgressDialog mProgressDialog;
 
     /**
      * Use this method get the intent to start {@link SettingsActivity}
@@ -69,13 +74,16 @@ public class SettingsActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_settings);
-        mBinding.setActivity(this);
 
-        SettingsComponent component = DaggerSettingsComponent.builder()
+        // Inject Dagger
+        DaggerSettingsComponent.builder()
                 .dataManagerComponent(BerryApp.get(this).getDataManagerApplicationComponent())
-                .settingsModule(new SettingsModule())
-                .build();
-        mPresenter = component.provideSettingsPresenter();
+                .activityModule(new ActivityModule(this))
+                .progressDialogModule(new ProgressDialogModule("Uploading avatar..."))
+                .build()
+                .inject(this);
+
+        mBinding.setActivity(this);
         mPresenter.attachView(this);
     }
 
@@ -99,9 +107,6 @@ public class SettingsActivity
      */
     @Override
     public void showProgressDialog(String message) {
-        mProgressDialog = new ProgressDialog(this);
-        mProgressDialog.setMessage(message);
-        mProgressDialog.setCanceledOnTouchOutside(false);
         mProgressDialog.show();
     }
 
