@@ -32,8 +32,6 @@ import com.example.nishant.berry.ui.model.AllUsers;
 
 import java.util.List;
 
-import javax.inject.Inject;
-
 /**
  * Presenter to display all users in database
  */

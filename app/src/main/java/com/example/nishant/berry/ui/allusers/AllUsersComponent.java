@@ -36,6 +36,4 @@ import dagger.Component;
 @Component(modules = AllUsersModule.class, dependencies = DataManagerComponent.class)
 public interface AllUsersComponent {
     void inject(AllUsersActivity allUsersActivity);
-
-    AllUsersPresenter provideAllUsersPresenter();
 }

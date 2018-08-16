@@ -36,7 +36,6 @@ import com.example.nishant.berry.R;
 import com.example.nishant.berry.application.BerryApp;
 import com.example.nishant.berry.base.BaseActivity;
 import com.example.nishant.berry.config.IConstants;
-import com.example.nishant.berry.data.DataManager;
 import com.example.nishant.berry.databinding.ActivityAllUsersBinding;
 import com.example.nishant.berry.ui.adapter.FriendsAdapter;
 import com.example.nishant.berry.ui.model.AllUsers;
@@ -46,8 +45,6 @@ import java.util.List;
 import java.util.Objects;
 
 import javax.inject.Inject;
-
-import static android.support.v7.widget.LinearLayoutManager.VERTICAL;
 
 /**
  * Displays all users in database
