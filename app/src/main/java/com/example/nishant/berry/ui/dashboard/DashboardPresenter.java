@@ -29,6 +29,8 @@ import com.example.nishant.berry.base.BasePresenter;
 import com.example.nishant.berry.data.DataManager;
 import com.example.nishant.berry.data.callbacks.OnTaskCompletion;
 
+import javax.inject.Inject;
+
 /**
  * Presenter that redirects navigation according to availability if user
  * Also responsible for sign out
@@ -37,7 +39,11 @@ public class DashboardPresenter
         extends BasePresenter<DashboardContract.View>
         implements DashboardContract.Presenter {
 
-    DashboardPresenter() {
+    private DataManager mDataManager;
+
+    @Inject
+    DashboardPresenter(DataManager dataManager) {
+        mDataManager = dataManager;
     }
 
     @Override
@@ -53,7 +59,7 @@ public class DashboardPresenter
     @Override
     public void checkCurrentUser() {
         // If current user is not available set call back for no active user
-        DataManager.getInstance().checkCurrentUserAvailability(new OnTaskCompletion() {
+        mDataManager.checkCurrentUserAvailability(new OnTaskCompletion() {
             @Override
             public void onSuccess() {
                 // Current user is available
@@ -72,6 +78,6 @@ public class DashboardPresenter
      */
     @Override
     public void signOutUser() {
-        DataManager.getInstance().signOutUser();
+        mDataManager.signOutUser();
     }
 }

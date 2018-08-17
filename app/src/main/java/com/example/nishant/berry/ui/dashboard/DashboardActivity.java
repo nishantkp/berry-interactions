@@ -33,6 +33,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.example.nishant.berry.R;
+import com.example.nishant.berry.application.BerryApp;
 import com.example.nishant.berry.base.BaseActivity;
 import com.example.nishant.berry.databinding.ActivityDashboardBinding;
 import com.example.nishant.berry.ui.adapter.SectionsPagerAdapter;
@@ -43,11 +44,18 @@ import com.example.nishant.berry.ui.start.StartActivity;
 
 import java.util.Objects;
 
+import javax.inject.Inject;
+
 public class DashboardActivity
         extends BaseActivity
         implements DashboardContract.View {
 
-    private DashboardPresenter mPresenter;
+    /* Dagger Injection */
+    @Inject
+    DashboardPresenter mPresenter;
+    @Inject
+    SectionsPagerAdapter mSectionsPagerAdapter;
+
     private ActivityDashboardBinding mBinding;
 
     /**
@@ -69,12 +77,16 @@ public class DashboardActivity
         setSupportActionBar(mBinding.dashboardAppBar.mainAppBar);
         Objects.requireNonNull(getSupportActionBar()).setTitle("Dashboard");
 
-        mPresenter = new DashboardPresenter();
+        // Inject presenter
+        DaggerDashboardComponent.builder()
+                .dataManagerComponent(BerryApp.get(this).getDataManagerApplicationComponent())
+                .dashboardModule(new DashboardModule(this))
+                .build()
+                .inject(this);
         mPresenter.attachView(this);
 
         // Setup viewPager with pager adapter
-        SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
-        mBinding.dashboardViewPager.setAdapter(sectionsPagerAdapter);
+        mBinding.dashboardViewPager.setAdapter(mSectionsPagerAdapter);
         mBinding.dashboardTabs.setupWithViewPager(mBinding.dashboardViewPager);
     }
 
