@@ -33,6 +33,8 @@ import com.example.nishant.berry.ui.model.AllUsers;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 /**
  * Presenter that deals with setting up the FirebaseRecyclerAdapter and querying the Firebase
  * database to get the appropriate values
@@ -41,7 +43,11 @@ public class ChatPresenter
         extends BasePresenter<ChatContract.View>
         implements ChatContract.Presenter {
 
-    ChatPresenter() {
+    private DataManager mDataManager;
+
+    @Inject
+    ChatPresenter(DataManager dataManager) {
+        mDataManager = dataManager;
     }
 
     @Override
@@ -60,7 +66,7 @@ public class ChatPresenter
      */
     @Override
     public void getCurrentUsersChatList() {
-        DataManager.getInstance().getChatList(new OnUsersList() {
+        mDataManager.getChatList(new OnUsersList() {
             @Override
             public void onData(List<AllUsers> data) {
                 getView().onInteractionData(data);

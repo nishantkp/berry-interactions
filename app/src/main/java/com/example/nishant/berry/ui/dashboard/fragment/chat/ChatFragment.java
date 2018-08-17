@@ -25,6 +25,7 @@
 
 package com.example.nishant.berry.ui.dashboard.fragment.chat;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -35,16 +36,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.nishant.berry.application.BerryApp;
 import com.example.nishant.berry.config.IConstants;
 import com.example.nishant.berry.databinding.FragmentChatBinding;
 import com.example.nishant.berry.R;
 import com.example.nishant.berry.ui.adapter.InteractionAdapter;
 import com.example.nishant.berry.ui.interaction.InteractionActivity;
 import com.example.nishant.berry.ui.model.AllUsers;
+import com.example.nishant.berry.ui.module.ActivityModule;
 
 import java.util.List;
 
-import static android.support.v7.widget.LinearLayoutManager.VERTICAL;
+import javax.inject.Inject;
 
 /**
  * A Fragment that deals with displaying a list of friends, with whom current user had
@@ -56,8 +59,16 @@ public class ChatFragment
     // Tag for logs
     private static final String LOG_TAG = ChatFragment.class.getSimpleName();
     private FragmentChatBinding mBinding;
-    private ChatPresenter mPresenter;
-    private InteractionAdapter mInteractionAdapter;
+
+    /* Dagger Injection */
+    @Inject
+    ChatPresenter mPresenter;
+    @Inject
+    InteractionAdapter mInteractionAdapter;
+    @Inject
+    LinearLayoutManager mLinearLayoutManager;
+    @Inject
+    DividerItemDecoration mItemDecor;
 
     public ChatFragment() {
         // Required empty public constructor
@@ -73,27 +84,34 @@ public class ChatFragment
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        Activity activity = getActivity();
+        if (activity == null) return null;
+
+        // Inject components with dagger
+        DaggerChatComponent.builder()
+                .dataManagerComponent(BerryApp.get(activity).getDataManagerApplicationComponent())
+                .activityModule(new ActivityModule(getActivity()))
+                .chatModule(new ChatModule(this))
+                .build()
+                .inject(this);
+
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_chat, container, false);
         mBinding = FragmentChatBinding.bind(view);
-        mInteractionAdapter = new InteractionAdapter(this);
+
         mBinding.chatRv.setAdapter(mInteractionAdapter);
 
-        mPresenter = new ChatPresenter();
         mPresenter.attachView(this);
 
         // Setup recycler view
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
-        layoutManager.setReverseLayout(true);
-        layoutManager.setStackFromEnd(true);
-        mBinding.chatRv.setLayoutManager(layoutManager);
+        mLinearLayoutManager.setReverseLayout(true);
+        mLinearLayoutManager.setStackFromEnd(true);
+        mBinding.chatRv.setLayoutManager(mLinearLayoutManager);
         mBinding.chatRv.setHasFixedSize(true);
 
         // Adds divider between two list items
-        DividerItemDecoration itemDecor =
-                new DividerItemDecoration(mBinding.chatRv.getContext(), VERTICAL);
-        mBinding.chatRv.addItemDecoration(itemDecor);
-
+        mBinding.chatRv.addItemDecoration(mItemDecor);
         return mBinding.getRoot();
     }
 
