@@ -63,15 +63,6 @@ public class DataManager implements DataContract {
     @Inject
     InteractionUseCase mInteractionUseCase;
 
-    // Lazy Initialization pattern
-    private static class StaticHolder {
-        static final DataManager INSTANCE = new DataManager();
-    }
-
-    public static DataManager getInstance() {
-        return StaticHolder.INSTANCE;
-    }
-
     /**
      * Private constructor so no one can make object of a data manager
      */
