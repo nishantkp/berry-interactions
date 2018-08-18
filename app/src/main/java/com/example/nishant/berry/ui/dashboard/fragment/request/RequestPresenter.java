@@ -33,6 +33,8 @@ import com.example.nishant.berry.ui.model.AllUsers;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 /**
  * Presenter that responsible for displaying friends request, in Request tab in Dashboard
  */
@@ -42,8 +44,9 @@ public class RequestPresenter
 
     private DataManager mDataManager;
 
-    RequestPresenter() {
-        mDataManager = DataManager.getInstance();
+    @Inject
+    RequestPresenter(DataManager dataManager) {
+        mDataManager = dataManager;
     }
 
     @Override

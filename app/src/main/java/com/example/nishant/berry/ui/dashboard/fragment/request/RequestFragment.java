@@ -25,6 +25,7 @@
 
 package com.example.nishant.berry.ui.dashboard.fragment.request;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -36,11 +37,15 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.nishant.berry.R;
+import com.example.nishant.berry.application.BerryApp;
 import com.example.nishant.berry.databinding.FragmentRequestBinding;
 import com.example.nishant.berry.ui.adapter.FriendRequestAdapter;
 import com.example.nishant.berry.ui.model.AllUsers;
+import com.example.nishant.berry.ui.module.ActivityModule;
 
 import java.util.List;
+
+import javax.inject.Inject;
 
 import static android.support.v7.widget.LinearLayoutManager.VERTICAL;
 
@@ -53,9 +58,17 @@ public class RequestFragment
 
     // Log tag
     private static final String LOG_TAG = RequestFragment.class.getSimpleName();
+
+    /* Dagger Injection */
+    @Inject
+    RequestPresenter mPresenter;
+    @Inject
+    FriendRequestAdapter mFriendRequestAdapter;
+    @Inject
+    LinearLayoutManager mLinearLayoutManager;
+    @Inject
+    DividerItemDecoration mItemDecor;
     private FragmentRequestBinding mBinding;
-    private RequestPresenter mPresenter;
-    private FriendRequestAdapter mFriendRequestAdapter;
 
     public RequestFragment() {
         // Required empty public constructor
@@ -71,26 +84,30 @@ public class RequestFragment
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        Activity activity = getActivity();
+        if (activity == null) return null;
+
+        // Inject dagger components
+        DaggerRequestComponent.builder()
+                .dataManagerComponent(BerryApp.get(activity).getDataManagerApplicationComponent())
+                .activityModule(new ActivityModule(activity))
+                .build()
+                .inject(this);
+
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_request, container, false);
         mBinding = FragmentRequestBinding.bind(view);
 
-        mPresenter = new RequestPresenter();
         mPresenter.attachView(this);
-
-        mFriendRequestAdapter = new FriendRequestAdapter(mPresenter);
         mBinding.requestRv.setAdapter(mFriendRequestAdapter);
 
         // Setup recycler view
-        mBinding.requestRv.setLayoutManager(
-                new LinearLayoutManager(getContext())
-        );
+        mBinding.requestRv.setLayoutManager(mLinearLayoutManager);
         mBinding.requestRv.setHasFixedSize(true);
 
         // Add divider between two items
-        DividerItemDecoration itemDecor =
-                new DividerItemDecoration(mBinding.requestRv.getContext(), VERTICAL);
-        mBinding.requestRv.addItemDecoration(itemDecor);
+        mBinding.requestRv.addItemDecoration(mItemDecor);
 
         return mBinding.getRoot();
     }
