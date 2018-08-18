@@ -33,6 +33,8 @@ import com.example.nishant.berry.ui.model.AllUsers;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 /**
  * Presenter that responsible for displaying friends list in Friends tab in
  * {@link DashboardActivity}
@@ -41,7 +43,11 @@ public class FriendsPresenter
         extends BasePresenter<FriendsContract.View>
         implements FriendsContract.Presenter {
 
-    FriendsPresenter() {
+    private DataManager mDataManager;
+
+    @Inject
+    FriendsPresenter(DataManager dataManager) {
+        mDataManager = dataManager;
     }
 
     @Override
@@ -59,7 +65,7 @@ public class FriendsPresenter
 
     @Override
     public void getAllFriends() {
-        DataManager.getInstance().fetchFriends(new OnUsersList() {
+        mDataManager.fetchFriends(new OnUsersList() {
             @Override
             public void onData(List<AllUsers> data) {
                 getView().onFriendsList(data);

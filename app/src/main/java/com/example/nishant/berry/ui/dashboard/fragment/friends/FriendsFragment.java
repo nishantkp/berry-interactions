@@ -25,6 +25,7 @@
 
 package com.example.nishant.berry.ui.dashboard.fragment.friends;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -36,15 +37,19 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.nishant.berry.R;
+import com.example.nishant.berry.application.BerryApp;
 import com.example.nishant.berry.config.IConstants;
 import com.example.nishant.berry.databinding.AlertDialogFriendsListBinding;
 import com.example.nishant.berry.databinding.FragmentFriendsBinding;
 import com.example.nishant.berry.ui.adapter.FriendsAdapter;
 import com.example.nishant.berry.ui.interaction.InteractionActivity;
 import com.example.nishant.berry.ui.model.AllUsers;
+import com.example.nishant.berry.ui.module.ActivityModule;
 import com.example.nishant.berry.ui.profile.UserProfileActivity;
 
 import java.util.List;
+
+import javax.inject.Inject;
 
 import static android.support.v7.widget.LinearLayoutManager.VERTICAL;
 
@@ -55,9 +60,19 @@ public class FriendsFragment
         extends Fragment
         implements FriendsContract.View, FriendsAdapter.OnClick {
 
-    private FriendsPresenter mPresenter;
+    /* Dagger Injection */
+    @Inject
+    FriendsPresenter mPresenter;
+    @Inject
+    FriendsAdapter mFriendsAdapter;
+    @Inject
+    LinearLayoutManager mLinearLayoutManager;
+    @Inject
+    DividerItemDecoration mItemDecor;
+    @Inject
+    AlertDialog.Builder mDialogBuilder;
+
     private FragmentFriendsBinding mBinding;
-    private FriendsAdapter mFriendsAdapter;
 
     public FriendsFragment() {
         // Required empty public constructor
@@ -73,26 +88,33 @@ public class FriendsFragment
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        Activity activity = getActivity();
+        if (activity == null) return null;
+
+        // Inject components with dagger
+        DaggerFriendsComponent.builder()
+                .dataManagerComponent(BerryApp.get(activity).getDataManagerApplicationComponent())
+                .activityModule(new ActivityModule(getActivity()))
+                .friendsModule(new FriendsModule(this))
+                .build()
+                .inject(this);
+
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_friends, container, false);
         mBinding = FragmentFriendsBinding.bind(view);
 
         // Adapter
-        mFriendsAdapter = new FriendsAdapter(this);
         mBinding.friendsRv.setAdapter(mFriendsAdapter);
 
-        mPresenter = new FriendsPresenter();
         mPresenter.attachView(this);
 
         // Setup recycler view
-        mBinding.friendsRv.setLayoutManager(new LinearLayoutManager(getContext()));
+        mBinding.friendsRv.setLayoutManager(mLinearLayoutManager);
         mBinding.friendsRv.setHasFixedSize(true);
 
         // Add divider between two items
-        DividerItemDecoration itemDecor =
-                new DividerItemDecoration(mBinding.friendsRv.getContext(), VERTICAL);
-        mBinding.friendsRv.addItemDecoration(itemDecor);
-
+        mBinding.friendsRv.addItemDecoration(mItemDecor);
         return mBinding.getRoot();
     }
 
@@ -150,9 +172,8 @@ public class FriendsFragment
         AlertDialogFriendsListBinding binding = AlertDialogFriendsListBinding.bind(alertView);
 
         // AlertDialog builder
-        final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        builder.setView(alertView);
-        final AlertDialog dialog = builder.create();
+        mDialogBuilder.setView(alertView);
+        final AlertDialog dialog = mDialogBuilder.create();
         dialog.show();
 
         // When user clicks on send message, start InteractionActivity
