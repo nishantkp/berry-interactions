@@ -49,7 +49,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
 
 /**
  * Utility class which deals with displaying friend request and performing action when

@@ -41,7 +41,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
 
 /**
  * Class that deals with login and signUp of user, saving status

@@ -37,7 +37,6 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.storage.UploadTask;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
 
 /**
  * Utility class that deals with storing user avatar and thumbnail to FirebaseStorage

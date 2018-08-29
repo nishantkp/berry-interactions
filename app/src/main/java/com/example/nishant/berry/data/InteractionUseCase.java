@@ -46,7 +46,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
 
 /**
  * Utility class that deals with getting chat between current user and user defined by
