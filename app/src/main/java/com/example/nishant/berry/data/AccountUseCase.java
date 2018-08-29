@@ -46,7 +46,6 @@ import javax.inject.Singleton;
 /**
  * Class that deals with login and signUp of user, saving status
  */
-@Singleton
 public final class AccountUseCase {
     private FbUsersUseCase mFbUsersUseCase;
 

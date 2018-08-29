@@ -47,7 +47,6 @@ import javax.inject.Singleton;
 /**
  * ChatUtility class to display chat list
  */
-@Singleton
 public final class ChatUseCase {
     // TODO: Use stack instead linkedList to store interaction data : <<<FUTURE UPDATE>>>
     private static List<AllUsers> mData = new LinkedList<>();

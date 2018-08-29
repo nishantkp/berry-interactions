@@ -57,7 +57,6 @@ import io.reactivex.schedulers.Schedulers;
  * FriendsUtility class to get the friends list of current user in {@link FriendsFragment}
  * with the help of FirebaseRecyclerAdapter
  */
-@Singleton
 public final class FriendsUseCase {
     private FbUsersUseCase mFbUsersUseCase;
 

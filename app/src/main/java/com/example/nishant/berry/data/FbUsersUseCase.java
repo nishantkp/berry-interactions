@@ -55,7 +55,6 @@ import javax.inject.Singleton;
 /**
  * Firebase Utility class
  */
-@Singleton
 public final class FbUsersUseCase {
     private List<AllUsers> mAllUsersList = new LinkedList<>();
 

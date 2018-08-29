@@ -44,7 +44,6 @@ import javax.inject.Singleton;
 /**
  * Utility class the deals with finding user from User's database in Firebase Database
  */
-@Singleton
 public final class SearchUseCase {
     private FbUsersUseCase mFbUsersUseCase;
 

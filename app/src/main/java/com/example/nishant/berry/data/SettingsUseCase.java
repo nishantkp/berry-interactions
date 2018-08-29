@@ -43,7 +43,6 @@ import javax.inject.Singleton;
  * Utility class that deals with storing user avatar and thumbnail to FirebaseStorage
  * i.e usually required for {@link SettingsActivity}, {@link SettingsPresenter}
  */
-@Singleton
 public final class SettingsUseCase {
     private FbUsersUseCase mFbUsersUseCase;
 

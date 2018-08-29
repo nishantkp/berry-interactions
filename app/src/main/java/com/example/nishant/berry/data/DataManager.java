@@ -33,7 +33,6 @@ import com.example.nishant.berry.data.callbacks.OnTaskCompletion;
 import com.example.nishant.berry.data.callbacks.OnUserProfile;
 import com.example.nishant.berry.data.callbacks.OnUsersData;
 import com.example.nishant.berry.data.callbacks.OnUsersList;
-import com.example.nishant.berry.data.component.DaggerUseCaseComponent;
 import com.example.nishant.berry.ui.model.AllUsers;
 
 import javax.inject.Inject;
@@ -44,31 +43,30 @@ import javax.inject.Singleton;
  */
 @Singleton
 public class DataManager implements DataContract {
-    @Inject
-    FbUsersUseCase mFbUsersUseCase;
-    @Inject
-    FriendsUseCase mFriendsUseCase;
-    @Inject
-    RequestsUseCase mRequestsUseCase;
-    @Inject
-    SettingsUseCase mSettingsUseCase;
-    @Inject
-    ChatUseCase mChatUseCase;
-    @Inject
-    AccountUseCase mAccountUseCase;
-    @Inject
-    SearchUseCase mSearchUseCase;
-    @Inject
-    ProfileUseCase mProfileUseCase;
-    @Inject
-    InteractionUseCase mInteractionUseCase;
+    private FbUsersUseCase mFbUsersUseCase;
+    private FriendsUseCase mFriendsUseCase;
+    private RequestsUseCase mRequestsUseCase;
+    private SettingsUseCase mSettingsUseCase;
+    private ChatUseCase mChatUseCase;
+    private AccountUseCase mAccountUseCase;
+    private SearchUseCase mSearchUseCase;
+    private ProfileUseCase mProfileUseCase;
+    private InteractionUseCase mInteractionUseCase;
 
-    /**
-     * Private constructor so no one can make object of a data manager
-     */
     @Inject
-    public DataManager() {
-        DaggerUseCaseComponent.create().inject(this);
+    DataManager(FbUsersUseCase fbUsersUseCase, FriendsUseCase friendsUseCase,
+                RequestsUseCase requestsUseCase, SettingsUseCase settingsUseCase,
+                ChatUseCase chatUseCase, AccountUseCase accountUseCase, SearchUseCase searchUseCase,
+                ProfileUseCase profileUseCase, InteractionUseCase interactionUseCase) {
+        mFbUsersUseCase = fbUsersUseCase;
+        mFriendsUseCase = friendsUseCase;
+        mRequestsUseCase = requestsUseCase;
+        mSettingsUseCase = settingsUseCase;
+        mChatUseCase = chatUseCase;
+        mAccountUseCase = accountUseCase;
+        mSearchUseCase = searchUseCase;
+        mProfileUseCase = profileUseCase;
+        mInteractionUseCase = interactionUseCase;
     }
 
     /**
